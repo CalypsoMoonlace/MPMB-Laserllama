@@ -569,7 +569,7 @@ SpellsList["arresting strike"] = {
 	school : "Combat",
 	time : "Hit",
 	timeFull : "No action required, on hit with a weapon attack",
-	range : "Self",
+	range : "Attack",
 	components : "W", // W = weapon
 	compMaterial : "Weapon attack",
 	duration : "Instantaneous",
@@ -664,7 +664,7 @@ SpellsList["disarm"] = {
 	school : "Combat",
 	time : "Hit",
 	timeFull : "No action required, on hit with a weapon attack",
-	range : "Self",
+	range : "Attack",
 	components : "W", // W = weapon
 	compMaterial : "Weapon attack",
 	duration : "Instantaneous",
@@ -702,9 +702,9 @@ SpellsList["feint"] = {
 	level : 1,
 	school : "Combat",
 	time : "1 bns",
-	range : "Self",
+	range : "15 ft",
 	duration : "Instantaneous",
-	description : "One creature makes Wis save or I have adv on all my attacks until the end of my turn",
+	description : "One creature makes Wis save or I have adv on all my attacks against them until the end of my turn",
 	descriptionFull : "As a bonus action, you can expend one Exploit Die to feint, forcing a creature that can see you within 15 feet to make a Wisdom saving throw. On a failed save, you have advantage on your attacks against it until the end of your current turn."
 };
 
@@ -743,6 +743,196 @@ SpellsList["heroic fortitude"] = {
 	descriptionFull : "Whenever you are forced to make a Strength, Dexterity, or Constitution saving throw you can expend an Exploit Die, roll it, and add the result to your saving throw. You can do so after you roll the d20, but before you know if you succeed or fail."
 };
 
+SpellsList["parry & riposte"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Dex') >= 11},
+	// Regular spell attributes
+	name : "Parry & Riposte",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "1 rea",
+	timeFull : "1 reaction, which you take when someone hits you with a melee attack",
+	components : "W*", // W = weapon, adding a * so the user knows it's more specific
+	compMaterial : "Finesse or versatile weapon",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to AC against 1 attack; Melee attack as part of the reaction if turns hit into miss",
+	descriptionFull : "While you are wielding a finesse or versatile weapon, and a creature you can see hits you with a melee attack, you can use your reaction to expend one Exploit Die, roll it, and add it to your Armor Class against that attack. Should this cause the attack to miss, you can make one melee weapon attack against your attacker as part of the same reaction."
+};
+
+SpellsList["precision strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Dex') >= 11},
+	// Regular spell attributes
+	name : "Precision Strike",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Attack",
+	timeFull : "No action required, as part of a weapon attack",
+	range : "Self",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to attack roll",
+	descriptionFull : "As part of a weapon attack you can expend one Exploit Die, roll it, and add the result to your attack roll. You can use this Exploit after you roll, but before you know if you hit or miss."
+};
+
+SpellsList["rustic intuition"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Wis') >= 11},
+	// Regular spell attributes
+	name : "Rustic Intuition",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to an Intelligence (Nature), Wisdom (Animal Handling), or Wisdom (Medicine) check",
+	descriptionFull : "When you make an Intelligence (Nature), Wisdom (Animal Handling), or Wisdom (Medicine) check you can expend an Exploit Die, roll it, and add the result to your ability check. You can do so after you roll, but before you know the result."
+};
+
+SpellsList["ruthless strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Str') >= 11},
+	// Regular spell attributes
+	name : "Ruthless Strike",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, when you hit a nonmagical object with an attack",
+	range : "Melee",
+	duration : "Instantaneous",
+	description : "On hit, expend any Exploit Die up to Prof Bonus as bonus dmg",
+	descriptionFull : "When you hit a target with a melee weapon attack, you can expend Exploit Dice (up to your proficiency bonus), roll the dice, and add them to the damage roll of that attack."
+};
+
+SpellsList["scholarly recall"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Int') >= 11},
+	// Regular spell attributes
+	name : "Scholarly Recall",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to an Intelligence (Arcana), Intelligence (History), or Intelligence (Religion) check",
+	descriptionFull : "Whenever you make an Intelligence (Arcana), Intelligence (History), or Intelligence (Religion) check you can expend an Exploit Die, roll it, and add the result to your ability check. You can do so after you roll, but before you know the result."
+};
+
+SpellsList["shield impact"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Str') >= 11},
+	// Regular spell attributes
+	name : "Shield Impact",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "1 rea",
+	timeFull : "1 reaction, which you take when someone hits you with an attack",
+	components : "Shield",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Reduce dmg taken by Exploit Die (up to my Prof Bonus) + Str",
+	descriptionFull : "When a creature you can see hits you with an attack, you can use a reaction to expend Exploit Dice (up to your proficiency bonus), roll those dice, and reduce the damage of that attack by an amount equal to the total you rolled + your Strength modifier. You must be wielding a shield to use this Exploit."
+};
+
+SpellsList["skilled rider"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Wis') >= 11},
+	// Regular spell attributes
+	name : "Skilled Rider",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to an Animal Handling check to control my mount or any d20 roll my mount makes",
+	descriptionFull : "When your trained mount makes an ability check, attack roll, or saving throw, or you make a Wisdom (Animal Handling) check to control it, you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
+SpellsList["subtle con"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Dex') >= 11 || What('Cha') >= 11},
+	// Regular spell attributes
+	name : "Subtle Con",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to a Dex (Sleight of Hand), a Cha (Deception), or a Cha (Performance) check",
+	descriptionFull : "When you make a Dexterity (Sleight of Hand), a Charisma (Deception), or a Charisma (Performance) check you can expend an Exploit Die, roll it, and add it to your ability check. You can do so after you roll, but before you know the result."
+};
+
+SpellsList["sweeping strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	// Regular spell attributes
+	name : "Sweeping Strike",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, when you hit a nonmagical object with an attack",
+	range : "Melee",
+	duration : "Instantaneous",
+	description : "On hit, force target to make a Dex saving throw or take Exploit Die of bludg dmg and fall prone",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die and force it to make a Dexterity saving throw. On a failure, it takes bludgeoning damage equal to one roll of your Exploit Die and falls prone. A creature more than one size larger than you has advantage on its saving throw."
+};
+
+SpellsList["warding strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	// Regular spell attributes
+	name : "Warding Strike",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "1 rea",
+	timeFull : "1 reaction, which you take when someone moves within the reach of a melee weapon you are wielding",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "When a crea moves within my melee reach; Use my reaction for melee attack; Add exploit die to dmg",
+	descriptionFull : "When a creature moves within the reach of a melee weapon you are wielding, you can use a reaction to expend an Exploit Die and make a single attack against it with that weapon. On hit, you add one roll of your Exploit Die to your damage roll."
+};
+
+// From the expanded fighter
 SpellsList["destructive strike"] = {
 	// Exploit exclusive attributes
 	isExploit : true,
@@ -756,7 +946,7 @@ SpellsList["destructive strike"] = {
 	school : "Combat",
 	time : "Hit",
 	timeFull : "No action required, when you hit a nonmagical object with an attack",
-	range : "Self",
+	range : "Attack",
 	duration : "Instantaneous",
 	description : "On hit on a non-magical item, treat attack dmg as maximum dmg and add roll of Exploit Die to dmg",
 	descriptionFull : " When you hit a nonmagical object with an attack, you can expend an Exploit Die, add it to the damage roll, and cause that attack to deal maximum damage in place of rolling."
