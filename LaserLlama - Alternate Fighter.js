@@ -601,7 +601,7 @@ SpellsList["commanding presence"] = {
 	isExploit : true,
 	submenu : "[1st-degree exploits (checks)]",
 	prereqeval : function(v) { return What('Str') >= 11 || What('Cha') >= 11},
-	addMod : { type : "skill", field : "Intimidation", mod : "max(Str-Cha|0)", text : "I can replace Intimidation (Charisma) checks with Intimidation (Strength)" },
+	addMod : { type : "skill", field : "Intimidation", mod : "max(Str-Cha|0)", text : "I can replace Charisma (Intimidation) checks with Strength (Intimidation)" },
 	// Regular spell attributes
 	name : "Commanding Presence",
 	classes : ["fighter(laserllama)", "barbarian(laserllama)"],
@@ -611,7 +611,7 @@ SpellsList["commanding presence"] = {
 	time : "Check",
 	range : "Self",
 	duration : "Instantaneous",
-	description : "Add my Exploit Die to Persuasion and Intimidation checks; Can make Str (Intimidation) checks (passive)",
+	description : "Add Exploit Die to Persuasion and Intimidation checks; Can make Str (Intimidation) checks (passive)",
 	descriptionFull : "When making a Charisma (Persuasion) or Charisma (Intimidation) check, you can expend one Exploit Die, roll it, and add the result to your ability check after rolling the d20 but before determining success. Additionally, when required to make a Charisma (Intimidation) check, you can opt to make a Strength (Intimidation) check instead."
 };
 
@@ -648,7 +648,7 @@ SpellsList["cunning instinct"] = {
 	time : "Check",
 	range : "Self",
 	duration : "Instantaneous",
-	description : "Add my Exploit Die to a Wisdom (Perception) or Wisdom (Survival) check",
+	description : "Add Exploit Die to a Wisdom (Perception) or Wisdom (Survival) check",
 	descriptionFull : "When making a Wisdom (Perception) or Wisdom (Survival) check, you can expend one Exploit Die, roll it, and add the result to your ability check after rolling but before determining success or failure."
 };
 
@@ -739,8 +739,142 @@ SpellsList["heroic fortitude"] = {
 	time : "Save",
 	range : "Self",
 	duration : "Instantaneous",
-	description : "Add one Exploit Die to a Str, Dex or Con saving throw",
+	description : "Add Exploit Die to a Str, Dex or Con saving throw",
 	descriptionFull : "Whenever you are forced to make a Strength, Dexterity, or Constitution saving throw you can expend an Exploit Die, roll it, and add the result to your saving throw. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
+SpellsList["destructive strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Str') >= 11},
+	// Regular spell attributes
+	name : "Destructive Strike",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, when you hit a nonmagical object with an attack",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "On hit on a non-magical item, treat attack dmg as maximum dmg and add roll of Exploit Die to dmg",
+	descriptionFull : " When you hit a nonmagical object with an attack, you can expend an Exploit Die, add it to the damage roll, and cause that attack to deal maximum damage in place of rolling."
+};
+
+SpellsList["eloquent speech"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Int') >= 11},
+	addMod : [
+		{ type : "skill", field : "Persuasion", mod : "max(Int-Cha|0)", text : "I can replace Charisma (Persuasion) checks with Intelligence (Persuasion)" },
+		{ type : "skill", field : "Deception", mod : "max(Int-Cha|0)", text : "I can replace Charisma (Deception) checks with Intelligence (Deception)" }
+	],
+	// Regular spell attributes
+	name : "Eloquent Speech",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to Pers and Decep checks; Can make Int (Persuasion) & Int (Persuasion) checks (passive)",
+	descriptionFull : "Whenever you would normally make a Charisma (Deception) or Charisma (Persuasion) check, you can choose to use your Intelligence in place of Charisma for that ability check. Also, whenever you make an Intelligence (Deception) or Intelligence (Persuasion) check you can expend one Exploit Die, roll it, and add the result to your check. You can do so after you roll the d20, but before you know if you succeed."
+};
+
+SpellsList["mechanical insight"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Int') >= 11},
+	// Regular spell attributes
+	name : "Mechanical Insight",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to a thieves' tools or tinker's tools check",
+	descriptionFull : "Whenever you make an ability check with a set of thieves' tools or tinker's tools you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
+SpellsList["reposition"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	// Regular spell attributes
+	name : "Reposition",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "1 bns",
+	range : "5 ft",
+	duration : "Instantaneous",
+	description : "Switch place with a conscious and willing creature, either me or target gains Exploit Die of temp hp",
+	descriptionFull : "As a bonus action, you can expend one Exploit Die to switch places with a conscious and willing creature within 5 feet of you. This movement does not provoke opportunity attacks. Either you or the creature you switched places with gains temporary hit points equal to one roll of your Exploit Die."
+};
+
+SpellsList["savvy explorer"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Int') >= 11 || What('Wis') >= 11},
+	// Regular spell attributes
+	name : "Savvy Explorer",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to a land/water vehicles, cartographer's tools, or navigator's tools check",
+	descriptionFull : "When you make an ability check with land or water vehicles, cartographer's tools, or navigator's tools you can expend one Exploit Die, roll it, and add it to your ability check. You can do so after you roll the d20, but before you know if you succeed."
+};
+
+SpellsList["streetwise"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Cha') >= 11},
+	addMod : [
+		{ type : "skill", field : "History", mod : "max(Cha-Int|0)", text : "I can replace Intelligence (History) checks with Charisma (History)" },
+		{ type : "skill", field : "Investigation", mod : "max(Cha-Int|0)", text : "I can replace Intelligence (Investigation) checks with Charisma (Investigation)" }
+	],
+	// Regular spell attributes
+	name : "Streetwise",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to Hist and Invest checks; Can make Cha (History) & Cha (Investigation) checks (passive)",
+	descriptionFull : "If you are in a settlement, you can make Charisma (History) and Charisma (Investigation) checks instead of the normal Intelligence (History) or Intelligence (Investigation) checks. Also, when you make a Charisma (History) or a Charisma (Investigation) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
+SpellsList["take down"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Str') >= 11},
+	// Regular spell attributes
+	name : "Take Down",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "1 bns",
+	range : "Touch",
+	duration : "Instantaneous",
+	description : "Attempt to shove or grapple a creature and add Exploit Die to the Strength (Athletics) check",
+	descriptionFull : "As a bonus action, you can expend one Exploit Die to touch a creature and attempt to Shove or Grapple it, and add one roll of your Exploit Die to your Strength (Athletics) check."
 };
 
 // 2nd-Degree Martial Exploits
