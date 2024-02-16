@@ -325,8 +325,10 @@ var FightingStyles = {
 							"I gain blindsight for a range of 5 times my prof bonus",
 							"In that range, I can see invisible creatures and anything that isn't behind total cover or hidden"
 						]),
-		vision : [["Blindsight", 10]]
-		// TODO: try to add the scaling
+		eval : function(lvl, chc) {
+			var blindrange = Number(How('Proficiency Bonus')) * 5;
+			SetProf('vision', blindrange != 0, "Blindsight", "Blind Warrior Fighting Style", blindrange);
+		}
 	},
 
 	heavyweight : {
@@ -390,7 +392,7 @@ var FightingStyles = {
 		},
 		action : ["bonus action", " (command)"]
 	},
-	// TODO: figure out if it is possible to edit the mount page
+	// Note: it is not possible to check for AC bonus easily here, so I'll leave it like this
 
 	pit : {
 		name : "Pit Fighting Style",
@@ -1396,55 +1398,116 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 			return MEfea;
 		}(),
 
-		"subclassfeature3" : {
-			name : "Advanced Technique",
-			minlevel : 3,
-			source : [["GMB:LL", 0]],
-			description : levels.map(function (n) {
-					if (n < 3) return '';
+		"subclassfeature3" : function(){
 
-					if (n >= 3 && n < 5) {
-						var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d8",
-						"I also learn two 1st degree Martial Exploits of my choice who don't count against my total"]
-					}
+			// Fixed attributes
+			MartialExploits = {
+				name : "Advanced Technique",
+				minlevel : 3,
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+						if (n < 3) return '';
 
-					if (n >= 5 && n < 9) {
-						var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d10",
-						"I also learn two 1st degree and two 2nd degree Martial Exploits of my choice who don't count against my total"]
-					}
+						if (n >= 3 && n < 5) {
+							var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d8",
+							"I also learn two 1st degree Martial Exploits of my choice who don't count against my total"]
+						}
 
-					if (n >= 9 && n < 11) {
-						var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d10",
-						"I also learn two 1st degree, two 2nd degree and a 3rd degree Martial Exploits of my choice who don't count against my total"]
-					}
+						if (n >= 5 && n < 9) {
+							var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d10",
+							"I also learn two 1st degree and two 2nd degree Martial Exploits of my choice who don't count against my total"]
+						}
 
-					if (n >= 11) {
-						var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d12",
-						"I also learn two 1st degree, two 2nd degree and a 3rd degree Martial Exploits of my choice who don't count against my total"]
-					}
+						if (n >= 9 && n < 11) {
+							var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d10",
+							"I also learn two 1st degree, two 2nd degree and a 3rd degree Martial Exploits of my choice who don't count against my total"]
+						}
 
-					return desc(result)
-				}),
-			toNotesPage : [{
-					name : "Master at Arms Exploits",
-					note : desc(["Below are my Master at Arms exploits"])
+						if (n >= 11) {
+							var result = ["My total number of Exploit Dice increases by 1 and my Exploit Dice increase to become 1d12",
+							"I also learn two 1st degree, two 2nd degree and a 3rd degree Martial Exploits of my choice who don't count against my total"]
+						}
+
+						return desc(result)
+					}),
+				toNotesPage : [{
+						name : "Master at Arms Exploits",
+						note : desc(["Below are my Master at Arms exploits"])
+					}],
+
+				extraLimitedFeatures : [{
+					name : "Martial Exploits",
+					usages : 1,
+					recovery : "short rest",
+					addToExisting : true
 				}],
 
-			extraLimitedFeatures : [{
-				name : "Martial Exploits",
-				usages : 1,
-				recovery : "short rest",
-				addToExisting : true
-			}],
+				// Martial Exploits
+				extraname : "Master at Arms Exploits",
+				extraTimes : levels.map(function (n) {
+					return n < 3 ? 0 : n < 5 ? 2 : n < 9 ? 4 : 5;
+				}),
+				extrachoices : []
+			}
 
-			bonusClassExtrachoices : [{
-				"class" : "fighter(laserllama)",
-				feature : "martial exploits",
-				bonus : 2
-			}]
-			// NOTE: It currently does not check if those are level 1 exploits. 
-			// The exact details of this part are TBA considering I don't have exploits added in the first place atm.
-		},
+			// Make a filtered spell list that contains only Fighter(laserllama) "spells" of degree <= 3
+			const FighterSpells = Object.keys(SpellsList).filter((key) => SpellsList[key].isExploit && SpellsList[key].level <= 3).filter((key) => {
+				for (var i = 0; i < SpellsList[key].classes.length; i++) {
+					if (SpellsList[key].classes[i] == "fighter(laserllama)") return true;
+				}
+				return false;
+				// NOTE: this is literally a SpellsList[key].classes.includes("fighter(laserllama)") but for some cursed reason I can't use that function
+			});
+			
+			//const DegreeToMinLevel = [0,0,5,9,13,17]
+			// Iterate over all Fighter(laserllama) "spells"
+			for (var i = 0; i < FighterSpells.length; i++) {
+				var NewSpell = SpellsList[FighterSpells[i]];
+
+				MartialExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
+
+				MartialExploits[FighterSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
+					name: NewSpell.name,
+					toNotesPage : [{ // What is added to the notes page
+						name : NewSpell.name + " Exploit",
+						note : desc(NewSpell.descriptionFull),
+						amendTo : "Master at Arms Exploits"
+					}],
+					source: NewSpell.source,
+					spellcastingBonus : [{ // What is added to the spellcasting sheet
+						name : NewSpell.name + " Exploit",
+						spellcastingAbility : 1,
+						spells : [FighterSpells[i]],
+						selection : [FighterSpells[i]]
+					}],
+					addMod: NewSpell.addMod,
+					submenu: NewSpell.submenu
+				}
+
+
+				// Matching prereqeval with required Fighter level
+				// NOTE: I am doing this ugly copypasted thing because DegreeToMinLevel[NewSpell.level] didn't work, I'm assuming due to lexical scoping but that kinda sucks
+				// It's easier for me to do this than spend idk how much time debugging this issue
+				if (NewSpell.level == 2) {
+					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 5 }; 
+				}
+				if (NewSpell.level == 3) {
+					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 9 }; 
+				}
+
+				// Combining level prereq (defined just above) with spell prereq (defined in the spell itself)
+				// Exploit has a prerequisite and a level prerequisite
+				if (NewSpell.prereqeval && MartialExploits[FighterSpells[i]].prereqeval) {
+					MartialExploits[FighterSpells[i]].prereqeval = (MartialExploits[FighterSpells[i]].prereqeval && NewSpell.prereqeval);
+				}
+				// Exploit has a prerequisite but no level prerequesite
+				if (NewSpell.prereqeval && !MartialExploits[FighterSpells[i]].prereqeval) {
+					MartialExploits[FighterSpells[i]].prereqeval = NewSpell.prereqeval;
+				}
+			}
+
+			return MartialExploits;
+		}(),
 
 		"subclassfeature3.1" : function () { // copies the main class feature, avoids having to copy all fighting styles
 			var FSfea = newObj(ClassList["fighter(laserllama)"].features["fighting style"]);
@@ -1514,7 +1577,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					}),
 
 				// Exploit choice menu
-				extraname : "Master at Arms Exploits",
+				extraname : "Master of Forms Exploits",
 				extrachoices : [],
 				extraTimes : levels.map(function (n) {
 						return n < 7 ? 0 : n < 15 ? 2 : n < 18 ? 3 : 4;
