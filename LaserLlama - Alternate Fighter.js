@@ -1667,7 +1667,65 @@ AddSubClass("fighter(laserllama)", "ronin", {
 	abilitySave : 1,
 	abilitySaveAlt : 2,
 	features : {
-		"subclassfeature3" : GetSubclassExploits("Ronin", ["commanding presence","counter","aggressive sprint","honor duel","heroic focus"])
+		"subclassfeature3" : GetSubclassExploits("Ronin", ["commanding presence","counter","aggressive sprint","honor duel","heroic focus"]),
+		"subclassfeature3.1" : {
+			name : "Exiled Courtier",
+			languageProfs : [1],
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			skillstxt : "Choose one from: History, Insight, Performance, or Persuasion",
+			description : levels.map(function (n) {
+				if (n < 7) return desc(["I learn to speak, read, and write one additional language of my choice and gain proficiency in either History, Insight, Performance, or Persuasion."]);
+				return desc(["I learn to speak, read, and write one additional language of my choice and gain proficiency in either History, Insight, Performance, or Persuasion.", "I also gain a bonus of my Exploit Die to any roll made with that skill."])
+			})
+		},
+		"subclassfeature3.2" : {
+			name : "Unyielding Spirit",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["As a bonus action, I gain adv. on my attacks and ignore any exhaustion level for this turn", "I also gain temporary HP equal to my fighter level", "I can use this once per short rest or gain an exhaustion level to use it again"]),
+			recovery : levels.map(function (n) {
+					return n < 10 ? "short rest" : "Init";
+				}),
+			additional : levels.map(function (n) { return n < 3 ? "" : n + " temp HP"; }),
+			usages : 1,
+			action : ["bonus action", ""]
+		},
+		"subclassfeature7" : {
+			name : "Unbreakable Will",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I gain proficiency with Wis saves, or if I'm already proficient, either Int or Cha saves"]),
+			saves : ["Wis"]
+		},
+		"subclassfeature10" : {
+			name : "Unrelenting",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["I regain one use of Unyielding Spirit if I have no more remaining when I roll initiative","When using Second Wind, my current level of exhaustion, if any, is reduced by 1"])
+		},
+		"subclassfeature15" : {
+			name : "Swift Strikes",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc([
+				"With the Attack action, I can forgo advantage on one attack to make one extra attack",
+				"This extra attack is part of the same action; I can do this only once per turn"
+			])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Ronin",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc([
+				"If I'm reduced to 0 HP, I can delay falling unconscious, immediately taking a bonus turn",
+				"While I'm at 0 HP, I suffer damage normally and die if I have 3 failed death saves",
+				"If I'm still at 0 HP at the end of this bonus turn, I fall unconscious",
+				"If I have no uses remaining, I can expend a use of Action Surge instead"
+			]),
+			recovery : "long rest",
+			usages : 1
+		}
 	}
 })
 
