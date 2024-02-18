@@ -951,7 +951,7 @@ SpellsList["destructive strike"] = {
 	range : "Attack",
 	duration : "Instantaneous",
 	description : "On hit on a non-magical item, treat attack dmg as maximum dmg and add roll of Exploit Die to dmg",
-	descriptionFull : " When you hit a nonmagical object with an attack, you can expend an Exploit Die, add it to the damage roll, and cause that attack to deal maximum damage in place of rolling."
+	descriptionFull : "When you hit a nonmagical object with an attack, you can expend an Exploit Die, add it to the damage roll, and cause that attack to deal maximum damage in place of rolling."
 };
 
 SpellsList["eloquent speech"] = {
@@ -1087,6 +1087,124 @@ SpellsList["aggressive sprint"] = {
 	descriptionFull : "As a bonus action, you can expend one Exploit Die to move up to your walking speed toward a hostile creature that you can see and make a single melee weapon attack against it."
 };
 
+SpellsList["blinding debris"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 11},
+	// Regular spell attributes
+	name : "Blinding Debris",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 2,
+	school : "Combat",
+	time : "1 bns",
+	range : "10 ft",
+	save : "Con",
+	duration : "1 rnd",
+	description : "One crea Con saving throw or blinded until beginning of my next turn",
+	descriptionFull : "As a bonus action, you can expend an Exploit Die to attempt to blind a creature with debris. A creature you can see within 10 feet must succeed on a Constitution saving throw or take piercing damage equal to one roll of your Exploit Die and become blinded until the beginning of your next turn."
+};
+
+SpellsList["concussive blow"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13},
+	// Regular spell attributes
+	name : "Concussive Blow",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 2,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a melee weapon attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon attack",
+	save : "Con",
+	duration : "1 rnd",
+	description : "On fail, 0 speed, can't speak, disadv. on attacks, skills and dex saving throws and attacks have adv.",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to empower your attack and force it to make a Constitution saving throw. On a failed save, the target suffers the effects below until the beginning of your next turn:\nIts speed becomes 0, and it can speak only falteringly.\nIt has disadvantage on attack rolls and ability checks.\nIt has disadvantage on Dexterity saving throws.\nAttack rolls against it have advantage."
+};
+
+SpellsList["crippling strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Crippling Strike",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a weapon attack",
+	range : "Attack",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "1 rnd",
+	save : "Con",
+	description : "On hit, one crea save or Exploit Die of bonus dmg and blinded or deafened or can't speak (my choice)",
+	descriptionFull : "When you hit a target with a weapon attack, you can expend an Exploit Die to cripple one of its senses. It must succeed on a Constitution saving throw or it takes additional damage equal to one roll of your Exploit Die and is blinded, deafened, or cannot speak (your choice) until the start of your next turn."
+};
+
+SpellsList["defensive stance"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Defensive Stance",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "1 bns",
+	range : "Self",
+	duration : "1 rnd",
+	description : "Add Exploit Die to my AC to every attack from a creature I can see that targets me",
+	descriptionFull : "As a bonus action, you can expend an Exploit Die to enter a defensive stance that lasts until the start of your next turn. Each time a creature you can see targets you with an attack while you are in this stance, you gain a bonus to your Armor Class against that attack equal to a roll of your Exploit Die."
+};
+
+SpellsList["dirty hit"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 13},
+	// Regular spell attributes
+	name : "Dirty Hit",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a melee weapon attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "1 rnd",
+	save : "Con",
+	description : "On hit, one crea save or Exploit Die of bonus dmg and prone and can't take reactions",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to strike at a vulnerable area. It must succeed on a Constitution saving throw or it takes additional damage equal to a roll of your Exploit Die, falls prone, and it cannot take reactions until the start of your next turn."
+};
+
+SpellsList["heroic will"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Heroic Will",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Skill",
+	time : "Save",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to an Int, Wis or Cha saving throw",
+	descriptionFull : "Whenever you are forced to make an Intelligence, Wisdom, or Charisma saving throw you can expend an Exploit Die, roll it, and add the result to your saving throw. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
 SpellsList["honor duel"] = {
 	// Exploit exclusive attributes
 	isExploit : true,
@@ -1102,8 +1220,129 @@ SpellsList["honor duel"] = {
 	components : "V",
 	duration : "1 min",
 	save : "Wis",
-	description : "1 crea save or dis. on attacks vs. not-me; Extra save each turn; Ends if I attack someone else",
+	description : "One crea save or dis. on attacks vs. not-me; Extra save each turn; Ends if I attack someone else",
 	descriptionFull : "As a bonus action, you can expend an Exploit Die and shout a challenge at a foe. One creature of your choice within 30 feet that can see or hear you must make a Wisdom saving throw. On a failed save, the creature has disadvantage on all attack rolls it makes against targets other than you for 1 minute. The creature can repeat this saving throw at the end of each of its turns, ending the effect on a success. This effect ends early if you attack a creature other than the target."
+};
+
+SpellsList["martial focus"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Martial Focus",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Attack",
+	timeFull : "No action required, as part of a weapon attack",
+	range : "Attack",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "Instantaneous",
+	description : "As part of the attack, grant myself advantage",
+	descriptionFull : "As part of a weapon attack you can expend an Exploit Die to grant yourself advantage on your attack roll. You can use this Exploit after you roll, but before you know if you hit or miss."
+};
+
+SpellsList["menacing shout"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Con') >= 13 || What('Cha') >= 13},
+	// Regular spell attributes
+	name : "Menacing Shout",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 2,
+	school : "Combat",
+	time : "1 bns",
+	range : "30 ft",
+	components : "V",
+	duration : "1 rnd",
+	save : "Wis",
+	description : "One crea save or frightened of me and must use their action to move away (without harming itself)",
+	descriptionFull : "As a bonus action, you can expend one Exploit Die and force one creature within 30 feet that can see or hear you to make a Wisdom saving throw. On a failed save, it is frightened of you until the end of your next turn and must use its action to move as far away from you as possible without harming itself."
+};
+
+SpellsList["redirect"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Redirect",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "1 rea",
+	timeFull : "1 reaction, which you take when a creature you can see misses you with a melee attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "Instantaneous",
+	description : "Redirect melee attack to another target of my choice within range, adding Exploit Die to attack roll",
+	descriptionFull : "When a creature you can see misses you with a melee attack, you can use your reaction to expend an Exploit Die and force it to attack another creature of your choice within range of its attack, adding one roll of your Exploit Die to its attack roll."
+};
+
+SpellsList["rending strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13},
+	// Regular spell attributes
+	name : "Rending Strike",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a melee weapon attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "Until long rest",
+	description : "On hit, Dex saving throw or -1 to AC and Exploit Die of bonus dmg",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to rend its armor. It must succeed on a Dexterity saving throw or it takes additional damage equal to one roll of your Exploit Die and its Armor Class is reduced by 1 until the damage is repaired, or it finishes a long rest."
+};
+
+SpellsList["volley"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 13},
+	// Regular spell attributes
+	name : "Volley",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "1 a",
+	range : "Attack",
+	components : "W*", // W = weapon
+	compMaterial : "Ranged weapon",
+	duration : "Instantaneous",
+	description : "All crea of my choice within 5 ft of chosen point save or take Exploit Die + Dex dmg (half on success)",
+	descriptionFull : "As an action, you can expend one Exploit Die to fire a volley of ammunition at a point you can see within normal range of your weapon. Creatures of your choice within 5 feet of that point must make a Dexterity Saving throw. On a failure, they take piercing damage equal to one roll of your Exploit Die + your Dexterity modifier, and half as much on a success."
+};
+
+SpellsList["whirlwind strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 || What('Dex') >= 13},
+	// Regular spell attributes
+	name : "Whirlwind Strike",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon",
+	duration : "Instantaneous",
+	description : "All crea within reach of a melee weapon save or take Exploit Die + Str/Dex dmg (half on success)",
+	descriptionFull : "In place of an attack, you can expend an Exploit Die to force each target within reach of a melee weapon you are wielding to make a Dexterity saving throw. Targets take damage equal to a roll of your Exploit Die + your Strength or Dexterity modifier on a failed save, and half as much on a success."
 };
 
 // 3rd degree exploits
