@@ -329,7 +329,7 @@ var FightingStyles = {
 		    var srcNm = "Blind Warrior Fighting Style";
 		    var curRange = CurrentProfs.vision.blindsight && CurrentProfs.vision.blindsight.ranges[srcNm];
 		    var newRange = lvl[1] && Number(How('Proficiency Bonus')) * 5;
-		    
+
 		    // Only do something if the range changed
 		    if (curRange !== newRange) {
 		        // First remove the old range, if any
@@ -1355,6 +1355,28 @@ SpellsList["whirlwind strike"] = {
 };
 
 // 3rd degree exploits
+SpellsList["disorienting blow"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[3rd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 15},
+	// Regular spell attributes
+	name : "Disorienting Blow",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 3,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a melee weapon attack",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	range : "Melee",
+	duration : "1 min",
+	save : "Wis",
+	description : "Add 2 ED to dmg; save or -2 AC, speed halved, disadv. on Dex saves, no rea, only 1 a (1 atk) or 1 bns",
+	descriptionFull : "When you hit with a creature with a melee weapon attack, you can expend an Exploit Die to strike with great force, dealing additional damage equal to two rolls of your Exploit Die and it must succeed on a Wisdom saving throw or suffer the effects below for 1 minute: \nIts speed is halved and it cannot take reactions.\nIts Armor Class is reduced by 2.\nIt has disadvantage on Dexterity saving throws.\nOn its turn it can only take an action or a bonus action.\nIt cannot make more than one attack during its turn, even if a feature would allow it to make multiple.\n\nIt can make a Wisdom saving throw at the end of each of its turns, ending these effects on a success.\nThis Exploit's effects do not stack with the slow spell. "
+};
+
 SpellsList["heroic focus"] = {
 	// Exploit exclusive attributes
 	isExploit : true,
@@ -1371,6 +1393,82 @@ SpellsList["heroic focus"] = {
 	description : "+2 AC, speed doubled, adv. on Dex saves, extra action (1 attack, dash, disengage, hide, search, object)",
 	descriptionFull : "As a bonus action, expend one Exploit Die to enter a heightened state of focus (requires concentration like a spell) for 1 minute or until concentration is lost, gaining doubled speed, +2 Armor Class, advantage on Dexterity saves, and an additional action (usable for specified actions); end with a Constitution saving throw against Exploit save DC or be incapacitated until the end of the next turn; does not stack with haste spell."
 };
+
+SpellsList["mythic athleticism"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[3rd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 15 || What('Con') >= 15 },
+	// Regular spell attributes
+	name : "Mythic Athleticism",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 3,
+	school : "Combat",
+	time : "1 bns",
+	range : "Self",
+	duration : "Conc, ED*10m",
+	description : "Str & Con check cannot be <10, walk speed increases by 5*Str, one size larger carry/grap, double jump",
+	descriptionFull : "As a bonus action, you can expend Exploit Dice (up to your proficiency bonus) to enter a heightened state of physical performance which you must concentrate on as if you were concentrating on a spell. You gain the benefits listed below:\nWhenever you make a Strength or Constitution check, you can treat a roll of 9 or lower on the d20 as a 10.\nYour walking speed increases by a number of feet equal to 5 times your Strength modifier (minimum of 5 feet).\nYou count as one size larger for the purposes of carrying capacity and the size of creatures that you can grapple.\nBoth your long and high jump distances double, even if that distance would exceed your remaining movement.\n\nThe effects last for 10 minutes for each Exploit Die spent"
+};
+
+SpellsList["mythic resilience"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[3rd-degree exploits]",
+	// Regular spell attributes
+	name : "Mythic Resilience",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 3,
+	school : "Combat",
+	time : "1 rea",
+	timeFull : "1 reaction, which you take when you take damage from a source you can see", // NOTE: might be wrong. I'm not sure if it really consumes the reaction.
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Reduce dmg by (3*ED+Con) * ED spent (up to my prof bns); Excess dmg reduction becomes temp HP",
+	descriptionFull : "When you take damage from a source you can see, you can expend Exploit Dice (up to your proficiency bonus) to reduce the incoming damage.\nFor each Exploit Die you expend you roll three Exploit Dice, adding your Constitution modifier to the total of all the dice. You reduce the damage by the total.\n\nIf the total rolled exceeds the amount of damage, you gain temporary hit points equal to the remaining amount."
+};
+
+SpellsList["thunderous shot"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[3rd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 15 || What('Dex') >= 15 },
+	// Regular spell attributes
+	name : "Thunderous Shot",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 3,
+	school : "Combat",
+	time : "Attack",
+	range : "Line (W)",
+	components : "W*", // W = weapon
+	compMaterial : "Ranged weapon",
+	duration : "Instantaneous",
+	description : "All crea in line save or take (2 ED) * ED spent (up to my PB) + Str/Dex dmg and prone (half on success)",
+	descriptionFull : "In place of an attack, you can expend Exploit Dice (up to your proficiency bonus) and fire one piece of ammunition in a line, out to the weapon's normal range. Creatures in the line must succeed on a Dexterity saving throw or take piercing damage equal to two rolls of your Exploit Die for each Die you spent + either your Strength or Dexterity modifier and fall prone. On a success, they take half that damage and don't fall prone."
+};
+
+SpellsList["war cry"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[3rd-degree exploits]",
+	// Regular spell attributes
+	name : "War Cry",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 3,
+	school : "Combat",
+	time : "1 a",
+	range : "S:30" + (typePF ? "-" : "") + "ft cone",
+	components : "V",
+	duration : "1 min",
+	save : "Wis",
+	description : "All crea save or drop what it is holding and frightened; extra save at end of turn if not in line of sight",
+	descriptionFull : "As an action, you can expend one Exploit Die and issue a mighty cry, forcing creatures of your choice that can hear you in an adjacent 30-foot cone to make a Wisdom saving throw. On a failed save, they drop whatever they are holding and are frightened of you for 1 minute. If a frightened creature ends its turn and does not have line of sight to you, it can repeat the saving throw, ending the effect on a success."
+};
+
 
 // Main class
 ClassList["fighter(laserllama)"] = {
