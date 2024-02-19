@@ -1391,7 +1391,7 @@ SpellsList["heroic focus"] = {
 	range : "Self",
 	duration : "Conc, 1 min",
 	description : "+2 AC, speed doubled, adv. on Dex saves, extra action (1 attack, dash, disengage, hide, search, object)",
-	descriptionFull : "As a bonus action, expend one Exploit Die to enter a heightened state of focus (requires concentration like a spell) for 1 minute or until concentration is lost, gaining doubled speed, +2 Armor Class, advantage on Dexterity saves, and an additional action (usable for specified actions); end with a Constitution saving throw against Exploit save DC or be incapacitated until the end of the next turn; does not stack with haste spell."
+	descriptionFull : "As a bonus action, you can expend one Exploit Die to enter a heightened state of focus which you must concentrate on as if you were concentrating on a spell. For 1 minute, or until you lose concentration, you gain the following benefits:\nYour speed is doubled.\nYou gain a +2 bonus to your Armor Class.\nYou have advantage on Dexterity saving throws.\nYou gain an additional action on each of your turns. It can only be used to take the Attack (one weapon attack only), Dash, Disengage, Hide, Search, or Use an Object action.\nWhen the effect ends, you must succeed on a Constitution saving throw against your Exploit save DC, or you can't move or take actions until after the end of your next turn.\nThis Exploit's effects do not stack with the haste spell. "
 };
 
 SpellsList["mythic athleticism"] = {
@@ -1409,7 +1409,7 @@ SpellsList["mythic athleticism"] = {
 	range : "Self",
 	duration : "Conc, ED*10m",
 	description : "Str & Con check cannot be <10, walk speed increases by 5*Str, one size larger carry/grap, double jump",
-	descriptionFull : "As a bonus action, you can expend Exploit Dice (up to your proficiency bonus) to enter a heightened state of physical performance which you must concentrate on as if you were concentrating on a spell. You gain the benefits listed below:\nWhenever you make a Strength or Constitution check, you can treat a roll of 9 or lower on the d20 as a 10.\nYour walking speed increases by a number of feet equal to 5 times your Strength modifier (minimum of 5 feet).\nYou count as one size larger for the purposes of carrying capacity and the size of creatures that you can grapple.\nBoth your long and high jump distances double, even if that distance would exceed your remaining movement.\n\nThe effects last for 10 minutes for each Exploit Die spent"
+	descriptionFull : "As a bonus action, you can expend Exploit Dice (up to your proficiency bonus) to enter a heightened state of physical performance which you must concentrate on as if you were concentrating on a spell. You gain the benefits listed below:\nWhenever you make a Strength or Constitution check, you can treat a roll of 9 or lower on the d20 as a 10.\nYour walking speed increases by a number of feet equal to 5 times your Strength modifier (minimum of 5 feet).\nYou count as one size larger for the purposes of carrying capacity and the size of creatures that you can grapple.\nBoth your long and high jump distances double, even if that distance would exceed your remaining movement.\nThe effects last for 10 minutes for each Exploit Die spent"
 };
 
 SpellsList["mythic resilience"] = {
@@ -1427,7 +1427,7 @@ SpellsList["mythic resilience"] = {
 	range : "Self",
 	duration : "Instantaneous",
 	description : "Reduce dmg by (3*ED+Con) * ED spent (up to my prof bns); Excess dmg reduction becomes temp HP",
-	descriptionFull : "When you take damage from a source you can see, you can expend Exploit Dice (up to your proficiency bonus) to reduce the incoming damage.\nFor each Exploit Die you expend you roll three Exploit Dice, adding your Constitution modifier to the total of all the dice. You reduce the damage by the total.\n\nIf the total rolled exceeds the amount of damage, you gain temporary hit points equal to the remaining amount."
+	descriptionFull : "When you take damage from a source you can see, you can expend Exploit Dice (up to your proficiency bonus) to reduce the incoming damage.\nFor each Exploit Die you expend you roll three Exploit Dice, adding your Constitution modifier to the total of all the dice. You reduce the damage by the total.\nIf the total rolled exceeds the amount of damage, you gain temporary hit points equal to the remaining amount."
 };
 
 SpellsList["thunderous shot"] = {
