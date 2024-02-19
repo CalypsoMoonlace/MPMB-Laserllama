@@ -255,10 +255,7 @@ var FightingStyles = {
 
 	protector : {
 		name : "Protector Fighting Style",
-		description : desc([
-			"As a reaction, I can add my prof bonus to AC against an attack made vs. me or someone within 5 ft of me",
-			"I need to be wielding a shield or a melee weapon to do this"
-		]),
+		description : desc(["As a reaction, I can add my prof bonus to AC against an attack made vs. me or someone within 5 ft of me. I need to be wielding a shield or a melee weapon to do this."]),
 		action : ["reaction", ""]
 	},
 
@@ -1727,6 +1724,7 @@ ClassList["fighter(laserllama)"] = {
 }
 
 // Subclasses
+// Master at arms (battle master)
 AddSubClass("fighter(laserllama)", "master at arms", {
 	regExpSearch : /^(?=.*master)(?=.*arms).*$/i,
 	subname : "Master at Arms",
@@ -2005,6 +2003,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 	}
 })
 
+// Ronin (samurai)
 AddSubClass("fighter(laserllama)", "ronin", {
 	regExpSearch : /ronin/i,
 	subname : "Ronin",
@@ -2071,6 +2070,83 @@ AddSubClass("fighter(laserllama)", "ronin", {
 			]),
 			recovery : "long rest",
 			usages : 1
+		}
+	}
+})
+
+// Knight Errant (cavalier)
+AddSubClass("fighter(laserllama)", "knight errant", {
+	regExpSearch : /knight/i,
+	subname : "Knight Errant",
+	fullname : "Knight Errant",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Knight Errant", ["shield impact", "skilled rider","defensive stance","honor duel","mythic resilience"]),
+		"subclassfeature3.1" : {
+			name : "Courtly Pedigree",
+			languageProfs : [1],
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			skillstxt : "Choose one from: Animal Handling, History, Insight, Performance, or Persuasion",
+			description : desc(["I learn to speak, read, and write one additional language of my choice and gain proficiency in either Animal Handling, History, Insight, Performance, or Persuasion.",
+				"I cannot be knocked against my will from a trained mount unless me or the mount is incapacitated and mounting/dismounting only takes me 5 ft of movement"])
+		},
+		"subclassfeature3.2" : {
+			name : "Chivalric Mark",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"Once per turn, if hit a creature with a melee weapon attack, I can mark it until the end of my next turn",
+				"While it is within 10 ft of me, a marked target has disadv. on attacks not directed at me",
+				"If it damages anybody but me, I can make a special melee attack vs. it with my reaction",
+				"I can give myself adv. on that attack by expending an Exploit Die and add it to the damage"
+			]),
+			action : ["reaction", ""]
+		},
+		"subclassfeature7" : {
+			name : "Noble Guardian",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I learn the Protector Fighting Style (or another if I already know it)",
+			 "As a reaction, I can add my Exploit Die to AC against an attack made vs. me or someone within 5 ft of me. I need to be wielding a shield or a melee weapon to do this.",
+			 "If the attack still hits, I can expend an Exploit Die to grant the target resistance to the attack"]),
+			action : ["reaction", "Protector Fighting Style"]
+		},
+		"subclassfeature10" : {
+			name : "Unyielding Knight",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["Creatures provoke opportunity attacks when moving 5 ft or more while within my reach",
+				"If I hit an opportunity attack, the target's speed is reduced to 0 until the end of the turn",
+				"I can use the Skilled Rider exploit at will without expending an Exploit Die"]),
+			spellChanges : {
+				"skilled rider" : {
+					firstCol : "atwill",
+					changes : "I can use the Skilled Rider exploit at will without expending an Exploit Die" // required
+				}
+			}
+		},
+		"subclassfeature15" : {
+			name : "Perilous Charge",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc([
+				"If I hit a creature after moving 10 ft in a straight line, it must make a Strength save",
+				"If failed, the target is knocked prone; I can do this only once per turn",
+				"It has disadvantage on the saving throw if I am mounted"
+			])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Knight Errant",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc([
+				"I can gain a special reaction but only for opportunity attacks or protector fighting style",
+				"I can do this only once on every creature's turn, except on my own turn",
+				"I can redirect damage from my trained mount to myself"
+			])
 		}
 	}
 })
