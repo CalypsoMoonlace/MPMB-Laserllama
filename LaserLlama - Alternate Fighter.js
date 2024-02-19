@@ -325,9 +325,18 @@ var FightingStyles = {
 							"I gain blindsight for a range of 5 times my prof bonus",
 							"In that range, I can see invisible creatures and anything that isn't behind total cover or hidden"
 						]),
-		eval : function(lvl, chc) {
-			var blindrange = Number(How('Proficiency Bonus')) * 5;
-			SetProf('vision', blindrange != 0, "Blindsight", "Blind Warrior Fighting Style", blindrange);
+		changeeval : function(lvl, chc) {
+		    var srcNm = "Blind Warrior Fighting Style";
+		    var curRange = CurrentProfs.vision.blindsight && CurrentProfs.vision.blindsight.ranges[srcNm];
+		    var newRange = lvl[1] && Number(How('Proficiency Bonus')) * 5;
+		    
+		    // Only do something if the range changed
+		    if (curRange !== newRange) {
+		        // First remove the old range, if any
+		        if (curRange) SetProf('vision', false, "Blindsight", srcNm, curRange);
+		        // Then set the new range, unless the feature is removed (i.e. lvl[1] === 0)
+		        if (newRange) SetProf('vision', true,  "Blindsight", srcNm, newRange);
+		    }
 		}
 	},
 
