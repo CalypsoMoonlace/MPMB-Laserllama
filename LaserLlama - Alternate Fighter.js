@@ -74,7 +74,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 			}],
 			source: SpellsList[NewSpell].source,
 			spellcastingBonus : [{ // What is added to the spellcasting sheet
-				name : SpellsList[NewSpell].name + " Exploit",
+				name : subclass_name + " Exploits",
 				spellcastingAbility : 1,
 				spells : [NewSpell],
 				selection : [NewSpell]
@@ -1605,7 +1605,7 @@ ClassList["fighter(laserllama)"] = {
 					}],
 					source: NewSpell.source,
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
-						name : NewSpell.name + " Exploit",
+						name : "Martial Exploits",
 						spellcastingAbility : 1,
 						spells : [FighterSpells[i]],
 						selection : [FighterSpells[i]]
@@ -1819,7 +1819,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					}],
 					source: NewSpell.source,
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
-						name : NewSpell.name + " Exploit",
+						name : "Master at Arms Exploits",
 						spellcastingAbility : 1,
 						spells : [FighterSpells[i]],
 						selection : [FighterSpells[i]]
@@ -1947,7 +1947,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					}],
 					source: NewSpell.source,
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
-						name : NewSpell.name + " Exploit",
+						name : "Master of Forms Exploits",
 						spellcastingAbility : 1,
 						spells : [FighterSpells[i]],
 						selection : [FighterSpells[i]]
@@ -2076,7 +2076,7 @@ AddSubClass("fighter(laserllama)", "ronin", {
 
 // Knight Errant (cavalier)
 AddSubClass("fighter(laserllama)", "knight errant", {
-	regExpSearch : /knight/i,
+	regExpSearch : /^(?=.*knight)(?=.*errant).*$/i,
 	subname : "Knight Errant",
 	fullname : "Knight Errant",
 	source : [["GMB:LL", 0]],
@@ -2151,6 +2151,274 @@ AddSubClass("fighter(laserllama)", "knight errant", {
 	}
 })
 
+// Runecarver (rune knight)
+AddSubClass("fighter(laserllama)", "runecarver", {
+	regExpSearch : /^(?=.*rune)(?=.*carver).*$/i,
+	subname : "Runecarver",
+	fullname : "Runecarver",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : {
+			name : "Rune Carver",
+			languageProfs : [1],
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc("I gain proficiency with calligrapher's supplies and I learn to speak, read, and write Giant"),
+			toolProfs : ["Calligrapher's Supplies"],
+			languageProfs : ["Giant"]
+		},
+		"subclassfeature3.1" : {
+			name : "Rune Carving",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"I learn how to use magic runes to enhance my gear that I can wear or hold in my hand",
+				'Use the "Choose Feature" button above to select a rune and add it to the third page',
+				"When I finish a short/long rest, I can inscribe each rune I know upon a different item I touch",
+				"Each rune can only be on one item at a time, and recharge after a short/long rest",
+				"Runes inscribed on a carried object grant both a passive and a limited-use active effect",
+				"Whenever I gain a fighter level, I can swap a rune I know for another",
+				"Only me can trigger runes; The DC for a rune's abilities is my Exploit Die DC",
+				"Exploits learned through runes can be used at will and don't count against my total"
+			]),
+			toNotesPage : [{
+					name : "Runecarver Exploits",
+					note : desc(["Below are my Runecarver exploits"])
+			}],
+			additional : levels.map(function (n){
+				return n < 3 ? "" : (n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6) + " runes known"
+			}),
+			extraTimes : levels.map(function (n) {
+				return n < 3 ? 0 : n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6;
+			}),
+			extraname : "Known runes",
+			extrachoices : ["Cloud Rune", "Fire Rune", "Frost Rune", "Stone Rune", "Hill Rune (prereq: level 7 fighter)", "Storm Rune (prereq: level 7 fighter)"],
+			"cloud rune" : {
+				name : "Cloud Rune",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"I learn the Subtle Con exploit",
+					"As a reaction when I or another I can see within 30 ft is hit by an attack, I can invoke this",
+					"I select another target for the attack within 30 ft of me, using the same roll (within range)"
+				]),
+				spellcastingBonus : [{ // What is added to the spellcasting sheet
+					name : "Cloud Rune Exploit",
+					spellcastingAbility : 1,
+					spells : ["subtle con"],
+					selection : ["subtle con"],
+					firstCol: 'atwill'
+				}],
+				toNotesPage : [{ // What is added to the notes page
+					name : SpellsList["subtle con"].name,
+					note : desc(SpellsList["subtle con"].descriptionFull),
+					amendTo : "Runecarver Exploits"
+				}],
+				action : [["reaction", " (invoke)"]],
+				additional : "invoke",
+				usages : 1,
+				recovery : "short rest"
+			},
+			"fire rune" : {
+				name : "Fire Rune",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"I add my Exploit Die when making an ability check with a tool",
+					"When I hit a creature with a weapon attack, I can invoke it to summon molten restraints",
+					"It must make a Str save or take 2 Exploit Die of fire dmg and be restrained for 1 min",
+					"While restrained, it can repeat the saving throw at the end of each of its turns",
+					"It takes 2 Exploit Die of fire dmg on a failure and breaks free on a success"
+				]),
+				additional : "invoke",
+				usages : 1,
+				recovery : "short rest"
+			},
+			"frost rune" : {
+				name : "Frost Rune",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"I learn the Cunning Instinct exploit",
+					"As a bonus action, I can invoke this to add my Exploit Die on Str and Con checks and saves for 10 min"
+				]),
+				spellcastingBonus : [{ // What is added to the spellcasting sheet
+					name : "Frost Rune Exploit",
+					spellcastingAbility : 1,
+					spells : ["cunning instinct"],
+					selection : ["cunning instinct"],
+					firstCol: 'atwill'
+				}],
+				toNotesPage : [{ // What is added to the notes page
+					name : SpellsList["cunning instinct"].name,
+					note : desc(SpellsList["cunning instinct"].descriptionFull),
+					amendTo : "Runecarver Exploits"
+				}],
+				addMod: SpellsList["cunning instinct"].addMod,
+				action : [["bonus action", " (invoke)"]],
+				additional : "invoke",
+				usages : 1,
+				recovery : "short rest"
+			},
+			"stone rune" : {
+				name : "Stone Rune",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"I learn the Inquisitive Eye exploit",
+					"As a reaction when a creature I can see ends it turn within 30 ft, I can invoke this rune",
+					"This causes the creature to make a Wisdom save or be charmed by me for 1 minute",
+					"While charmed, it descends into a dreamy stupor, becoming incapacitated and has speed 0",
+					"It can repeat the save at the end of each of its turns, ending the effect on a success"
+				]),
+				/*spellcastingBonus : [{ // What is added to the spellcasting sheet
+					name : "Stone Rune Exploit",
+					spellcastingAbility : 1,
+					spells : ["inquisitive eye"],
+					selection : ["inquisitive eye"],
+					firstCol: 'atwill'
+				}],
+				toNotesPage : [{ // What is added to the notes page
+					name : SpellsList["inquisitive eye"].name,
+					note : desc(SpellsList["inquisitive eye"].descriptionFull),
+					amendTo : "Runecarver Exploits"
+				}],*/
+				// NOTE: This is commented because Inquisitive Eye is not added yet
+				action : [["reaction", " (invoke)"]],
+				additional : "invoke",
+				usages : 1,
+				recovery : "short rest"
+			},
+			"hill rune (prereq: level 7 fighter)" : {
+				name : "Hill Rune",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"I learn the Brace Up exploit",
+					"As a bonus action, I can invoke it to gain resistance to bludg/slash/pierc damage for 1 min",
+					"When I use Runic Might, I can invoke this Rune as part of that same bonus action"
+				]),
+				spellcastingBonus : [{ // What is added to the spellcasting sheet
+					name : "Hill Rune Exploit",
+					spellcastingAbility : 1,
+					spells : ["brace up"],
+					selection : ["brace up"],
+					firstCol: 'atwill'
+				}],
+				toNotesPage : [{ // What is added to the notes page
+					name : SpellsList["brace up"].name,
+					note : desc(SpellsList["brace up"].descriptionFull),
+					amendTo : "Runecarver Exploits"
+				}],
+				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 7; },
+				action : [["bonus action", " (invoke)"]],
+				additional : "invoke",
+				usages : 1,
+				recovery : "short rest"
+			},
+			"storm rune (prereq: level 7 fighter)" : {
+				name : "Storm Rune",
+				source : [["T", 45]],
+				description : desc([
+					"I learn the Scholarly Recall exploit",
+					"As a bonus action, I can invoke it to enter a prophetic state for 1 min or till incapacitated",
+					"While in this state, I can use a reaction to add or substract a roll of my Exploit Die from a roll",
+					"I can do this for attacks, saves, and checks of myself or others I can see within 30 ft of me"
+				]),
+				spellcastingBonus : [{ // What is added to the spellcasting sheet
+					name : "Storm Rune Exploit",
+					spellcastingAbility : 1,
+					spells : ["scholarly recall"],
+					selection : ["scholarly recall"],
+					firstCol: 'atwill'
+				}],
+				toNotesPage : [{ // What is added to the notes page
+					name : SpellsList["scholarly recall"].name,
+					note : desc(SpellsList["scholarly recall"].descriptionFull),
+					amendTo : "Runecarver Exploits"
+				}],
+				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 7; },
+				action : [["bonus action", " (invoke)"]],
+				additional : "invoke",
+				usages : 1,
+				recovery : "short rest"
+			}
+		},
+		"subclassfeature3.2" : {
+			name : "Giant's Might",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"As a bonus action, I can imbue myself with runic magic for 1 minute and gain benefits:",
+				" \u2022 Space permitted, I grow to a larger size category along with everything I'm wearing",
+				" \u2022 Once per turn, I can get a bonus equal to my Exploit Die for a Strength-based check, saving throw or weapon damage roll",
+			]),
+			additional : levels.map(function (n) {
+				return n < 3 ? "" : (n < 18 ? "Large" : "Huge") + ", +1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " bonus"
+			}),
+			action : [["bonus action", ""]],
+			usages : "Con mod per ",
+			usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+			recovery : "long rest",
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (classes.known["fighter(laserllama)"] && classes.known["fighter(laserllama)"].level >= 3 && v.isWeapon && (/giant('s)? might/i).test(v.WeaponTextName)) {
+							n = classes.known["fighter(laserllama)"].level;
+							var GMdmgDie = (n < 5 ? 'd6' : n < 11 ? 'd8' : n < 17 ? 'd10' : 'd12');
+
+							var dmgDieRx = RegExp('(\\d+)' + GMdmgDie, 'i');
+							if (dmgDieRx.test(fields.Damage_Die)) {
+								var dmgDieMatch = fields.Damage_Die.match(dmgDieRx);
+								fields.Damage_Die = fields.Damage_Die.replace(dmgDieRx, Number(dmgDieMatch[1]) + 1 + GMdmgDie);
+								fields.Description = fields.Description.replace(/Versatile \((\d+d\d+)\)/i, 'Versatile ($1+1' + GMdmgDie + ')');
+							} else if (!isNaN(fields.Damage_Die)) {
+								fields.Damage_Die = 1 + GMdmgDie + "+" + fields.Damage_Die;
+							} else {
+								fields.Description += (fields.Description ? '; ' : '') + '+1' + GMdmgDie + ' damage';
+							}
+							if (classes.known["fighter(laserllama)"].level >= 18 && v.isMeleeWeapon) fields.Description += (fields.Description ? '; ' : '') + '+5 ft reach';
+						};
+					},
+					"If I include the words \"Giant Might\" in the name of a weapon or unarmed strike, it gets treated as a weapon that I use while imbued by my Giant's Might feature. It adds my Exploit Die to damage and if I am above lvl 18, my reach increases by 5 ft (for melee weapons).",
+					8
+				]
+			}
+		},
+		"subclassfeature7" : {
+			name : "Runic Ward",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc([
+				"As a reaction when I see a creature within 30 ft get hit by an attack, I can protect it",
+				"I add my Constitution modifier (min of +1) to the target's AC against that attack"
+			]),
+			action : [["reaction", ""]],
+			usages : "Con mod per ",
+			usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+			recovery : "long rest",
+		},
+		"subclassfeature10" : {
+			name : "Unyielding",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["Adv. on saves vs moved against my will, knocked prone, poisoned, or stunned"]),
+			savetxt : { 
+				text : ["Adv. on saves vs moved against my will, knocked prone, poisoned, or stunned"]
+			},
+		},
+		"subclassfeature15" : {
+			name : "Ancient Insight",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["When I have no uses of a Rune remaining, I can expend one Exploit Die to invoke that Rune"])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Rune Carver",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["When I use Runic Might, I can become Huge, so long as there is room for me to grow", "While Huge, my reach increases by 5 feet"])
+		}
+	}
+})
+
 // Feats
 FeatsList["alternate defensive duelist"] = {
 	name : "Alternate Defensive Duelist",
@@ -2164,7 +2432,7 @@ FeatsList["alternate defensive duelist"] = {
 
 FeatsList["alternate weapon master"] = {
 	name : "Alternate Weapon Master",
-	source : [["P", 170]],
+	source : [["GMB:LL"]],
 	descriptionFull : "You have practiced extensively with a variety of weapons, gaining the following benefits:\n \u2022 Increase your Strength or Dexterity score by 1, to a maximum of 20.\n \u2022 You gain proficiency with all simple and martial weapons.\n \u2022 If you are already proficient with all simple and martial weapons, you can instead choose four types of weapons. Whenever you make a weapon attack with one of those weapons, you can treat a roll equal to your proficiency bonus or lower on the d20 as your proficiency bonus.",
 	description : "I gain proficiency with all simple or martial weapons of my choice. If I'm already proficient with all, I instead choose 4 weapons with which I can treat a result on the d20 as my Prof Bonus. [+1 Strength or Dexterity]",
 	weaponProfs: [true, true],
