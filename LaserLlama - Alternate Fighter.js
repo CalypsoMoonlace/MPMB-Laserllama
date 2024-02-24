@@ -1761,7 +1761,7 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 			name : "Spellcasting",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
-			description : "\n   " + "I can cast known Arcane Knight spells, using Intelligence as my spellcasting ability",
+			description : desc(["I can cast known Arcane Knight spells, using Intelligence as my spellcasting ability", "I can replace a spell I know with another I have spell slots for when I gain a level"]),
 			additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"]
 		},
 		"subclassfeature3.1" : {
@@ -2590,6 +2590,151 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 		}
 	}
 })
+
+// Shadow dancer (echo knight)
+AddSubClass("fighter(laserllama)", "shadowdancer", {
+	regExpSearch : /^(?=.*shadow)(?=.*dancer).*$/i,
+	subname : "Shadowdancer",
+	fullname : "Shadowdancer",
+	source : [["GMB:LL", 0]],
+	features : {
+		//"subclassfeature3" : GetSubclassExploits("Shadowdancer", ["feint", "lightstep", "dirty hit", "whirlwind strike", "heroic focuse"]),
+		// NOTE: is commented because lightstep is missing atm
+		"subclassfeature3.1" : {
+			name : "Conjure Shade",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"As a bonus action, I can magically manifest a translucent image of myself within 15 ft",
+				"My shade lasts until I dismiss it as a bonus action, I manifest another, or I'm incapacitated",
+				"It is also destroyed if it is more than 30 ft away from me at the end of my turn",
+				"It has 1 HP, immunity to all conditions, uses my save bonuses, and AC 14 + Cha modifier",
+				"On my turn as a free action, I can command it to move up to 30 ft in any direction",
+				"When I use the Attack action on my turn, I can have any attack originate from my echo",
+				"I can also make opportunity attacks from the echo's location as if I were in its space"
+			]),
+			action: [["bonus action", " (summon/dismiss)"]],
+			creaturesAdd : [["Shade"]],
+			creatureOptions : [{
+				name : "Shade",
+				source : [["W", 183]],
+				size : 3,
+				type : "Undead",
+				alignment : "",
+				ac : "14+oCha",
+				hp : 1,
+				hd : [],
+				speed : "30 ft",
+				scores : ["", "", "", "", "", ""],
+				savesLinked : true,
+				condition_immunities : "all conditions",
+				passivePerception : 0,
+				senses : "",
+				languages : "Understands all the languages you know, but it cannot speak",
+				challengeRating : "0",
+				proficiencyBonus : 0,
+				attacksAction : 0,
+				attacks : [],
+				features : [{
+					name : "Dark Bond",
+					description : "If the Shade is forced to make a saving throw, it uses my saving throw bonus for the roll"
+				}, {
+					name : "Incorporeal Echo",
+					description : "The Shade has no physical presence and counts as difficult terrain for creatures that move through its space. It cannot hold or interact with any objects, nor can it attune to or use any magic items."
+				}],
+				traits : [{
+					name : "Swap Place",
+					description : "The shade's creator can, as a bonus action, teleport, magically swapping places with the shade, if it is within 30 feet."
+				}, {
+					name : "Umbral Guardian",
+					description : "When the shade's creator takes the Attack action on their turn, any attack they make with that action can originate from the echo's space. This choice is made for each attack separately.\n   In addition, when a creature would provoke an opportunity attack from the shade, its creator can use their reaction to make an opportunity attack against that creature as if its creator was in the shade's space."
+				}],
+				notes: [{
+					name : "The shade is a magical, translucent, gray image of its creator that shares its creator's turn in",
+					description : "combat, but it cannot act on its own.",
+					joinString: " "
+				}, {
+					name : "It lasts until it is destroyed, dismissed or another is",
+					description : "manifested.",
+					joinString: " "
+				}, {
+					name : "The shade is also destroyed if it is ever more than 30 ft away from its creator at the end of its creator's",
+					description : "turn.",
+					joinString: " "
+				}],
+				header : "Shade",
+				eval : function(prefix, lvl) {
+					// Same size as character
+					PickDropdown(prefix + "Comp.Desc.Size", tDoc.getField("Size Category").currentValueIndices);
+					Value(prefix + "Comp.Desc.Age", What("Age"));
+					Value(prefix + "Comp.Desc.Sex", What("Sex"));
+					Value(prefix + "Comp.Desc.Height", What("Height"));
+					Value(prefix + "Comp.Desc.Alignment", What("Alignment"));
+				}
+			}]
+		},
+		"subclassfeature3.2" : {
+			name : "Dance of Shadows",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["As a bonus action, if my Shade is within 30 ft of me, I can teleport to swap places with it"]),
+			action : ["bonus action", "Swap Location with Shade"]
+		},
+		"subclassfeature7" : {
+			name : "Shade Strike",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc([
+				"When I use the Dance of Shadows, I can make one extra melee attack from my or my shade's position",
+				"When I have no uses left, I can expend an Exploit Die as part of Dance of Shadows to make this bonus attack again"
+			]),
+			usages : "Charisma modifier per ",
+			usagescalc : "event.value = Math.max(1, What('Cha Mod'));",
+			recovery : "short rest"
+		},
+		"subclassfeature7.1" : {
+			name : "Umbral Voyage",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc([
+				"As an action, I can temporarily transfer my consciousness to my shade for up to 10 min",
+				"During this time, I see and hear through its eyes and ears, but not my own eyes and ears",
+				"While I use my shade this way, it can be up to 1 mile away from me without issue",
+				"It ends early if my Shade is destroyed. or I use your bonus action to end it"
+			]),
+			action : [["action", ""]]
+		},
+		"subclassfeature10" : {
+			name : "Dark Sacrifice",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc([
+				"As a reaction when a creature within 10 ft of my shade is hit, I can make my shade the target",
+				"The damage that the target would take is reduced by an amount equal to my Fighter level, causing my Shade to take the damage instead"
+			]),
+			action : [["reaction", ""]]
+		},
+		"subclassfeature15" : {
+			name : "Restorative Shadows",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc([
+				"When my echo is destroyed by taking damage, I can use my reaction to regain temp HP",
+				"I gain temporary hit points equal to one roll of my Exploit Die + my Charisma modifier"
+			])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Shadowdancer",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc([
+				"I can now manifest two echoes instead of one with the same bonus action",
+				"These two can coexist, but if I manifest a third, the previous two are destroyed",
+				"Anything I can do from one echo's position can be done from the other's instead"
+			])
+		}
+	}
+});
 
 // Feats
 FeatsList["alternate defensive duelist"] = {
