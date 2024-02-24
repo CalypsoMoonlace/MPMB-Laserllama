@@ -1498,7 +1498,7 @@ ClassList["fighter(laserllama)"] = {
 				"\n \u2022 light crossbow and 20 bolts -or- two handaxes;" +
 				"\n \u2022 a dungeoneer’s pack -or- an explorer’s pack;" + 
 				"\n\nAlternatively, choose 5d4 x 10 gp worth of starting equipment instead of both the class' and the background's starting equipment.", 
-	subclasses : ["Warrior Archetype", []],
+	subclasses : ["Warrior Archetype", ["fighter(laserllama)-arcane knight"]],
 	attacks : [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4],
 	abilitySave : 1, // Alt Fighter uses Strength or Dex for foes' saving throws
 	abilitySaveAlt : 2,
@@ -1692,7 +1692,7 @@ ClassList["fighter(laserllama)"] = {
 		"indomitable" : {
 			name : "Indomitable",
 			source : [["GMB:LL", 0]],
-			minlevel : 6,
+			minlevel : 9,
 			description : desc([
                 "When I fail a saving throw, I can choose to succeed instead"
             ]),
@@ -1723,7 +1723,99 @@ ClassList["fighter(laserllama)"] = {
 
 }
 
+// Edit official eldritch knight regex to avoid conflict with arcane knight
+if(ClassSubList["fighter-eldritch knight"]) {
+    ClassSubList["fighter-eldritch knight"].regExpSearch = /^(?!.*(exalted|sacred|holy|divine|nature|natural|purple.*dragon|green|arcane archer))(?=.*(knight|fighter|warrior|militant|warlord|phalanx|gladiator|trooper))(?=.*\b(eldritch|magic|mage|witch)\b).*$/i
+};
+
 // Subclasses
+// Arcane Knight (eldritch knight)
+ClassSubList["fighter(laserllama)-arcane knight"] = {
+	regExpSearch : /^(?=.*arcane)(?=.*knight)(?!.*errant).*$/i,
+	subname : "Arcane Knight",
+	fullname : "Arcane Knight",
+	source : [["GMB:LL", 0]],
+	abilitySave : 4,
+	spellcastingFactor : 3,
+	spellcastingList : {
+		spells : [
+			"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
+			"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
+			"arcane scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
+			"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
+			"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
+		]
+	},
+	spellcastingKnown : {
+		cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+		spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
+	},
+	features : {
+		// Override action surge because of the lvl 15 subclass feature
+		"action surge": function() {
+			var actsurge = newObj(ClassList["fighter(laserllama)"].features["action surge"]);
+			actsurge.additional = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "30 ft teleport", "30 ft teleport", "30 ft teleport", "30 ft teleport", "30 ft teleport", "30 ft teleport"];
+			return actsurge;
+		}(),
+		"subclassfeature3" : {
+			name : "Spellcasting",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : "\n   " + "I can cast known Arcane Knight spells, using Intelligence as my spellcasting ability",
+			additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"]
+		},
+		"subclassfeature3.1" : {
+			name : "Weapon Bond",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"At the end of a short or long rest, I can touch a weapon, forging a magical bond",
+				"I cannot be disarmed of a bonded weapon unless I am incapacitated",
+				"If it is on the same plane of existence, I can use a bonus action to instantly summon it to me", 
+				"It can be used as a spellcasting focus for my Arcane Knight spell",
+				"I can have up to two bonded weapons, but can only summon one at a time"
+			]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (classes.known["fighter(laserllama)"] && classes.known["fighter(laserllama)"].level >= 3 && v.isWeapon && (/bond/i).test(v.WeaponTextName)) {
+							fields.Description += (fields.Description ? '; ' : '') + 'Cannot be disarmed unless incapacitated';
+						}
+					},
+					"I cannot be disarmed of a bonded weapon unless I am incapacitated",
+					19
+				]
+			},
+			action : [["bonus action", " (summon)"]]
+		},
+		"subclassfeature7" : {
+			name : "War Magic",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : "\n   " + "When I use my action to cast an Arcane Knight spell, I can make a weapon attack as a bonus action",
+			action : ["bonus action", ""]
+		},
+		"subclassfeature10" : {
+			name : "Enchanted Strikes",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : "\n   " + "A creature hit by my weapon attack has disadv. on the save vs. the next spell I cast" + "\n   " + "This lasts until the end of my next turn"
+		},
+		"subclassfeature15" : {
+			name : "Arcane Surge",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : "\n   " + "When I use Action Surge, I can also teleport up to 30 ft to an empty space I can see" + "\n   " + "I can do so before or after the extra action"
+		},
+		"subclassfeature18" : {
+			name : "Legendary Arcane Knight",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc("When I take the Attack action on my turn, I can cast an Arcane Knight spell with a casting time of one action in place of one attack")
+		}
+	}
+}
+
 // Champion
 AddSubClass("fighter(laserllama)", "champion", {
 	regExpSearch : /champion/i,
@@ -1813,6 +1905,13 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 			var MEfea = newObj(ClassList["fighter(laserllama)"].features["martial exploits"]);
 			MEfea.additional = ['', "d6", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12"];
 			return MEfea;
+		}(),
+
+		// Override action surge because of the lvl 10 subclass feature
+		"action surge": function() {
+			var actsurge = newObj(ClassList["fighter(laserllama)"].features["action surge"]);
+			actsurge.additional = ["", "", "", "", "", "", "", "", "", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die", "exploit die"];
+			return actsurge;
 		}(),
 
 		"subclassfeature3" : function(){
@@ -2149,7 +2248,7 @@ AddSubClass("fighter(laserllama)", "ronin", {
 
 // Knight Errant (cavalier)
 AddSubClass("fighter(laserllama)", "knight errant", {
-	regExpSearch : /^(?=.*knight)(?=.*errant).*$/i,
+	regExpSearch : /^(?=.*knight)(?=.*errant)(?!.*arcane).*$/i,
 	subname : "Knight Errant",
 	fullname : "Knight Errant",
 	source : [["GMB:LL", 0]],
