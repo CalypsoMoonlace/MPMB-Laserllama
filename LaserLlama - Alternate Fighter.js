@@ -1724,6 +1724,79 @@ ClassList["fighter(laserllama)"] = {
 }
 
 // Subclasses
+// Champion
+AddSubClass("fighter(laserllama)", "champion", {
+	regExpSearch : /champion/i,
+	subname : "Champion",
+	fullname : "Champion",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Champion", ["feat of strength", "ruthless strike","concussive blow","heroic will","mythic athleticism"]),
+		"subclassfeature3.1" : {
+			name : "Mighty Warrior",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+					return n < 15 ? desc("I score a critical hit with my weapon attacks on a roll of 19 and 20") : desc("I score a critical hit with my weapon attacks on a roll of 18, 19 and 20");
+			}),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (!v.isSpell && !v.CritChance && classes.known["fighter(laserllama)"] && classes.known["fighter(laserllama)"].level < 15) {
+							fields.Description += (fields.Description ? '; ' : '') + 'Crit on 19-20';
+							v.CritChance = 19;
+						};
+						if (!v.isSpell && (!v.CritChance || v.CritChance >= 19) && classes.known["fighter(laserllama)"] && classes.known["fighter(laserllama)"].level >= 15) {
+							fields.Description += (fields.Description ? '; ' : '') + 'Crit on 18-20';
+							v.CritChance = 18;
+						};
+					},
+					"My weapon attacks score a critical hit on 19-20 (if fighter lvl < 15) or 18-20 (if fighter lvl >=15)",
+					19
+				]
+			}
+		},
+		"subclassfeature3.2" : {
+			name : "Remarkable Strength",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc("Whenever I make a Strength or Constitution ability check or saving throw, I gain a bonus to my roll equal to one roll of my Exploit Die")
+		},
+		"subclassfeature7" : {
+			name : "Peak Athlete",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I gain a climbing and swimming speed equal to my walking speed", "When I use Second Wind, I gain the benefits of the Dash action"]),
+			speed : {
+				swim : { spd : "walk", enc : 0 },
+				climb : { spd : "walk", enc : 0 }
+			}
+		},
+		"subclassfeature10" : {
+			name : "Devastating Critical",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["Whenever I score a critical hit with a weapon attack, I can deal additional damage equal to my Fighter level"])
+		},
+		"subclassfeature15" : {
+			name : "Devastating Critical Improvement",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["When I score a critical hit with a weapon attack, I can maximize the damage instead of rolling"]),
+			usages : 1,
+			recovery : "short rest"
+		},
+		"subclassfeature18" : {
+			name : "Legendary Champion",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc("At the start of my turn, if I'm not above half or at 0 HP, I regain 5 + Con mod HP")
+		}
+	}
+})
+
 // Master at arms (battle master)
 AddSubClass("fighter(laserllama)", "master at arms", {
 	regExpSearch : /^(?=.*master)(?=.*arms).*$/i,
