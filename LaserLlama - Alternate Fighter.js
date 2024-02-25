@@ -2347,10 +2347,9 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 			minlevel : 3,
 			description : desc([
 				"I learn how to use magic runes to enhance my gear that I can wear or hold in my hand",
-				'Use the "Choose Feature" button above to select a rune and add it to the third page',
 				"When I finish a short/long rest, I can inscribe each rune I know upon a different item I touch",
-				"Each rune can only be on one item at a time, and recharge after a short/long rest",
 				"Runes inscribed on a carried object grant both a passive and a limited-use active effect",
+				"Each rune can only be on one item at a time, and recharge after a short/long rest",
 				"Whenever I gain a fighter level, I can swap a rune I know for another",
 				"Only me can trigger runes; The DC for a rune's abilities is my Exploit Die DC",
 				"Exploits learned through runes can be used at will and don't count against my total"
@@ -2735,6 +2734,316 @@ AddSubClass("fighter(laserllama)", "shadowdancer", {
 		}
 	}
 });
+
+// Sylvan archer (arcane archer)
+AddSubClass("fighter(laserllama)", "sylvan archer", {
+	regExpSearch : /^(?=.*sylvan)(?=.*archer).*$/i,
+	subname : "Sylvan Archer",
+	fullname : "Sylvan Archer",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Sylvan Archer", ["precision strike", "rustic intuition", "martial focus", "volley", "thunderous shot"]),
+		"subclassfeature3.1" : {
+			name : "Sylvan Lore",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"I gain proficiency in Nature and can make Wis (Nature) checks instead of Int (Nature)",
+				"I learn Sylvan and druidcraft, I can cast druidcraft with Wis and an ammunition as focus"
+				]),
+			languageProfs : ["Sylvan"],
+			skills : ["Nature"],
+			addMod : { type : "skill", field : "Nature", mod : "max(Wis-Int|0)", text : "I can replace Intelligence (Nature) checks with Wisdom (Nature)" },
+			spellcastingBonus : {
+				name : "Sylvan Lore",
+				spells : ["druidcraft"],
+				selection : ["druidcraft"],
+				firstCol : "atwill",
+				spellcastingAbility : 5
+			},
+			spellChanges : {
+				"druidcraft" : {
+					components : "V,S,M",
+					compMaterial : "A piece of ammunition",
+					changes : "With Sylvan Lore, I can cast druidcraft with my Wisdom and an ammunition as focus"
+				}
+			}
+		},
+		"subclassfeature3.2" : {
+			name : "Enchanted Arrows",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"I can unleash magical effects when I hit a creature from a ranged weapon",
+				"I know a number of Arcane Shot Options and learn additional at certain levels",
+				"If I have no uses left, I can expend an Exploit Die to use it again",
+				"The DC for my Enchanted Shots is my Exploit Die DC"
+			]),
+			usages : "Wis mod per ",
+			usagescalc : "event.value = Math.max(1, What('Wis Mod'));",
+			recovery : "long rest",
+			altResource : "ED",
+			additional : levels.map( function(n) { return n < 3 ? "" : (n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6) + " options known"; }),
+			extraname : "Enchanted Shots Options",
+			extrachoices : ["Beguiling Shot", "Bursting Shot", "Enfeebling Shot", "Grasping Shot", "Piercing Shot", "Seeking Shot", "Shadow Shot",
+				"Banishing Shot", "Severing Shot", "Technical Shot", "Transposing Shot"],
+			extraTimes : levels.map(function (n) {
+				return n < 3 ? 0 : n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6;
+			}),
+			"beguiling shot" : {
+				name : "Beguiling Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"The target must succeed on a Wisdom save or takes psychic damage",
+							"If failed, it is charmed by a creature of my choice",
+							"This lasts until my next turn starts or anyone attacks or damages the target in any way"
+						]);
+					return desc([
+							"The target must succeed on a Wisdom save or takes psychic damage (half on success)",
+							"If failed, it is charmed by a creature of my choice",
+							"This lasts until my next turn starts or anyone attacks or damages the target in any way"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " psychic damage";
+					return "+2d12 psychic & +1d12 force dmg";
+				})
+			},
+			"bursting shot" : {
+				name : "Bursting Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"The creature and any other creature within 10 ft of it must succeed on a Dex saving throw",
+							"If failed, they take (my choice) acid, cold, fire, lightning, poison, or thunder damage"
+						])
+					return desc([
+							"The creature and any other creature within 10 ft of it must succeed on a Dex saving throw",
+							"If failed, they take (my choice) acid, cold, fire, lightning, poison, or thunder damage (half on success)"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " (my choice) damage";
+					return "+2d12 (my choice) & +1d12 force dmg";
+				})
+			},
+			"enfeebling shot" : {
+				name : "Enfeebling Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"The target must succeed on a Constitution save or takes necrotic damage",
+							"If failed, the damage of its weapon attacks is halved for 1 minute",
+							"The creature can repeat this saving throw at the start of each of its turns, ending this effect on a success"
+						]);
+					return desc([
+							"The target must succeed on a Constitution save or takes necrotic damage (half on success)",
+							"If failed, the damage of its weapon attacks is halved for 1 minute",
+							"The creature can repeat this saving throw at the start of each of its turns, ending this effect on a success"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " necrotic damage";
+					return "+2d12 necrotic & +1d12 force dmg";
+				})
+			},
+			"grasping shot" : {
+				name : "Grasping Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"The target must succeed on a Dexterity save or takes poison damage",
+							"If failed, its speed is halved for 1 minute and it takes additional piercing dmg the first time it moves",
+							"A creature can use its action to make a Strength check, removing the thorns on a success"
+						]);
+					return desc([
+							"The target must succeed on a Dexterity save or takes poison damage (half on success)",
+							"If failed, its speed is halved for 1 minute and it takes additional piercing dmg the first time it moves",
+							"A creature can use its action to make a Strength check, removing the thorns on a success"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " poison/pierc damage";
+					return "+2d12 poison/pierc & +1d12 force dmg";
+				})
+			},
+			"piercing shot" : {
+				name : "Piercing Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"The creature and any creature directly behind it in a straight line out to 30 ft must succeed on a Dex saving throw",
+							"If failed, they take force damage"
+						])
+					return desc([
+							"The creature and any creature directly behind it in a straight line out to 30 ft must succeed on a Dex saving throw",
+							"If failed, they take force damage (half on success)"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " force damage";
+					return "+3d12 force dmg";
+				})
+			},
+			"seeking shot" : {
+				name : "Seeking Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"I don't roll for the attack, but I choose a target I have seen in the last minute",
+							"The seeking arrow moves around corners, obstacles, and ignores cover to hit the target",
+							"The target must succeed on a Dex saving throw or be hit if there is a path within range",
+							"If failed, I learn its location and it takes force damage"
+						])
+					return desc([
+							"I don't roll for the attack, but I choose a target I have seen in the last minute",
+							"The seeking arrow moves around corners, obstacles, and ignores cover to hit the target",
+							"The target must succeed on a Dex saving throw or be hit if there is a path within range",
+							"If failed, I learn its location and it takes force damage (half on success)"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " force damage";
+					return "+3d12 force dmg";
+				})
+			},
+			"shadow shot" : {
+				name : "Shadow Shot",
+				source : [["GMB:LL", 0]],
+				description : levels.map( function(n) {
+					if (n < 3) return "";
+					if (n < 7) return desc([
+							"The target must succeed on an Intelligence save or takes psychic damage",
+							"If failed, it is blinded for 1 minute",
+							"The creature can repeat this saving throw at the start of each of its turns, ending this effect on a success"
+						]);
+					return desc([
+							"The target must succeed on an Intelligence save or takes psychic damage (half on success)",
+							"If failed, it is blinded for 1 minute",
+							"The creature can repeat this saving throw at the start of each of its turns, ending this effect on a success"
+						]);
+				}),
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " psychic damage";
+					return "+2d12 psychic & +1d12 force dmg";
+				})
+			},
+			// 10th level prereq
+			"banishing shot" : {
+				name : "Banishing Shot",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"The target makes a Charisma save or is banished to a harmless demiplane for 1 minute",
+					"On each of its turns while it is banished, the creature can use its action to repeat the saving throw, ending the effect on a success",
+					"When it ends, it reappears in the space it was banished from, or the closest unoccupied space"
+				]),
+				submenu : "[fighter level 10+]",
+				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 10; },
+				additional : levels.map( function(n) { return n < 18 ? "" : "+1d12 force damage"; })
+			},
+			"severing shot" : {
+				name : "Severing Shot",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"The target makes a Charisma save or take force dmg and be unable to cast spells",
+					"The creature can repeat this saving throw at the start of each turn, ending the effect on a success"
+				]),
+				submenu : "[fighter level 10+]",
+				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 10; },
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " force damage";
+					return "+3d12 force dmg";
+				})
+			},
+			"technical shot" : {
+				name : "Technical Shot",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"The target makes a Dexterity save or suffer the effects of one Martial Exploit I know",
+					"I can use this Enchanted Shot to deliver the effects of Exploits that normally require me to hit with a melee weapon attack"
+				]),
+				submenu : "[fighter level 10+]",
+				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 10; },
+				additional : levels.map( function(n) { return n < 18 ? "" : "+1d12 force damage"; })
+			},
+			"transposing shot" : {
+				name : "Transposing Shot",
+				source : [["GMB:LL", 0]],
+				description : desc([
+					"The target makes a Charisma save or takes force damage (half on success)",
+					"If failed, it instantly switches places with me (no opportunity attacks with this movement)"
+				]),
+				submenu : "[fighter level 10+]",
+				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 10; },
+				additional : levels.map( function(n) {
+					const expldie = ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"];
+					if (n < 3) return "";
+					if (n < 18) return "+2" + expldie[n] + " force damage";
+					return "+3d12 force dmg";
+				})
+			},
+
+		},
+		"subclassfeature7" : {
+			name : "Sylvan Shot",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc([
+				"My ranged weapon attacks count as magical",
+				"Once per turn when I miss with a magic arrow, I can use my reaction to redirect it",
+				"I reroll the attack against a different target within range of my weapon"
+			]),
+			action : ["reaction", ""]
+		},
+		"subclassfeature15" : {
+			name : "Enchanted Quiver",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc([
+				"Whenever I make a ranged attack I can conjure a magical ammunition as part of the attack",
+				"After the attack, hit or miss, this ammunition vanishes",
+				"Also, when I roll initiative, I regain one expended use of my Enchanted Shots"
+			])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Sylvan Archer",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc([
+				"Whenever I use an Enchanted Shot it deals additional force damage equal to my Exploit Die",
+				"Also, when I use an Enchanted Shot I can empower it, causing creatures of my choice within 20 ft to suffer the effects of the Shot along with the target"
+			]),
+			additional : "Empowered shot",
+			recovery : "long rest",
+			usages : 1
+		}
+	}
+})
 
 // Feats
 FeatsList["alternate defensive duelist"] = {
