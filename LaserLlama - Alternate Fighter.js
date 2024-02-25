@@ -3015,10 +3015,10 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 			minlevel : 7,
 			description : desc([
 				"My ranged weapon attacks count as magical",
-				"Once per turn when I miss with a magic arrow, I can use my reaction to redirect it",
+				"Once per turn when I miss with a ranged weapon attack, I can use my reaction to redirect it",
 				"I reroll the attack against a different target within range of my weapon"
 			]),
-			action : ["reaction", ""]
+			action : ["reaction", " (reroll attack)"]
 		},
 		"subclassfeature15" : {
 			name : "Enchanted Quiver",
