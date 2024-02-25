@@ -1889,6 +1889,81 @@ AddSubClass("fighter(laserllama)", "champion", {
 	}
 })
 
+// Marksman
+AddSubClass("fighter(laserllama)", "marksman", {
+	regExpSearch : /marksman/i,
+	subname : "Marksman",
+	fullname : "Marksman",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	weaponProfs : {
+		primary : [true, true, ["Firearms"]]
+	},
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Marksman", ["arresting strike", "precision strike","crippling strike", "volley", "thunderous shot"]),
+		//"subclassfeature3" : GetSubclassExploits("Marksman", ["arresting strike", "inquisitive eye", "crippling strike", "volley", "thunderous shot"]),
+		"subclassfeature3.1" : {
+			name : "Marksman's Focus",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+					"When I begin my turn and am not surprised or incapacitated, I can choose to enter a state of Focus, which imposes the following benefits and effects until the end of my turn:",
+					"\u2022 My speed is reduced to 0 feet",
+					"\u2022 Until I hit a creature with a ranged attack, I have adv. on all ranged weapon attack rolls",
+					"\u2022 I can reroll 1 and 2 (but must take the new roll) on my damage rolls with a ranged weapon"
+				])
+		},
+		"subclassfeature3.2" : {
+			name : "Elite Training",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"When I make a Dex check or saving throw, I can expend an Exploit Die and add it to my roll", 
+				"I can do so after I roll, but before I know the result."
+			])
+		},
+		"subclassfeature7" : {
+			name : "Cunning Shot",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I add my proficiency bonus to my Initiative rolls while conscious", "My attacks with ranged weapons ignore resistance to piercing damage"]),
+			addMod : { type : "skill", field : "Init", mod : "Prof", text : "I can add my Proficiency Bonus to initiative rolls" },
+			calcChanges : {
+				atkAdd : [
+					function (fields, v, output) {
+						if (v.isRangedWeapon && !v.isNaturalWeapon && !v.isDC) fields.Description += (fields.Description ? '; ' : '') + "Ignore resistance to pierc dmg";
+					},
+					"My attacks with ranged weapons ignore resistance to piercing damage"
+				]
+			}
+		},
+		"subclassfeature10" : {
+			name : "Reposition",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["When I use Second Wind, my walking speed increases by 10 feet, and any opportunity attacks against me are made at disadvantage until the end of my current turn"])
+		},
+		"subclassfeature15" : {
+			name : "Reliable Shot",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["My normal and long range for ranged weapon attacks increases by 10 ft times my Fighter lvl", 
+				"Also, once per turn, when I have advantage on a ranged weapon attack, I can forgo advantage and make one additional ranged weapon attack"
+				])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Marksman",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc([
+				"When I Focus, the benefits last for 1 minute, and I have adv. on all ranged weapon attacks for the duration and my speed is only reduced to 10 ft",
+				"At the start of my turn, I can end my Focus (no action required)"
+			])
+		}
+	}
+})
+
 // Master at arms (battle master)
 AddSubClass("fighter(laserllama)", "master at arms", {
 	regExpSearch : /^(?=.*master)(?=.*arms).*$/i,
