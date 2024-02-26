@@ -42,7 +42,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 		description : desc(["I learn additional Exploits who don't count against my total and can't be switched"]),
 		toNotesPage : [{
 				name : subclass_name +  " Exploits",
-				note : desc(["Below are my " + subclass_name + " exploits"])
+				note : desc(["Below are my " + subclass_name + " exploits. The 3rd level exploit can only be used per short rest."])
 			}],
 		autoSelectExtrachoices : [{
 			extrachoice : exploit_list[0],
@@ -68,7 +68,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 		SubclassExploits[NewSpell] = {
 			name: SpellsList[NewSpell].name,
 			toNotesPage : [{ // What is added to the notes page
-				name : SpellsList[NewSpell].name + " Exploit",
+				name : SpellsList[NewSpell].name + " Exploit [" + (SpellsList[NewSpell].level == 1 ? '1st' : SpellsList[NewSpell].level == 2 ? '2nd' : SpellsList[NewSpell].level == 3 ? '3rd': SpellsList[NewSpell].level + 'th') + " degree]",
 				note : desc(SpellsList[NewSpell].descriptionFull),
 				amendTo : SubclassExploits.name
 			}],
@@ -620,7 +620,7 @@ SpellsList["commanding presence"] = {
 	range : "Self",
 	duration : "Instantaneous",
 	description : "Add Exploit Die to Persuasion and Intimidation checks; Can make Str (Intimidation) checks (passive)",
-	descriptionFull : "When making a Charisma (Persuasion) or Charisma (Intimidation) check, you can expend one Exploit Die, roll it, and add the result to your ability check after rolling the d20 but before determining success. Additionally, when required to make a Charisma (Intimidation) check, you can opt to make a Strength (Intimidation) check instead."
+	descriptionFull : "When making a Charisma (Persuasion) or Charisma (Intimidation) check, you can expend one Exploit Die, roll it, and add the result to your ability check after rolling the d20 but before determining success.\n\nAdditionally, when required to make a Charisma (Intimidation) check, you can opt to make a Strength (Intimidation) check instead."
 };
 
 SpellsList["counter"] = {
@@ -751,13 +751,129 @@ SpellsList["heroic fortitude"] = {
 	descriptionFull : "Whenever you are forced to make a Strength, Dexterity, or Constitution saving throw you can expend an Exploit Die, roll it, and add the result to your saving throw. You can do so after you roll the d20, but before you know if you succeed or fail."
 };
 
-SpellsList["parry & riposte"] = {
+SpellsList["hurl"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Str') >= 11},
+	// Regular spell attributes
+	name : "Hurl",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Attack",
+	timeFull : "In place of an attack",
+	range : "60/120 ft",
+	duration : "Instantaneous",
+	save : "Dex",
+	description : "1 crea makes Dex saving throw or both crea and thrown object take Exploit Die + Str bludg dmg",
+	descriptionFull : "In place of an attack, you can expend an Exploit Die to throw an object that you are holding at a target you can see within 60 feet. The target must succeed on a Dexterity saving throw or both the object and target take bludgeoning damage equal to one roll of your Exploit Die + your Strength modifier.\n\nAt 11th level, the range of this Exploit becomes 120 feet"
+};
+
+SpellsList["inquisitive eye"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Int') >= 11 ||What('Wis') >= 11},
+	// Regular spell attributes
+	name : "Inquisitive Eye",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to an Intelligence (Investigation) or a Wisdom (Insight) check",
+	descriptionFull : "When you make an Intelligence (Investigation) or a Wisdom (Insight) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
+SpellsList["lightstep"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Dex') >= 11},
+	// Regular spell attributes
+	name : "Lightstep",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to a Dexterity (Acrobatics) or a Dexterity (Stealth) check",
+	descriptionFull : "When you make a Dexterity (Acrobatics) or a Dexterity (Stealth) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
+};
+
+SpellsList["lunge"] = {
 	// Exploit exclusive attributes
 	isExploit : true,
 	submenu : "[1st-degree exploits (combat)]",
 	prereqeval : function(v) { return What('Dex') >= 11},
 	// Regular spell attributes
-	name : "Parry & Riposte",
+	name : "Lunge",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Attack",
+	timeFull : "No action required, as part of a weapon attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon attack",
+	duration : "Instantaneous",
+	description : "Increase range of a melee weapon attack by 5 ft; Add Exploit Die to dmg",
+	descriptionFull : "As part of a melee weapon attack you can expend an Exploit Die to increase the range of that attack by 5 feet. On hit, you deal additional damage equal to one roll of your Exploit Die."
+};
+
+SpellsList["mighty leap"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (checks)]",
+	prereqeval : function(v) { return What('Dex') >= 11},
+	// Regular spell attributes
+	name : "Mighty Leap",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Skill",
+	time : "Jump",
+	timeFull : "After moving at least 10 ft immediately before jumping",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Increase jump distance by 10 ft * Exploit Die expended (up to prof bonus) even if it exceeds my speed",
+	descriptionFull : "When you move at least 10 feet immediately before you jump, you can expend Exploit Dice (up to your proficiency bonus) to increase the distance of your jump by 10 feet for each Exploit Die expended, even if this exceeds your remaining speed."
+};
+
+SpellsList["mighty thrust"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Str') >= 11},
+	// Regular spell attributes
+	name : "Mighty Thrust",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 1,
+	school : "Combat",
+	time : "Attack",
+	timeFull : "In place of an attack",
+	range : "Touch",
+	duration : "Instantaneous",
+	save : "Dex",
+	description : "1 crea makes Str saving throw or knocked back in line by 5 ft * Str; Adv. on save if one size larger",
+	descriptionFull : "In place of an attack, you can expend an Exploit Die to force one target you touch to make a Strength saving throw. On a failed save, it is knocked back in a line number of feet equal to 5 times your Strength modifier. A target that is more than one size larger than you has advantage on its saving throw."
+};
+
+SpellsList["parry and riposte"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[1st-degree exploits (combat)]",
+	prereqeval : function(v) { return What('Dex') >= 11},
+	// Regular spell attributes
+	name : "Parry and Riposte",
 	classes : ["fighter(laserllama)"],
 	source : ["GMB:LL", 0],
 	level : 1,
@@ -881,6 +997,7 @@ SpellsList["skilled rider"] = {
 	school : "Skill",
 	time : "Check",
 	range : "Self",
+	components : "Mount",
 	duration : "Instantaneous",
 	description : "Add Exploit Die to an Animal Handling check to control my mount or any d20 roll my mount makes",
 	descriptionFull : "When your trained mount makes an ability check, attack roll, or saving throw, or you make a Wisdom (Animal Handling) check to control it, you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
@@ -979,7 +1096,7 @@ SpellsList["eloquent speech"] = {
 	range : "Self",
 	duration : "Instantaneous",
 	description : "Add Exploit Die to Pers and Decep checks; Can make Int (Persuasion) & Int (Persuasion) checks (passive)",
-	descriptionFull : "Whenever you would normally make a Charisma (Deception) or Charisma (Persuasion) check, you can choose to use your Intelligence in place of Charisma for that ability check. Also, whenever you make an Intelligence (Deception) or Intelligence (Persuasion) check you can expend one Exploit Die, roll it, and add the result to your check. You can do so after you roll the d20, but before you know if you succeed."
+	descriptionFull : "Whenever you would normally make a Charisma (Deception) or Charisma (Persuasion) check, you can choose to use your Intelligence in place of Charisma for that ability check.\n\nAlso, whenever you make an Intelligence (Deception) or Intelligence (Persuasion) check you can expend one Exploit Die, roll it, and add the result to your check. You can do so after you roll the d20, but before you know if you succeed."
 };
 
 SpellsList["mechanical insight"] = {
@@ -994,6 +1111,8 @@ SpellsList["mechanical insight"] = {
 	level : 1,
 	school : "Skill",
 	time : "Check",
+	components : "M",
+	compMaterial : "Thieves' tools or tinker's tools",
 	range : "Self",
 	duration : "Instantaneous",
 	description : "Add Exploit Die to a thieves' tools or tinker's tools check",
@@ -1030,6 +1149,8 @@ SpellsList["savvy explorer"] = {
 	school : "Skill",
 	time : "Check",
 	range : "Self",
+	components : "M",
+	compMaterial : "Land/water vehicle, cartographer's tools, or navigator's tools",
 	duration : "Instantaneous",
 	description : "Add Exploit Die to a land/water vehicles, cartographer's tools, or navigator's tools check",
 	descriptionFull : "When you make an ability check with land or water vehicles, cartographer's tools, or navigator's tools you can expend one Exploit Die, roll it, and add it to your ability check. You can do so after you roll the d20, but before you know if you succeed."
@@ -1054,7 +1175,7 @@ SpellsList["streetwise"] = {
 	range : "Self",
 	duration : "Instantaneous",
 	description : "Add Exploit Die to Hist and Invest checks; Can make Cha (History) & Cha (Investigation) checks (passive)",
-	descriptionFull : "If you are in a settlement, you can make Charisma (History) and Charisma (Investigation) checks instead of the normal Intelligence (History) or Intelligence (Investigation) checks. Also, when you make a Charisma (History) or a Charisma (Investigation) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
+	descriptionFull : "If you are in a settlement, you can make Charisma (History) and Charisma (Investigation) checks instead of the normal Intelligence (History) or Intelligence (Investigation) checks.\n\nAlso, when you make a Charisma (History) or a Charisma (Investigation) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
 };
 
 SpellsList["take down"] = {
@@ -1371,7 +1492,7 @@ SpellsList["disorienting blow"] = {
 	duration : "1 min",
 	save : "Wis",
 	description : "Add 2 ED to dmg; save or -2 AC, speed halved, disadv. on Dex saves, no rea, only 1 a (1 atk) or 1 bns",
-	descriptionFull : "When you hit with a creature with a melee weapon attack, you can expend an Exploit Die to strike with great force, dealing additional damage equal to two rolls of your Exploit Die and it must succeed on a Wisdom saving throw or suffer the effects below for 1 minute: \nIts speed is halved and it cannot take reactions.\nIts Armor Class is reduced by 2.\nIt has disadvantage on Dexterity saving throws.\nOn its turn it can only take an action or a bonus action.\nIt cannot make more than one attack during its turn, even if a feature would allow it to make multiple.\n\nIt can make a Wisdom saving throw at the end of each of its turns, ending these effects on a success.\nThis Exploit's effects do not stack with the slow spell. "
+	descriptionFull : "When you hit with a creature with a melee weapon attack, you can expend an Exploit Die to strike with great force, dealing additional damage equal to two rolls of your Exploit Die and it must succeed on a Wisdom saving throw or suffer the effects below for 1 minute: \nIts speed is halved and it cannot take reactions.\nIts Armor Class is reduced by 2.\nIt has disadvantage on Dexterity saving throws.\nOn its turn it can only take an action or a bonus action.\nIt cannot make more than one attack during its turn, even if a feature would allow it to make multiple.\n\nIt can make a Wisdom saving throw at the end of each of its turns, ending these effects on a success.\nThis Exploit's effects do not stack with the slow spell."
 };
 
 SpellsList["heroic focus"] = {
@@ -1388,7 +1509,7 @@ SpellsList["heroic focus"] = {
 	range : "Self",
 	duration : "Conc, 1 min",
 	description : "+2 AC, speed doubled, adv. on Dex saves, extra action (1 attack, dash, disengage, hide, search, object)",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to enter a heightened state of focus which you must concentrate on as if you were concentrating on a spell. For 1 minute, or until you lose concentration, you gain the following benefits:\nYour speed is doubled.\nYou gain a +2 bonus to your Armor Class.\nYou have advantage on Dexterity saving throws.\nYou gain an additional action on each of your turns. It can only be used to take the Attack (one weapon attack only), Dash, Disengage, Hide, Search, or Use an Object action.\nWhen the effect ends, you must succeed on a Constitution saving throw against your Exploit save DC, or you can't move or take actions until after the end of your next turn.\nThis Exploit's effects do not stack with the haste spell. "
+	descriptionFull : "As a bonus action, you can expend one Exploit Die to enter a heightened state of focus which you must concentrate on as if you were concentrating on a spell. For 1 minute, or until you lose concentration, you gain the following benefits:\nMy speed is doubled, I gain a +2 bonus to AC, I have advantage on Dexterity saving throws, and I gain an additional action on each of my turns. That action can be used only to take the Attack (one weapon attack only), Dash, Disengage, Hide, or Use an Object action.\nWhen the effect ends, you must succeed on a Constitution saving throw against your Exploit save DC, or you can't move or take actions until after the end of your next turn.\nThis Exploit's effects do not stack with the haste spell."
 };
 
 SpellsList["mythic athleticism"] = {
@@ -1406,7 +1527,7 @@ SpellsList["mythic athleticism"] = {
 	range : "Self",
 	duration : "Conc, ED*10m",
 	description : "Str & Con check cannot be <10, walk speed increases by 5*Str, one size larger carry/grap, double jump",
-	descriptionFull : "As a bonus action, you can expend Exploit Dice (up to your proficiency bonus) to enter a heightened state of physical performance which you must concentrate on as if you were concentrating on a spell. You gain the benefits listed below:\nWhenever you make a Strength or Constitution check, you can treat a roll of 9 or lower on the d20 as a 10.\nYour walking speed increases by a number of feet equal to 5 times your Strength modifier (minimum of 5 feet).\nYou count as one size larger for the purposes of carrying capacity and the size of creatures that you can grapple.\nBoth your long and high jump distances double, even if that distance would exceed your remaining movement.\nThe effects last for 10 minutes for each Exploit Die spent"
+	descriptionFull : "As a bonus action, you can expend Exploit Dice (up to your proficiency bonus) to enter a heightened state of physical performance which you must concentrate on as if you were concentrating on a spell. You gain the benefits listed below:\nWhenever you make a Strength or Constitution check, you can treat a roll of 9 or lower on the d20 as a 10.\nYour walking speed increases by a number of feet equal to 5 times your Strength modifier (minimum of 5 feet).\nYou count as one size larger for the purposes of carrying capacity and the size of creatures that you can grapple.\nBoth your long and high jump distances double, even if that distance would exceed your remaining movement.\nThe effects last for 10 minutes for each Exploit Die spent."
 };
 
 SpellsList["mythic resilience"] = {
@@ -1566,7 +1687,7 @@ ClassList["fighter(laserllama)"] = {
 				description : desc(["I gain Exploit Dice, which are used to fuel my Martial Exploits", "Use the \"Choose Feature\" button above to choose Martial Exploits"]),
 				toNotesPage : [{
 					name : "Martial Exploits",
-					note : desc(["Below are all Martial Exploits I know"])
+					note : desc(["Below are all Martial Exploits I know. Each 3rd and 4th degree exploits can only be used once per short rest. Each 5th degree exploit can only be used once per long rest."])
 				}],
 
 				// Martial Exploits
@@ -1599,7 +1720,7 @@ ClassList["fighter(laserllama)"] = {
 				MartialExploits[FighterSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
 					name: NewSpell.name,
 					toNotesPage : [{ // What is added to the notes page
-						name : NewSpell.name + " Exploit",
+						name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
 						note : desc(NewSpell.descriptionFull),
 						amendTo : "Martial Exploits"
 					}],
@@ -1901,8 +2022,7 @@ AddSubClass("fighter(laserllama)", "marksman", {
 		primary : [true, true, ["Firearms"]]
 	},
 	features : {
-		"subclassfeature3" : GetSubclassExploits("Marksman", ["arresting strike", "precision strike","crippling strike", "volley", "thunderous shot"]),
-		//"subclassfeature3" : GetSubclassExploits("Marksman", ["arresting strike", "inquisitive eye", "crippling strike", "volley", "thunderous shot"]),
+		"subclassfeature3" : GetSubclassExploits("Marksman", ["arresting strike", "inquisitive eye", "crippling strike", "volley", "thunderous shot"]),
 		"subclassfeature3.1" : {
 			name : "Marksman's Focus",
 			source : [["GMB:LL", 0]],
@@ -1950,7 +2070,21 @@ AddSubClass("fighter(laserllama)", "marksman", {
 			minlevel : 15,
 			description : desc(["My normal and long range for ranged weapon attacks increases by 10 ft times my Fighter lvl", 
 				"Also, once per turn, when I have advantage on a ranged weapon attack, I can forgo advantage and make one additional ranged weapon attack"
-				])
+				]),
+			/*calcChanges : {
+				atkAdd : [
+					function (fields, v, output) {
+						if (v.isRangedWeapon && !v.isNaturalWeapon && !v.isDC) {
+							const ranges = fields.Range.split(' ')[0].split('/');
+							ranges[0] = parseInt(range[0]) + classes.known["fighter(laserllama)"].level * 10;
+							ranges[1] = parseInt(range[1]) + classes.known["fighter(laserllama)"].level * 10;
+							fields.Range = ranges[0] + "/" + ranges[1] + " ft"
+						};
+					},
+					"My normal and long range for ranged weapon attacks increases by 10 ft times my Fighter lvl"
+				]
+			}*/
+			// NOTE: doesn't work at the moment
 		},
 		"subclassfeature18" : {
 			name : "Legendary Marksman",
@@ -2515,7 +2649,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"While charmed, it descends into a dreamy stupor, becoming incapacitated and has speed 0",
 					"It can repeat the save at the end of each of its turns, ending the effect on a success"
 				]),
-				/*spellcastingBonus : [{ // What is added to the spellcasting sheet
+				spellcastingBonus : [{ // What is added to the spellcasting sheet
 					name : "Stone Rune Exploit",
 					spellcastingAbility : 1,
 					spells : ["inquisitive eye"],
@@ -2526,8 +2660,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					name : SpellsList["inquisitive eye"].name,
 					note : desc(SpellsList["inquisitive eye"].descriptionFull),
 					amendTo : "Runecarver Exploits"
-				}],*/
-				// NOTE: This is commented because Inquisitive Eye is not added yet
+				}],
 				action : [["reaction", " (invoke)"]],
 				additional : "invoke",
 				usages : 1,
@@ -2672,8 +2805,7 @@ AddSubClass("fighter(laserllama)", "shadowdancer", {
 	fullname : "Shadowdancer",
 	source : [["GMB:LL", 0]],
 	features : {
-		//"subclassfeature3" : GetSubclassExploits("Shadowdancer", ["feint", "lightstep", "dirty hit", "whirlwind strike", "heroic focuse"]),
-		// NOTE: is commented because lightstep is missing atm
+		"subclassfeature3" : GetSubclassExploits("Shadowdancer", ["feint", "lightstep", "dirty hit", "whirlwind strike", "heroic focus"]),
 		"subclassfeature3.1" : {
 			name : "Conjure Shade",
 			source : [["GMB:LL", 0]],
