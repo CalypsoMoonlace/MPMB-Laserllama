@@ -469,17 +469,6 @@ var FightingStyles = {
 	}
 };
 
-
-// Defining the Fighter spell sheet - also known as Martial exploits
-CurrentSpells["fighter(laserllama)"] = {
-	name : "Fighter",
-	shortname : "Martial Exploits",
-	ability: 1,
-	bonus : {},
-	typeSp:"known",
-	refType:"class"
-}
-
 // Exploits list
 
 /* HOW TO ADD AN EXPLOIT 
