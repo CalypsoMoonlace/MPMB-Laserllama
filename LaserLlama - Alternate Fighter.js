@@ -1975,6 +1975,19 @@ if(ClassSubList["fighter-eldritch knight"]) {
     ClassSubList["fighter-eldritch knight"].regExpSearch = /^(?!.*(exalted|sacred|holy|divine|nature|natural|purple.*dragon|green|arcane archer))(?=.*(knight|fighter|warrior|militant|warlord|phalanx|gladiator|trooper))(?=.*\b(eldritch|magic|mage|witch)\b).*$/i
 };
 
+// Create arcane knight spell list
+var ArcaneKnightList = [
+	"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
+	"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
+	/*"arcane scorcher",*/ "scorching ray", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
+	"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
+	"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
+]
+
+for (var i = 0; i < ArcaneKnightList.length; i++) {
+	SpellsList[ArcaneKnightList[i]].classes.push("arcane knight");
+}
+
 // Subclasses
 // Arcane Knight (eldritch knight)
 ClassSubList["fighter(laserllama)-arcane knight"] = {
@@ -1984,19 +1997,6 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 	source : [["GMB:LL", 0]],
 	abilitySave : 4,
 	spellcastingFactor : 3,
-	spellcastingList : {
-		spells : [
-			"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
-			"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
-			"arcane scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
-			"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
-			"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
-		]
-	},
-	spellcastingKnown : {
-		cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-		spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
-	},
 	features : {
 		// Override action surge because of the lvl 15 subclass feature
 		"action surge": function() {
@@ -2009,7 +2009,30 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
 			description : desc(["I can cast known Arcane Knight spells, using Intelligence as my spellcasting ability", "I can replace a spell I know with another I have spell slots for when I gain a level"]),
-			additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"]
+			additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"],
+			eval : function() {
+			    CurrentSpells["arcane knight"] = {
+			        name : "Arcane Knight (2)", // cannot be the name as the class name (which is replaced by subclass)
+			        level: classes.known["fighter(laserllama)"].level,
+			        typeSp : "known",
+			        refType : "class",
+			        ability : 4, 
+			        list : {"class" : "arcane knight"}, //this is whatever you named your spellList to be
+			        known : {
+			            //your spells known arrays, keep in mind that spellsTable is different
+			            cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],   
+			            spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12], 
+			            //factor is optional, but it determines multiclassing
+			            factor : [3,"default"]
+			        },
+			        allowUpCasting : true,
+			    }
+			    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
+			},
+			removeeval : function() {
+			    delete CurrentSpells["arcane knight"];
+			    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
+			}
 		},
 		"subclassfeature3.1" : {
 			name : "Weapon Bond",
@@ -2019,7 +2042,7 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 				"At the end of a short or long rest, I can touch a weapon, forging a magical bond",
 				"I cannot be disarmed of a bonded weapon unless I am incapacitated",
 				"If it is on the same plane of existence, I can use a bonus action to instantly summon it to me", 
-				"It can be used as a spellcasting focus for my Arcane Knight spell",
+				"It can be used as a spellcasting focus for my Arcane Knight spells",
 				"I can have up to two bonded weapons, but can only summon one at a time"
 			]),
 			calcChanges : {
