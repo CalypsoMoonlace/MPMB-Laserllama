@@ -1540,8 +1540,8 @@ SpellsList["mythic resilience"] = {
 	source : ["GMB:LL", 0],
 	level : 3,
 	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when you take damage from a source you can see", // NOTE: might be wrong. I'm not sure if it really consumes the reaction.
+	time : "Special",
+	timeFull : "No action required, when you take damage from a source you can see", // NOTE: RAW it doesn't consume the reaction, though I'm not sure if it's intended
 	range : "Self",
 	duration : "Instantaneous",
 	description : "Reduce dmg by (3*ED+Con) * ED spent (up to my prof bns); Excess dmg reduction becomes temp HP",
@@ -1585,6 +1585,143 @@ SpellsList["war cry"] = {
 	save : "Wis",
 	description : "All crea save or drop what it is holding and frightened; extra save at end of turn if not in line of sight",
 	descriptionFull : "As an action, you can expend one Exploit Die and issue a mighty cry, forcing creatures of your choice that can hear you in an adjacent 30-foot cone to make a Wisdom saving throw. On a failed save, they drop whatever they are holding and are frightened of you for 1 minute. If a frightened creature ends its turn and does not have line of sight to you, it can repeat the saving throw, ending the effect on a success."
+};
+
+// 4th degree exploits
+SpellsList["expert determination"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[4th-degree exploits]",
+	// Regular spell attributes
+	name : "Expert Determination",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 4,
+	school : "Skill",
+	time : "1 a",
+	range : "Self",
+	duration : "1 h",
+	description : "Choose one skill/tool I'm proficient in; Add Exploit die to all checks for this skill/tool",
+	descriptionFull : "As an action, you can expend one Exploit Die to focus your mind and temporarily sharpen one of your skills. Choose a skill or tool that you are proficient in. For the next hour, you can add one roll of your Exploit Die to any check you make that uses that skill, without expending an Exploit Die."
+};
+
+SpellsList["fluid movements"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[4th-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 17 },
+	// Regular spell attributes
+	name : "Fluid Movements",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 4,
+	school : "Combat",
+	time : "1 bns",
+	range : "Self",
+	duration : "Conc, 1 min",
+	description : "Dash & diseng as 1 bns; magic/terrain cannot reduce speed, paralyze, restrain; 5 ft to escape (see book)",
+	descriptionFull : "As a bonus action, you can expend one Exploit Die to enter a heightened state of movement which you must concentrate on as if you were concentrating on a spell. For 1 minute, or until you lose concentration, you gain the following benefits:\n\u2022 Your movement is unaffected by difficult terrain.\n\u2022 You can use a bonus action on your turn to gain the benefits of both the Dash and Disengage action.\n\u2022 Spells and other magical effects can neither reduce your speed nor cause you to be paralyzed or restrained.\n\u2022 You can spend 5 feet of movement to instantly escape from nonmagical restraints like manacles or a grapple.\n\u2022 Swimming or being underwater imposes no penalties on your movements or your attack rolls."
+};
+
+SpellsList["quick draw"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[4th-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 17 },
+	// Regular spell attributes
+	name : "Quick Draw",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 4,
+	school : "Combat",
+	time : "1 bns",
+	range : "Self",
+	components : "W*", // W = weapon
+	compMaterial : "Ranged weapon",
+	duration : "Conc, 1 min",
+	description : "Use bns (including when activating this expl) to make 2 ranged weapon atks as long as I have ammo",
+	descriptionFull : "As a bonus action, you can expend one Exploit Die and enter into a heightened state of focus which you must concentrate on as if concentrating on a spell. For the next minute, or until you lose concentration, you can use a bonus action, including the bonus action you used to use this Exploit to make two ranged weapon attacks so long as you have ammunition.\nThis Exploit's effects don't stack with the swift quiver spell."
+};
+
+SpellsList["staggering blow"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[4th-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 17 },
+	// Regular spell attributes
+	name : "Staggering Blow",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 4,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a melee weapon attack",
+	range : "Self",
+	components : "W*", // W = weapon
+	compMaterial : "Melee weapon",
+	duration : "1 min",
+	description : "Add 3 expl die to dmg; Wis saving throw or disadv. on checks & attack rolls and can't take reactions",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend one Exploit Die to strike with near-supernatural power, dealing additional damage equal to three rolls of your Exploit Die. It must succeed on a Wisdom saving throw, or for the next minute it has disadvantage on ability checks and attack rolls and can't take reactions. The creature can make a Wisdom saving throw at the start of each of its turns, ending these effects on a success."
+};
+
+SpellsList["unbreakable"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[4th-degree exploits]",
+	prereqeval : function(v) { return What('Con') >= 17 },
+	// Regular spell attributes
+	name : "Unbreakable",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 4,
+	school : "Combat",
+	time : "Special",
+	timeFull : "No action required, when you take damage that would reduce you to 0 hit points, even if that damage would kill you outright",
+	range : "Self",
+	duration : "1 min",
+	description : "Fall to 1 HP and gain temp HP equal to (3 expl die) * Expl die spent (up to prof bonus)",
+	descriptionFull : "When you take damage that would reduce you to 0 hit points, even if that damage would kill you outright, you can expend Exploit Dice (up to your proficiency bonus) and fall to 1 hit point. For each Exploit Die you spent, you roll three Exploit Dice, and you gain temporary hit points equal to the total roll."
+};
+
+// 5th degree exploits
+SpellsList["storm of arrows"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[5th-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 19 },
+	// Regular spell attributes
+	name : "Storm of Arrows",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 5,
+	school : "Combat",
+	time : "1 a",
+	range : "Attack",
+	components : "W*", // W = weapon
+	compMaterial : "Ranged weapon",
+	duration : "Instantaneous",
+	description : "All crea I choose within 30 ft; Dex saving throw or (2 ED) * ED spent (up to PB) + Dex dmg (half on save)",
+	descriptionFull : "As an action on your turn, you can expend Exploit Dice (up to your proficiency bonus) to fire a volley of ammunition at a point you can see within the range of your weapon. Creatures of your choice within 30 feet of that point must succeed on a Dexterity saving throw or they take piercing damage equal to two rolls of your Exploit Die for each Exploit Die you spent + your Dexterity modifier. Any creature that succeeds on its saving throw takes half as much piercing damage. You must have enough ammunition to hit each target."
+};
+
+SpellsList["steel wind slash"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[5th-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 19 || What('Dex') >= 19},
+	// Regular spell attributes
+	name : "Steel Wind Slash",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 5,
+	school : "Combat",
+	time : "1 a",
+	range : "30 ft",
+	components : "W*", // W = weapon
+	compMaterial : "Melee weapon",
+	duration : "Instantaneous",
+	description : "Melee attack vs 5 crea in range; (2 ED) * ED spent (up to PB) + Dex/Str dmg; Teleport next to one target",
+	descriptionFull : "As an action on your turn, you can expend Exploit Dice (up to your proficiency bonus) and flourish a melee weapon then vanish. Choose up to five targets that you can see within 30 feet and make one melee weapon attack against each one.\nOn a hit, each target takes damage of your weapon's type equal to two rolls of your Exploit Die for each Exploit Die you spent + either your Strength or Dexterity modifier.\nYou then appear in an unoccupied space of your choice you can see within 5 feet of one of the targets of this Exploit."
 };
 
 
