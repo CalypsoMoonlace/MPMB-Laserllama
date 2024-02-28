@@ -2347,7 +2347,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				MartialExploits[FighterSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
 					name: NewSpell.name,
 					toNotesPage : [{ // What is added to the notes page
-						name : NewSpell.name + " Exploit",
+						name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
 						note : desc(NewSpell.descriptionFull),
 						amendTo : "Master at Arms Exploits"
 					}],
@@ -2438,7 +2438,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				}),
 				toNotesPage : [{
 					name : "Master of Forms Exploits",
-					note : desc(["Below are my Master of Forms exploits."])
+					note : desc(["Below are my Master of Forms exploits. Each 3rd and 4th degree exploits can only be used once per short rest. Each 5th degree exploit can only be used once per long rest."])
 				}],
 			}
 
@@ -2455,7 +2455,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				MartialExploits[FighterSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
 					name: NewSpell.name,
 					toNotesPage : [{ // What is added to the notes page
-						name : NewSpell.name + " Exploit",
+						name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
 						note : desc(NewSpell.descriptionFull),
 						amendTo : "Master of Forms Exploits"
 					}],
