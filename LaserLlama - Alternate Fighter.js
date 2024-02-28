@@ -63,7 +63,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 	};
 
 	for (var i = 0; i < SubclassExploits.autoSelectExtrachoices.length; i++) {
-		var NewSpell = SubclassExploits.autoSelectExtrachoices[i].extrachoice;
+		var NewSpell = SubclassExploits.autoSelectExtrachoices[i].extrachoice; // note: that's a spell key which is inconsistent with the other times I use a variable called NewSpell
 
 		SubclassExploits[NewSpell] = {
 			name: SpellsList[NewSpell].name,
@@ -73,18 +73,70 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 				amendTo : SubclassExploits.name
 			}],
 			source: SpellsList[NewSpell].source,
-			spellcastingBonus : [{ // What is added to the spellcasting sheet
-				name : subclass_name + " Exploits",
-				spellcastingAbility : 1,
-				spells : [NewSpell],
-				selection : [NewSpell]
-			}],
 			addMod: SpellsList[NewSpell].addMod,
-			submenu: SpellsList[NewSpell].submenu
+			submenu: SpellsList[NewSpell].submenu,
+			// NOTE: prereqeval shouldn't be added here because they are automatically selected with autoSelectExtrachoices
+			eval : MartialEvalFactory(NewSpell),
+			removeeval : MartialRemoveFactory(NewSpell)
 		};
 	}
 
 	return SubclassExploits;
+}
+
+// Factory methods
+function MartialEvalFactory(tempSpell) {
+	// pre: tempSpell is the key of an item from SpellsList
+	// post: returns an eval() function that adds the tempSpell to the spell list when evaluated
+	return function() {
+		if (!CurrentSpells["martial exploits"]) {
+			// Defining the Fighter spell sheet - also known as Martial exploits
+			CurrentSpells["martial exploits"] = {
+				name : "Martial Exploits",
+				shortname : "Martial Exploits",
+				ability: 1,
+				bonus : {},
+				typeSp:"known",
+				refType:"feat"
+			}
+		}
+
+	    CurrentSpells["martial exploits"].bonus["martial exploit " + tempSpell] = [{ // What is added to the spellcasting sheet
+				name : "Martial Exploits",
+				spellcastingAbility : 1,
+				spells : [tempSpell],
+				selection : [tempSpell]
+			}];
+	    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
+	}
+}
+
+function MartialRemoveFactory(tempSpell) {
+	// pre: tempSpell is the key of an item from SpellsList
+	// post: returns a removeeval() function that remove the tempSpell from the spell list when evaluated
+	return function() {
+	    delete CurrentSpells["martial exploits"].bonus["martial exploit " + tempSpell];
+	    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
+	}
+}
+
+function ExploitPrereqFactory(tempSpell, class_name) {
+	// pre: tempSpell is the key of an item from SpellsList, class_name is a class name (daring today aren't we) eg "fighter"
+	// post: returns a prereqeval() function
+
+	// spell has its own prereq
+	if (SpellsList[tempSpell].prereqeval) {
+		return function(v) {
+			const DegreeToMinLevel = [0,0,5,9,13,17];
+			return (classes.known[class_name].level >= DegreeToMinLevel[SpellsList[tempSpell].level]) && SpellsList[tempSpell].prereqeval(v);
+		}
+	}
+
+	return function(v) {
+		const DegreeToMinLevel = [0,0,5,9,13,17];
+		return classes.known[class_name].level >= DegreeToMinLevel[SpellsList[tempSpell].level];
+	}
+
 }
 
 // Fighting styles
@@ -1713,7 +1765,6 @@ SpellsList["steel wind slash"] = {
 	descriptionFull : "As an action on your turn, you can expend Exploit Dice (up to your proficiency bonus) and flourish a melee weapon then vanish. Choose up to five targets that you can see within 30 feet and make one melee weapon attack against each one.\nOn a hit, each target takes damage of your weapon's type equal to two rolls of your Exploit Die for each Exploit Die you spent + either your Strength or Dexterity modifier.\nYou then appear in an unoccupied space of your choice you can see within 5 feet of one of the targets of this Exploit."
 };
 
-
 // Main class
 ClassList["fighter(laserllama)"] = {
 
@@ -1836,10 +1887,10 @@ ClassList["fighter(laserllama)"] = {
 				// NOTE: this is literally a SpellsList[key].classes.includes("fighter(laserllama)") but for some cursed reason I can't use that function
 			});
 			
-			//const DegreeToMinLevel = [0,0,5,9,13,17]
 			// Iterate over all Fighter(laserllama) "spells"
 			for (var i = 0; i < FighterSpells.length; i++) {
 				var NewSpell = SpellsList[FighterSpells[i]];
+				var tempSpell = FighterSpells[i];
 
 				MartialExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
 
@@ -1851,41 +1902,11 @@ ClassList["fighter(laserllama)"] = {
 						amendTo : "Martial Exploits"
 					}],
 					source: NewSpell.source,
-					spellcastingBonus : [{ // What is added to the spellcasting sheet
-						name : "Martial Exploits",
-						spellcastingAbility : 1,
-						spells : [FighterSpells[i]],
-						selection : [FighterSpells[i]]
-					}],
 					addMod: NewSpell.addMod,
-					submenu: NewSpell.submenu
-				}
-
-
-				// Matching prereqeval with required Fighter level
-				// NOTE: I am doing this ugly copypasted thing because DegreeToMinLevel[NewSpell.level] didn't work, I'm assuming due to lexical scoping but that kinda sucks
-				// It's easier for me to do this than spend idk how much time debugging this issue
-				if (NewSpell.level == 2) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 5 }; 
-				}
-				if (NewSpell.level == 3) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 9 }; 
-				}
-				if (NewSpell.level == 4) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 13 }; 
-				}
-				if (NewSpell.level == 5) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 17 }; 
-				}
-
-				// Combining level prereq (defined just above) with spell prereq (defined in the spell itself)
-				// Exploit has a prerequisite and a level prerequisite
-				if (NewSpell.prereqeval && MartialExploits[FighterSpells[i]].prereqeval) {
-					MartialExploits[FighterSpells[i]].prereqeval = (MartialExploits[FighterSpells[i]].prereqeval && NewSpell.prereqeval);
-				}
-				// Exploit has a prerequisite but no level prerequesite
-				if (NewSpell.prereqeval && !MartialExploits[FighterSpells[i]].prereqeval) {
-					MartialExploits[FighterSpells[i]].prereqeval = NewSpell.prereqeval;
+					submenu: NewSpell.submenu,
+					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
+					eval : MartialEvalFactory(FighterSpells[i]),
+					removeeval : MartialRemoveFactory(FighterSpells[i])
 				}
 			}
 
@@ -1997,6 +2018,19 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 	source : [["GMB:LL", 0]],
 	abilitySave : 4,
 	spellcastingFactor : 3,
+	spellcastingList : {
+		spells : [
+			"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
+			"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
+			"arcane scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
+			"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
+			"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
+		]
+	},
+	spellcastingKnown : {
+		cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+		spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
+	},
 	features : {
 		// Override action surge because of the lvl 15 subclass feature
 		"action surge": function() {
@@ -2010,29 +2044,6 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 			minlevel : 3,
 			description : desc(["I can cast known Arcane Knight spells, using Intelligence as my spellcasting ability", "I can replace a spell I know with another I have spell slots for when I gain a level"]),
 			additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"],
-			eval : function() {
-			    CurrentSpells["arcane knight"] = {
-			        name : "Arcane Knight (2)", // cannot be the name as the class name (which is replaced by subclass)
-			        level: classes.known["fighter(laserllama)"].level,
-			        typeSp : "known",
-			        refType : "class",
-			        ability : 4, 
-			        list : {"class" : "arcane knight"}, //this is whatever you named your spellList to be
-			        known : {
-			            //your spells known arrays, keep in mind that spellsTable is different
-			            cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],   
-			            spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12], 
-			            //factor is optional, but it determines multiclassing
-			            factor : [3,"default"]
-			        },
-			        allowUpCasting : true,
-			    }
-			    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
-			},
-			removeeval : function() {
-			    delete CurrentSpells["arcane knight"];
-			    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
-			}
 		},
 		"subclassfeature3.1" : {
 			name : "Weapon Bond",
@@ -2257,14 +2268,6 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 	abilitySaveAlt : 2,
 	features : {
 
-		// NOTE: This overrides martial exploits from the main class and is necessary to update the Exploit Dice size
-		// See this for more details: https://canary.discord.com/channels/533350585706217494/863810547584467004/1204723669042069525
-		"martial exploits": function() {
-			var MEfea = newObj(ClassList["fighter(laserllama)"].features["martial exploits"]);
-			MEfea.additional = ['', "d6", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12"];
-			return MEfea;
-		}(),
-
 		// Override action surge because of the lvl 10 subclass feature
 		"action surge": function() {
 			var actsurge = newObj(ClassList["fighter(laserllama)"].features["action surge"]);
@@ -2273,6 +2276,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 		}(),
 
 		"subclassfeature3" : function(){
+			ClassList["fighter(laserllama)"].features["martial exploits"].additional = ['', "d6", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12"];
 
 			// Fixed attributes
 			MartialExploits = {
@@ -2348,35 +2352,11 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 						amendTo : "Master at Arms Exploits"
 					}],
 					source: NewSpell.source,
-					spellcastingBonus : [{ // What is added to the spellcasting sheet
-						name : "Master at Arms Exploits",
-						spellcastingAbility : 1,
-						spells : [FighterSpells[i]],
-						selection : [FighterSpells[i]]
-					}],
 					addMod: NewSpell.addMod,
-					submenu: NewSpell.submenu
-				}
-
-
-				// Matching prereqeval with required Fighter level
-				// NOTE: I am doing this ugly copypasted thing because DegreeToMinLevel[NewSpell.level] didn't work, I'm assuming due to lexical scoping but that kinda sucks
-				// It's easier for me to do this than spend idk how much time debugging this issue
-				if (NewSpell.level == 2) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 5 }; 
-				}
-				if (NewSpell.level == 3) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 9 }; 
-				}
-
-				// Combining level prereq (defined just above) with spell prereq (defined in the spell itself)
-				// Exploit has a prerequisite and a level prerequisite
-				if (NewSpell.prereqeval && MartialExploits[FighterSpells[i]].prereqeval) {
-					MartialExploits[FighterSpells[i]].prereqeval = (MartialExploits[FighterSpells[i]].prereqeval && NewSpell.prereqeval);
-				}
-				// Exploit has a prerequisite but no level prerequesite
-				if (NewSpell.prereqeval && !MartialExploits[FighterSpells[i]].prereqeval) {
-					MartialExploits[FighterSpells[i]].prereqeval = NewSpell.prereqeval;
+					submenu: NewSpell.submenu,
+					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
+					eval : MartialEvalFactory(FighterSpells[i]),
+					removeeval : MartialRemoveFactory(FighterSpells[i])
 				}
 			}
 
@@ -2476,41 +2456,11 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 						amendTo : "Master at Arms Exploits"
 					}],
 					source: NewSpell.source,
-					spellcastingBonus : [{ // What is added to the spellcasting sheet
-						name : "Master of Forms Exploits",
-						spellcastingAbility : 1,
-						spells : [FighterSpells[i]],
-						selection : [FighterSpells[i]]
-					}],
 					addMod: NewSpell.addMod,
-					submenu: NewSpell.submenu
-				}
-
-
-				// Matching prereqeval with required Fighter level
-				// NOTE: I am doing this ugly copypasted thing because DegreeToMinLevel[NewSpell.level] didn't work, I'm assuming due to lexical scoping but that kinda sucks
-				// It's easier for me to do this than spend idk how much time debugging this issue
-				if (NewSpell.level == 2) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 5 }; 
-				}
-				if (NewSpell.level == 3) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 9 }; 
-				}
-				if (NewSpell.level == 4) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 13 }; 
-				}
-				if (NewSpell.level == 5) {
-					MartialExploits[FighterSpells[i]].prereqeval = function(v) { return classes.known["fighter(laserllama)"].level >= 17 }; 
-				}
-
-				// Combining level prereq (defined just above) with spell prereq (defined in the spell itself)
-				// Exploit has a prerequisite and a level prerequisite
-				if (NewSpell.prereqeval && MartialExploits[FighterSpells[i]].prereqeval) {
-					MartialExploits[FighterSpells[i]].prereqeval = (MartialExploits[FighterSpells[i]].prereqeval && NewSpell.prereqeval);
-				}
-				// Exploit has a prerequisite but no level prerequesite
-				if (NewSpell.prereqeval && !MartialExploits[FighterSpells[i]].prereqeval) {
-					MartialExploits[FighterSpells[i]].prereqeval = NewSpell.prereqeval;
+					submenu: NewSpell.submenu,
+					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
+					eval : MartialEvalFactory(FighterSpells[i]),
+					removeeval : MartialRemoveFactory(FighterSpells[i])
 				}
 			}
 
