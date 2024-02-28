@@ -2310,7 +2310,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					}),
 				toNotesPage : [{
 						name : "Master at Arms Exploits",
-						note : desc(["Below are my Master at Arms exploits"])
+						note : desc(["Below are my Master at Arms exploits. The 3rd level exploit can only be used per short rest."])
 					}],
 
 				extraLimitedFeatures : [{
@@ -2434,8 +2434,12 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				extraname : "Master of Forms Exploits",
 				extrachoices : [],
 				extraTimes : levels.map(function (n) {
-						return n < 7 ? 0 : n < 15 ? 2 : n < 18 ? 3 : 4;
-					}),
+					return n < 7 ? 0 : n < 15 ? 2 : n < 18 ? 3 : 4;
+				}),
+				toNotesPage : [{
+					name : "Master of Forms Exploits",
+					note : desc(["Below are my Master of Forms exploits."])
+				}],
 			}
 
 			// Make a filtered spell list that contains only exploits
@@ -2453,7 +2457,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					toNotesPage : [{ // What is added to the notes page
 						name : NewSpell.name + " Exploit",
 						note : desc(NewSpell.descriptionFull),
-						amendTo : "Master at Arms Exploits"
+						amendTo : "Master of Forms Exploits"
 					}],
 					source: NewSpell.source,
 					addMod: NewSpell.addMod,
@@ -2664,7 +2668,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 			]),
 			toNotesPage : [{
 					name : "Runecarver Exploits",
-					note : desc(["Below are my Runecarver exploits"])
+					note : desc(["Below are my Runecarver exploits. They can all be used at will."])
 			}],
 			additional : levels.map(function (n){
 				return n < 3 ? "" : (n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6) + " runes known"
