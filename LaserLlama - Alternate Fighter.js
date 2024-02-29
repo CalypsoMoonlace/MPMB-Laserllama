@@ -2559,7 +2559,7 @@ AddSubClass("fighter(laserllama)", "mystic", {
 			name : "Spellcasting",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
-			description : desc(["I can cast known Psion spells, using Intelligence as my spellcasting ability", "I can replace a spell I know with another of a level equal to my Mental Limit or lower", "This feature has not been implemented yet (interested in this? shoot me a dm!)"]),
+			description : desc(["I can cast known Psion spells, using Intelligence as my spellcasting ability", "This feature has not been implemented yet (interested in this? shoot me a dm!)"]),
 			//additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"],
 		},
 		"subclassfeature3.1" : {
@@ -2568,7 +2568,7 @@ AddSubClass("fighter(laserllama)", "mystic", {
 			minlevel : 3,
 			description : desc([
 				"I learn the mage hand spell, and when I manifest it I do not need to provide components",
-				"My mage hand is invisible, and it can lift a number of pounds equal to 10 times my Intelligence modifier (min of 10 pounds)"
+				"My mage hand is invisible, and can lift a number of pounds equal to 10 * Int mod (min 10)"
 			]),
 			spellcastingBonus : [{
 				name : "Minor Telekinesis",
@@ -2587,15 +2587,15 @@ AddSubClass("fighter(laserllama)", "mystic", {
 			name : "Mystic Empowerment",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
-			description : desc(["When an Exploit would use my Str, Dex, or Con, I can choose to use my Int instead", "Also, once per turn when I damage a creature with a Martial Exploit I know, I can choose for the Exploit to deal psychic damage in place of its normal damage type"]),
+			description : desc(["When an Exploit would use my Str, Dex, or Con, I can choose to use my Int instead", "Also, once per turn when I damage a creature with a Martial Exploit, I can choose for the Exploit to deal psychic damage in place of its normal damage type"]),
 		},
 		"subclassfeature7" : {
 			name : "Phase Step",
 			source : [["GMB:LL", 0]],
 			minlevel : 7,
 			description : levels.map(function (n) {
-				var result = ["When I use Second Wind, until the end of my current turn, I can move through solid nonmagical objects and creatures as if they were difficult terrain", "If I end my movement inside an object or creature, I am instantly shunted to the nearest unoccupied space, taking 1d10 force damage for every 5 feet I am forced to move"]
-				if (n >= 18) result.push("I also gain a flying speed equal to my walking speed until the end of that turn");
+				var result = ["When I use Second Wind, until the end of my current turn, I can move through solid nonmag objects and crea as if they were difficult terrain", "If I end my movement inside an object or creature, I am instantly shunted to the nearest unoccupied space, taking 1d10 force damage for every 5 feet I am forced to move"]
+				if (n >= 18) result[0] = ("When I use Second Wind, until the end of my current turn, I gain a fly speed equal to my walk speed and can move through solid nonmag objects and crea as if they were difficult terrain");
 				return desc(result);
 			})
 		},
@@ -2603,20 +2603,22 @@ AddSubClass("fighter(laserllama)", "mystic", {
 			name : "Inscrutable Mind",
 			source : [["GMB:LL", 0]],
 			minlevel : 10,
-			description : desc(["I have adv. on saving throws to resist being charmed, frightened, or having my thoughts read", "Also, whenever I succeed on an Int, Wis, or Cha saving throw, I can spend 1 Psi Point to force the attacker to make an Int saving throw. On a failed save, it takes psychic damage equal to my Fighter level."])
+			description : desc(["I have adv. on saving throws to resist being charmed, frightened, or having my thoughts read", "Also, whenever I succeed on an Int, Wis, or Cha saving throw, I can spend 1 Psi Point to force the attacker to succeed an Int saving throw or take psychic dmg equal to my Fighter lvl"]),
+			savetxt : { adv_vs : ["charmed", "frightened", "mind reading"] }
 		},
 		"subclassfeature15" : {
 			name : "Psionic Ward",
 			source : [["GMB:LL", 0]],
 			minlevel : 15,
-			description : desc(["As a bonus action, I can spend 5 Psi Points to project a Psionic Ward which emanates out from me in a 30-foot radius for 1 minute", "Me, and creatures of my choice within range gain resistance to psychic damage and can add my Intelligence modifier (minimum of +1) to any Intelligence, Wisdom, and Charisma saving throws that we are forced to make"]),
+			description : desc(["As a bonus action, project a Psionic Ward around me for a 30-foot radius for 1 minute", "Me, and creatures of my choice within range gain resistance to psychic damage and can add my Int mod (min of +1) to any Int, Wis, and Cha saving throws that we make"]),
+			additional : "5 Psi Points",
 			action : ["bonus action", ""]
 		},
 		"subclassfeature18" : {
 			name : "Legendary Mystic",
 			source : [["GMB:LL", 0]],
 			minlevel : 18,
-			description : desc(["I learn the telekinesis spell, but it does not count against my total", "I can manifest this spell once, without expending any Psi Points", "If I have no uses left, I can expend 5 Psi Points to use it again"]),
+			description : desc(["I learn the telekinesis spell, but it does not count against my total", "I can manifest this spell once per long rest or spend 5 Psi points to use it again"]),
 			spellcastingBonus : {
 				name : "Telekinetic Master",
 				spells : ["telekinesis"],
