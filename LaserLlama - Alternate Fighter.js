@@ -2170,6 +2170,52 @@ AddSubClass("fighter(laserllama)", "champion", {
 	}
 })
 
+// Commander (banneret)
+AddSubClass("fighter(laserllama)", "commander", {
+	regExpSearch : /commander/i,
+	subname : "Commander",
+	fullname : "Commander",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : {
+			name : "Commander Exploits",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I learn exploits from the Warlord class who don't count against my total", "This feature has not been implemented yet (interested in this? shoot me a dm!)"])
+		},
+		"subclassfeature3.1" : {
+			name : "Student of War",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain proficiency in either History, Insight, or Persuasion, and whenever I make an ability check with that skill I gain a bonus to my roll equal to one roll of my Exploit Die"]),
+			skillstxt : "Choose one from: History, Insight, or Persuasion",
+		},
+		"subclassfeature7" : {
+			name : "Strategic Command",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["When I use Second Wind, I can choose up to three creatures within 30 ft that can see or hear me to regain hit points equal to one roll of my Exploit Die + my Leadership modifier"])
+		},
+		"subclassfeature10" : {
+			name : "Heroic Surge",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				if (n < 18) return desc(["When I use Action Surge, I can choose another creature within 30 ft that can see or hear me", "It can use its reaction to move up to its full speed without provoking opportunity attacks and then make a single weapon attack"])
+				return desc(["When I use Action Surge, I can choose two creatures within 30 feet that can see or hear me", "They can use their reaction to move up to their full speed without provoking opportunity attacks and then make a single weapon attack"])
+			})
+		},
+		"subclassfeature15" : {
+			name : "Inspiring Commands",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["Once per turn when I use a Tactical Exploit that targets at least one friendly creature, one target of my choice gains temp HP equal to my Leadership modifier"])
+		}
+	}
+})
+
 // Marksman
 AddSubClass("fighter(laserllama)", "marksman", {
 	regExpSearch : /marksman/i,
@@ -2483,6 +2529,106 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 			source : [["GMB:LL", 0]],
 			minlevel : 18,
 			description : desc(["Once per turn, instead of expending an Exploit Die, I can use a d6 as Exploit Die", "Also, I can replace an Exploit I know with another of the same level with 1h of training (can be part of a short/long rest)"])
+		}
+	}
+})
+
+// Mystic (psi warrior)
+AddSubClass("fighter(laserllama)", "mystic", {
+	regExpSearch : /mystic/i,
+	subname : "Mystic",
+	fullname : "Mystic",
+	source : [["GMB:LL", 0]],
+	abilitySave : 4,
+	spellcastingFactor : 3,
+	/*spellcastingList : {
+		spells : [
+			"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
+			"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
+			"arcane scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
+			"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
+			"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
+		]
+	},
+	spellcastingKnown : {
+		cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+		spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
+	},*/
+	features : {
+		"subclassfeature3" : {
+			name : "Spellcasting",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can cast known Psion spells, using Intelligence as my spellcasting ability", "I can replace a spell I know with another of a level equal to my Mental Limit or lower", "This feature has not been implemented yet (interested in this? shoot me a dm!)"]),
+			//additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"],
+		},
+		"subclassfeature3.1" : {
+			name : "Minor Telekinesis",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				"I learn the mage hand spell, and when I manifest it I do not need to provide components",
+				"My mage hand is invisible, and it can lift a number of pounds equal to 10 times my Intelligence modifier (min of 10 pounds)"
+			]),
+			spellcastingBonus : [{
+				name : "Minor Telekinesis",
+				spells : ["mage hand"],
+				selection : ["mage hand"]
+			}],
+			spellChanges : {
+				"mage hand" : {
+					description : "Create invis hand for simple tasks or carry up to 10*Int lb; 1 a to control; can't have multiple instances",
+					components : "",
+					changes : "My Minor Telekinesis class feature expands my use of the Mage Hand cantrip, removes the need for components and makes the spectral hand invisible."
+				}
+			}
+		},
+		"subclassfeature3.2" : {
+			name : "Mystic Empowerment",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["When an Exploit would use my Str, Dex, or Con, I can choose to use my Int instead", "Also, once per turn when I damage a creature with a Martial Exploit I know, I can choose for the Exploit to deal psychic damage in place of its normal damage type"]),
+		},
+		"subclassfeature7" : {
+			name : "Phase Step",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : levels.map(function (n) {
+				var result = ["When I use Second Wind, until the end of my current turn, I can move through solid nonmagical objects and creatures as if they were difficult terrain", "If I end my movement inside an object or creature, I am instantly shunted to the nearest unoccupied space, taking 1d10 force damage for every 5 feet I am forced to move"]
+				if (n >= 18) result.push("I also gain a flying speed equal to my walking speed until the end of that turn");
+				return desc(result);
+			})
+		},
+		"subclassfeature10" : {
+			name : "Inscrutable Mind",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["I have adv. on saving throws to resist being charmed, frightened, or having my thoughts read", "Also, whenever I succeed on an Int, Wis, or Cha saving throw, I can spend 1 Psi Point to force the attacker to make an Int saving throw. On a failed save, it takes psychic damage equal to my Fighter level."])
+		},
+		"subclassfeature15" : {
+			name : "Psionic Ward",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["As a bonus action, I can spend 5 Psi Points to project a Psionic Ward which emanates out from me in a 30-foot radius for 1 minute", "Me, and creatures of my choice within range gain resistance to psychic damage and can add my Intelligence modifier (minimum of +1) to any Intelligence, Wisdom, and Charisma saving throws that we are forced to make"]),
+			action : ["bonus action", ""]
+		},
+		"subclassfeature18" : {
+			name : "Legendary Mystic",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["I learn the telekinesis spell, but it does not count against my total", "I can manifest this spell once, without expending any Psi Points", "If I have no uses left, I can expend 5 Psi Points to use it again"]),
+			spellcastingBonus : {
+				name : "Telekinetic Master",
+				spells : ["telekinesis"],
+				selection : ["telekinesis"],
+				firstCol : "oncelr"
+			},
+			spellChanges : {
+				"telekinesis" : {
+					components : "",
+					changes : "Using Legendary Mystic, I can cast Telekinesis without requiring components and without spell slots"
+				}
+			}
 		}
 	}
 })
