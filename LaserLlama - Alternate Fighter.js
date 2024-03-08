@@ -16,6 +16,7 @@
     Sheet:      v13.0.06 and newer
  
     Code by:    Original script by CalypsoMoonlace
+    			Thanks to @garnaul (t-santana on github) for helping out with some exploits
 */
 
 
@@ -63,21 +64,21 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 	};
 
 	for (var i = 0; i < SubclassExploits.autoSelectExtrachoices.length; i++) {
-		var NewSpell = SubclassExploits.autoSelectExtrachoices[i].extrachoice; // note: that's a spell key which is inconsistent with the other times I use a variable called NewSpell
+		var NewSpellKey = SubclassExploits.autoSelectExtrachoices[i].extrachoice;
 
-		SubclassExploits[NewSpell] = {
-			name: SpellsList[NewSpell].name,
+		SubclassExploits[NewSpellKey] = {
+			name: SpellsList[NewSpellKey].name,
 			toNotesPage : [{ // What is added to the notes page
-				name : SpellsList[NewSpell].name + " Exploit [" + (SpellsList[NewSpell].level == 1 ? '1st' : SpellsList[NewSpell].level == 2 ? '2nd' : SpellsList[NewSpell].level == 3 ? '3rd': SpellsList[NewSpell].level + 'th') + " degree]",
-				note : desc(SpellsList[NewSpell].descriptionFull),
+				name : SpellsList[NewSpellKey].name + " Exploit [" + (SpellsList[NewSpellKey].level == 1 ? '1st' : SpellsList[NewSpellKey].level == 2 ? '2nd' : SpellsList[NewSpellKey].level == 3 ? '3rd': SpellsList[NewSpellKey].level + 'th') + " degree]",
+				note : desc(SpellsList[NewSpellKey].descriptionFull),
 				amendTo : SubclassExploits.name
 			}],
-			source: SpellsList[NewSpell].source,
-			addMod: SpellsList[NewSpell].addMod,
-			submenu: SpellsList[NewSpell].submenu,
+			source: SpellsList[NewSpellKey].source,
+			addMod: SpellsList[NewSpellKey].addMod,
+			submenu: SpellsList[NewSpellKey].submenu,
 			// NOTE: prereqeval shouldn't be added here because they are automatically selected with autoSelectExtrachoices
-			eval : MartialEvalFactory(NewSpell),
-			removeeval : MartialRemoveFactory(NewSpell)
+			eval : MartialEvalFactory(NewSpellKey),
+			removeeval : MartialRemoveFactory(NewSpellKey)
 		};
 	}
 
