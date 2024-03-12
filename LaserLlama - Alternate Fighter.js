@@ -141,7 +141,7 @@ function ExploitPrereqFactory(tempSpell, class_name) {
 }
 
 // Fighting styles
-var FightingStyles = {
+var FightingStylesLL = {
 	archery : {
 		name : "Archery Fighting Style",
 		description : desc("+2 bonus to attack rolls I make with ranged weapons"),
@@ -1812,28 +1812,28 @@ ClassList["fighter(laserllama)"] = {
 			choices : ["Archery", "Brawler", "Classical Swordplay", "Defense", "Dueling", "Dual Wielding", "Featherweight Fighting","Great Weapon Fighting", 
 						"Improvised Fighting", "Melee Marksman", "Protector", "Strongbow", "Thrown Weapon Fighting", "Versatile Fighting", "Blind Warrior",
 						"Heavyweight Fighting", "Mariner", "Mountaineer", "Pit Fighting", "Shield Warrior", "Standard Bearer", "Wrestler"],
-			"archery" : FightingStyles.archery,
-			"classical swordplay" : FightingStyles.classical,
-			"brawler": FightingStyles.brawler,
-			"defense" : FightingStyles.defense,
-			"dueling" : FightingStyles.dueling,
-			"dual wielding" : FightingStyles.dual_wielding,
-			"featherweight fighting" : FightingStyles.featherweight,
-			"great weapon fighting" : FightingStyles.great_weapon,
-			"improvised fighting" : FightingStyles.improvised,
-			"melee marksman" : FightingStyles.marksman,
-			"protector" : FightingStyles.protector,
-			"strongbow" : FightingStyles.strongbow,
-			"thrown weapon fighting" : FightingStyles.thrown,
-			"versatile fighting" : FightingStyles.versatile,
-			"blind warrior" : FightingStyles.blind,
-			"heavyweight fighting" : FightingStyles.heavyweight,
-			"mariner" : FightingStyles.mariner,
-			"mountaineer" : FightingStyles.mountaineer,
-			"pit fighting" : FightingStyles.pit,
-			"shield warrior" : FightingStyles.shieldwarrior,
-			"standard bearer" : FightingStyles.standardbearer,
-			"wrestler" : FightingStyles.wrestler
+			"archery" : FightingStylesLL.archery,
+			"classical swordplay" : FightingStylesLL.classical,
+			"brawler": FightingStylesLL.brawler,
+			"defense" : FightingStylesLL.defense,
+			"dueling" : FightingStylesLL.dueling,
+			"dual wielding" : FightingStylesLL.dual_wielding,
+			"featherweight fighting" : FightingStylesLL.featherweight,
+			"great weapon fighting" : FightingStylesLL.great_weapon,
+			"improvised fighting" : FightingStylesLL.improvised,
+			"melee marksman" : FightingStylesLL.marksman,
+			"protector" : FightingStylesLL.protector,
+			"strongbow" : FightingStylesLL.strongbow,
+			"thrown weapon fighting" : FightingStylesLL.thrown,
+			"versatile fighting" : FightingStylesLL.versatile,
+			"blind warrior" : FightingStylesLL.blind,
+			"heavyweight fighting" : FightingStylesLL.heavyweight,
+			"mariner" : FightingStylesLL.mariner,
+			"mountaineer" : FightingStylesLL.mountaineer,
+			"pit fighting" : FightingStylesLL.pit,
+			"shield warrior" : FightingStylesLL.shieldwarrior,
+			"standard bearer" : FightingStylesLL.standardbearer,
+			"wrestler" : FightingStylesLL.wrestler
 		},
 
 		"second wind" : {
