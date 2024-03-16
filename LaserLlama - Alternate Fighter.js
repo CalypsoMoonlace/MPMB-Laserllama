@@ -584,27 +584,6 @@ spellSchoolList["Combat"] = "combat";
 spellSchoolList["Skill"] = "skill";
 spellSchoolList["Order"] = "order";
 
-// Warlord Exploits (for testing Master at Arms)
-SpellsList["intimidating command"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Cha') >= 13},
-	// Regular spell attributes
-	name : "Intimidating Command",
-	classes : ["warlord"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "30 ft",
-	components : "V",
-	duration : "1 rnd",
-	save : "Wis",
-	description : "1 crea save or follow one word command (cannot be directly harmful), e.g. approach, drop, flee, halt",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to shout a one-word command at one creature that can hear you within 30 feet. It must succeed on a Wisdom saving throw, or it is compelled to obey your command to the best of its ability on its next turn unless its actions would be directly harmful to it"
-};
-
 // Martial Exploits
 // 1st degree martial exploits
 SpellsList["arresting strike"] = {
@@ -905,7 +884,7 @@ SpellsList["mighty thrust"] = {
 	range : "Touch",
 	duration : "Instantaneous",
 	save : "Dex",
-	description : "1 crea makes Str saving throw or knocked back in line by 5 ft * Str; Adv. on save if one size larger",
+	description : "One crea makes Str save (larger crea have adv.) or knocked back in line by 5 ft times my Str mod",
 	descriptionFull : "In place of an attack, you can expend an Exploit Die to force one target you touch to make a Strength saving throw. On a failed save, it is knocked back in a line number of feet equal to 5 times your Strength modifier. A target that is more than one size larger than you has advantage on its saving throw."
 };
 
@@ -1487,7 +1466,7 @@ SpellsList["volley"] = {
 	school : "Combat",
 	time : "1 a",
 	range : "Attack",
-	components : "W*", // W = weapon
+	components : "W", // W = weapon
 	compMaterial : "Ranged weapon",
 	duration : "Instantaneous",
 	description : "All crea of my choice within 5 ft of chosen point save or take Exploit Die + Dex dmg (half on success)",
@@ -1514,6 +1493,225 @@ SpellsList["whirlwind strike"] = {
 	descriptionFull : "In place of an attack, you can expend an Exploit Die to force each target within reach of a melee weapon you are wielding to make a Dexterity saving throw. Targets take damage equal to a roll of your Exploit Die + your Strength or Dexterity modifier on a failed save, and half as much on a success."
 };
 
+// From the expanded fighter
+SpellsList["exposing strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Exposing Strike",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Hit",
+	timeFull : "No action required, on hit with a weapon attack",
+	range : "Attack",
+	components : "W", // W = weapon
+	compMaterial : "Weapon attack",
+	duration : "1 rnd",
+	description : "On hit, the next attack against that crea before my turn has adv and adds Exploit Die to dmg",
+	descriptionFull : "When you hit a creature with a weapon attack, you can expend an Exploit Die to temporarily weaken it. The first attack made against that creature before the beginning of your next turn has advantage, and on hit, that attack deals additional damage equal to one roll of your Exploit Die."
+};
+
+SpellsList["exposing strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Exposing Strike",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Miss",
+	timeFull : "No action required, on miss with a melee weapon attack",
+	range : "Melee",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon attack",
+	duration : "Instantaneous",
+	description : "On miss, repeat my attack against another target within reach of my weapon",
+	descriptionFull : "When you make a melee weapon attack and miss, you can expend an Exploit Die to immediately repeat your attack against another target within the reach of your weapon."
+};
+
+SpellsList["hold the line"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 || What('Con') >= 13 },
+	// Regular spell attributes
+	name : "Hold the Line",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "1 bns",
+	range : "S:10-ft rad",
+	duration : "Until move",
+	description : "All allied crea with a weapon/shield within range gain half cover (see book)",
+	descriptionFull : "As a bonus action, you can expend an Exploit Die to form your allies into a defensive position. You and allied creatures within 10 feet that are wielding a weapon or shield gain the benefits of half cover, which also apply to ability checks and saving throws made to avoid being moved against your will.\n\nThe benefits of this Exploit instantly end if you leave your space, and they have no effect on incapacitated creatures."
+};
+
+SpellsList["immovable stance"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 || What('Con') >= 13 },
+	// Regular spell attributes
+	name : "Immovable Stance",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "1 bns",
+	range : "Self",
+	duration : "Until move",
+	save : "Str",
+	description : "Each time a crea tries to grapple, move me or move in my space, Str saving throw or is grappled/prone",
+	descriptionFull : "As a bonus action, you can expend an Exploit Die to enter an immovable stance that lasts until you move from the space. Each time a creature attempts to grapple, move you against your will, or move through your space while you are in this stance it must first succeed on a Strength saving throw. On a failed save, you can instantly grapple it or knock it prone."
+};
+
+SpellsList["improvised skill"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	// Regular spell attributes
+	name : "Improvised Skill",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 2,
+	school : "Skill",
+	time : "Check",
+	range : "Self",
+	duration : "Instantaneous",
+	description : "Add Exploit Die to a non proficient check",
+	descriptionFull : "When you make an ability check that doesn't include your proficiency bonus, you can expend an Exploit Die and add it to your roll. You can use this Exploit after you roll, but before you know if you succeed or fail."
+};
+
+SpellsList["intimidating command"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Cha') >= 13 },
+	// Regular spell attributes
+	name : "Intimidating Command",
+	classes : ["fighter(laserllama)"],
+	source : ["GMB:LL", 0],
+	level : 2,
+	school : "Combat",
+	time : "1 bns",
+	range : "30 ft",
+	components : "V",
+	duration : "1 rnd",
+	save : "Wis",
+	description : "1 crea save or follow one word command (cannot be directly harmful), e.g. approach, drop, flee, halt",
+	descriptionFull : "As a bonus action, you can expend an Exploit Die to shout a one-word command at one creature that can hear you within 30 feet. It must succeed on a Wisdom saving throw, or it is compelled to obey your command to the best of its ability on its next turn unless its actions would be directly harmful to it"
+};
+
+SpellsList["ringing strike"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 },
+	// Regular spell attributes
+	name : "Ringing Strike",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Hit",
+	range : "Attack",
+	duration : "1 min",
+	save : "Wis",
+	description : "On hit, one crea save or -1d4 penalty to all d20 it makes; extra save end of each turn",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to send it reeling. It must succeed on a Wisdom saving throw or it must subtract 1d4 from all ability checks, attack rolls, and saving throws it makes for 1 minute.\n\nA creature can repeat this saving throw at the end of each of its turns, ending the effect on a success."
+};
+
+SpellsList["shattering slam"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 },
+	// Regular spell attributes
+	name : "Shattering Slam",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Attack",
+	range : "S:5-ft rad",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon attack",
+	duration : "Instantaneous",
+	save : "Dex",
+	description : "All crea within range Dex save or fall prone and take Exploit Die + Str dmg (half on save); diff. terrain",
+	descriptionFull : "In place of an attack, you can expend an Exploit Die to strike the ground at your feet with a melee weapon. All creatures within 5 feet of you must succeed on a Dexterity saving throw or take bludgeoning damage equal to one roll of your Exploit Die + your Strength modifier and fall prone. On a successful save, they take half as much damage and don't fall prone.\n\nTerrain in this area that is loose earth or stone becomes difficult terrain until a creature uses its action to clear it."
+};
+
+SpellsList["thunderous blow"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 },
+	// Regular spell attributes
+	name : "Thunderous Blow",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Attack",
+	range : "Melee",
+	time : "Hit",
+	timeFull : "No action required, on hit with a melee weapon attack",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon attack",
+	duration : "Instantaneous",
+	save : "Dex",
+	description : "On hit, one crea save (larger crea have adv.) or Expl Die of bonus dmg and pushed 5 ft times my Str mod",
+	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to empower your attack with immense force. The creature must succeed on a Strength saving throw or take additional damage equal to a roll of your Exploit Die and be knocked back in a straight line number of feet equal to 5 times your Strength modifier. Creatures more than one size larger than you have advantage on their saving throw."
+};
+
+SpellsList["trick shot"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Dex') >= 13 || What('Int') >= 13 },
+	// Regular spell attributes
+	name : "Trick Shot",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "Attack",
+	range : "Melee",
+	time : "1 bns",
+	components : "W*", // W = weapon
+	compMaterial : "Ranged weapon that has both the finesse and thrown properties",
+	duration : "Instantaneous",
+	description : "Attack that ignores cover if it can ricochet; Ignore disadv; Add Exploit Die to dmg",
+	descriptionFull : "As a bonus action, you can expend an Exploit Die to make a special ranged weapon attack with a weapon that has both the finesse and thrown properties.\n\nThis attack ignores the benefits of cover, so long as it can ricochet off one surface and hit a target in range. If this attack would normally have disadvantage, it does not, and on hit, it deals additional damage equal to one roll of your Exploit Die."
+};
+
+SpellsList["zephyr slash"] = {
+	// Exploit exclusive attributes
+	isExploit : true,
+	submenu : "[2nd-degree exploits]",
+	prereqeval : function(v) { return What('Str') >= 13 || What('Dex') >= 13},
+	// Regular spell attributes
+	name : "Zephyr Slash",
+	source : ["GMB:LL", 0],
+	classes : ["fighter(laserllama)"],
+	level : 2,
+	school : "Combat",
+	time : "1 a",
+	range : "S:30-ft line",
+	components : "W", // W = weapon
+	compMaterial : "Melee weapon",
+	duration : "Instantaneous",
+	description : "Move up to 30 ft, all crea I go through Dex save or take 2 Exploit Die + Str/Dex dmg",
+	descriptionFull : "As an action, you can expend an Exploit Die and flourish your melee weapon instantly move up to 30 feet in a straight line, without provoking attacks of opportunity. Any creatures that you pass through must succeed on a Dexterity saving throw or take damage equal to two rolls of your Exploit Die + either your Strength or Dexterity modifier."
+};
+
 // 3rd degree exploits
 SpellsList["disorienting blow"] = {
 	// Exploit exclusive attributes
@@ -1529,7 +1727,7 @@ SpellsList["disorienting blow"] = {
 	time : "Hit",
 	timeFull : "No action required, on hit with a melee weapon attack",
 	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
+	compMaterial : "Melee weapon attack",
 	range : "Melee",
 	duration : "1 min",
 	save : "Wis",
@@ -1603,7 +1801,7 @@ SpellsList["thunderous shot"] = {
 	school : "Combat",
 	time : "Attack",
 	range : "Line (W)",
-	components : "W*", // W = weapon
+	components : "W", // W = weapon
 	compMaterial : "Ranged weapon",
 	duration : "Instantaneous",
 	description : "All crea in line save or take (2 ED) * ED spent (up to my PB) + Str/Dex dmg and prone (half on success)",
@@ -1678,7 +1876,7 @@ SpellsList["quick draw"] = {
 	school : "Combat",
 	time : "1 bns",
 	range : "Self",
-	components : "W*", // W = weapon
+	components : "W", // W = weapon
 	compMaterial : "Ranged weapon",
 	duration : "Conc, 1 min",
 	description : "Use bns (including when activating this expl) to make 2 ranged weapon atks as long as I have ammo",
@@ -1698,8 +1896,8 @@ SpellsList["staggering blow"] = {
 	school : "Combat",
 	time : "Hit",
 	timeFull : "No action required, on hit with a melee weapon attack",
-	range : "Self",
-	components : "W*", // W = weapon
+	range : "Melee",
+	components : "W", // W = weapon
 	compMaterial : "Melee weapon",
 	duration : "1 min",
 	description : "Add 3 expl die to dmg; Wis saving throw or disadv. on checks & attack rolls and can't take reactions",
@@ -1739,7 +1937,7 @@ SpellsList["storm of arrows"] = {
 	school : "Combat",
 	time : "1 a",
 	range : "Attack",
-	components : "W*", // W = weapon
+	components : "W", // W = weapon
 	compMaterial : "Ranged weapon",
 	duration : "Instantaneous",
 	description : "All crea I choose within 30 ft; Dex saving throw or (2 ED) * ED spent (up to PB) + Dex dmg (half on save)",
@@ -1759,7 +1957,7 @@ SpellsList["steel wind slash"] = {
 	school : "Combat",
 	time : "1 a",
 	range : "30 ft",
-	components : "W*", // W = weapon
+	components : "W", // W = weapon
 	compMaterial : "Melee weapon",
 	duration : "Instantaneous",
 	description : "Melee attack vs 5 crea in range; (2 ED) * ED spent (up to PB) + Dex/Str dmg; Teleport next to one target",
@@ -2278,20 +2476,22 @@ AddSubClass("fighter(laserllama)", "marksman", {
 			description : desc(["My normal and long range for ranged weapon attacks increases by 10 ft times my Fighter lvl", 
 				"Also, once per turn, when I have advantage on a ranged weapon attack, I can forgo advantage and make one additional ranged weapon attack"
 				]),
-			/*calcChanges : {
-				atkAdd : [
-					function (fields, v, output) {
-						if (v.isRangedWeapon && !v.isNaturalWeapon && !v.isDC) {
-							const ranges = fields.Range.split(' ')[0].split('/');
-							ranges[0] = parseInt(range[0]) + classes.known["fighter(laserllama)"].level * 10;
-							ranges[1] = parseInt(range[1]) + classes.known["fighter(laserllama)"].level * 10;
-							fields.Range = ranges[0] + "/" + ranges[1] + " ft"
-						};
-					},
+			calcChanges : {
+			    atkAdd : [
+			        function (fields, v) {
+			            if (v.isRangedWeapon && !v.isNaturalWeapon && !v.isDC && (/\d+\/\d+\s?(ft|m)/).test(fields.Range)) {
+			                var rangeNmbr = fields.Range.match(/\b(\d+)\/(\d+)\b/);
+			                var shortRange = parseInt(rangeNmbr[1]);
+			                var longRange = parseInt(rangeNmbr[2]);
+			                shortRange += classes.known["fighter(laserllama)"].level * 10;
+			                longRange += classes.known["fighter(laserllama)"].level * 10;
+
+			                fields.Range = fields.Range.replace(/\b(\d+)\/(\d+)\b/, shortRange + '/' + longRange);
+			            };
+			        },
 					"My normal and long range for ranged weapon attacks increases by 10 ft times my Fighter lvl"
-				]
-			}*/
-			// NOTE: doesn't work at the moment
+			    ],
+			}
 		},
 		"subclassfeature18" : {
 			name : "Legendary Marksman",
@@ -3616,6 +3816,53 @@ FeatsList["martial training"] = {
 		addToExisting : true
 	}]
 };
+
+// Add the fighting initiate only when all other code has run, so that we get fighting styles added by the code
+RunFunctionAtEnd(function() {
+	if (!ClassList["fighter(laserllama)"] || !ClassList["fighter(laserllama)"].features["fighting style"]) return;
+	var FtngStyles = ClassList["fighter(laserllama)"].features["fighting style"];
+
+	FeatsList["alternate fighting initiate"] = {
+		name : "Alternate Fighting Initiate",
+		source : [["GMB:LL"]],
+		descriptionFull : "Your martial training has helped you develop a particular style of fighting. As a result, you learn one Fighting Style option of your choice from the fighter class. If you already have a style, the one you choose must be different.\n   Whenever you reach a level that grants the Ability Score Improvement feature, you can replace this feat's fighting style with another one from the alternate fighter class that you don't have.",
+		description: "I learn one Fighting Style from the alternate fighter class, which must be one that I don't yet know. I can replace this fighting style for another whenever I gain an Ability Score Improvement.",
+		prerequisite: "Proficiency with a martial weapon",
+		prereqeval : function(v) {
+			return v.martialWeaponsProf || v.otherWeaponsProf.some(function (n) {
+				return WeaponsList[n] && (/Martial/i).test(WeaponsList[n].type);
+			});
+		},
+		choices : []
+	};
+
+	FtngStyles.choices.forEach(function (sName) {
+		var sNameLC = sName.toLowerCase();
+		if (!FtngStyles[sNameLC]) return;
+		FeatsList["alternate fighting initiate"].choices.push(sName);
+
+		if (!FeatsList["alternate fighting initiate"][sNameLC]) {
+			FeatsList["alternate fighting initiate"][sNameLC] = {
+				description : FtngStyles[sNameLC].description.replace(/^\n   /i, '').replace(/\n   /g, '. ') + ". I can replace this fighting style whenever I gain an ASI.",
+				source : FtngStyles[sNameLC].source ? FtngStyles[sNameLC].source : FtngStyles.source
+			}
+		}
+
+		// Copy all attributes except name, source and description
+		for (var attr in FtngStyles[sNameLC]) {
+			if ((/\b(name|description|source)\b/i).test(attr)) continue;
+			FeatsList["alternate fighting initiate"][sNameLC][attr] = FtngStyles[sNameLC][attr];
+		}
+		if (!FeatsList["alternate fighting initiate"][sNameLC].prereqeval) {
+			FeatsList["alternate fighting initiate"][sNameLC].prereqeval = function(v) {
+				var knownStyles = GetFightingStyleSelection();
+				return knownStyles[v.choice] ? false : true;
+			};
+			if (!FeatsList["alternate fighting initiate"][sNameLC].prerequisite) FeatsList["alternate fighting initiate"][sNameLC].prerequisite = sName + " Fighting Style is not selected anywhere else."
+		};
+	});
+
+});
 
 // Source information
 SourceList["GMB:LL"] = {
