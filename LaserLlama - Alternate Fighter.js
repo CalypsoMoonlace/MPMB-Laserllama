@@ -16,9 +16,7 @@
     Sheet:      v13.0.06 and newer
  
     Code by:    Original script by CalypsoMoonlace
-    			Thanks to @garnaul (t-santana on github) for helping out with some exploits
 */
-
 
 // Meta information
 var iFileName = "LaserLlama - Fighter.js";
@@ -76,49 +74,33 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 			source: SpellsList[NewSpellKey].source,
 			addMod: SpellsList[NewSpellKey].addMod,
 			submenu: SpellsList[NewSpellKey].submenu,
-			// NOTE: prereqeval shouldn't be added here because they are automatically selected with autoSelectExtrachoices
-			eval : MartialEvalFactory(NewSpellKey),
-			removeeval : MartialRemoveFactory(NewSpellKey)
+            eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+                if (!CurrentSpells["martial exploits"]) {
+					// Defining the Fighter spell sheet - also known as Martial exploits
+					CurrentSpells["martial exploits"] = {
+						name : "Martial Exploits",
+						shortname : "Martial Exploits",
+						ability: 1,
+						bonus : {},
+						typeSp:"known",
+						refType:"feat"
+					}
+				}
+            },
+            spellcastingBonusElsewhere : {
+                addTo : "martial exploits",
+                spellcastingBonus : {
+                    name : subclass_name +  " Exploits",
+                    spellcastingAbility : 4,
+                    spells : [NewSpellKey],
+                    selection : [NewSpellKey]
+                    //prepared : true // enabling this puts a star on the column, which, while it is cool, is incompatible with stuff that edits it to "at will"
+                }
+            }
 		};
 	}
 
 	return SubclassExploits;
-}
-
-// Factory methods
-function MartialEvalFactory(tempSpell) {
-	// pre: tempSpell is the key of an item from SpellsList
-	// post: returns an eval() function that adds the tempSpell to the spell list when evaluated
-	return function() {
-		if (!CurrentSpells["martial exploits"]) {
-			// Defining the Fighter spell sheet - also known as Martial exploits
-			CurrentSpells["martial exploits"] = {
-				name : "Martial Exploits",
-				shortname : "Martial Exploits",
-				ability: 1,
-				bonus : {},
-				typeSp:"known",
-				refType:"feat"
-			}
-		}
-
-	    CurrentSpells["martial exploits"].bonus["martial exploit " + tempSpell] = [{ // What is added to the spellcasting sheet
-				name : "Martial Exploits",
-				spellcastingAbility : 1,
-				spells : [tempSpell],
-				selection : [tempSpell]
-			}];
-	    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
-	}
-}
-
-function MartialRemoveFactory(tempSpell) {
-	// pre: tempSpell is the key of an item from SpellsList
-	// post: returns a removeeval() function that remove the tempSpell from the spell list when evaluated
-	return function() {
-	    delete CurrentSpells["martial exploits"].bonus["martial exploit " + tempSpell];
-	    SetStringifieds('spells'); CurrentUpdates.types.push('spells');
-	}
 }
 
 function ExploitPrereqFactory(tempSpell, class_name) {
@@ -183,9 +165,9 @@ var FightingStylesLL = {
 					for (var i = 1; i <= FieldNumbers.actions; i++) {
 						if ((/off.hand.attack/i).test(What('Bonus Action ' + i))) return;
 					};
-					if ((/\bfinesse\b/i).test(fields.Description)) output.extraDmg += 2;
+					if ((/\bfinesse\b/i).test(fields.Description)) output.extraHit += 2;
 				},
-				"When I'm wielding a finesse weapon in one hand and no weapon nor shield in my other hand, I do +2 damage with that melee weapon. This condition will always be false if the bonus action 'Off-hand Attack' exists."
+				"When I'm wielding a finesse weapon in one hand and no weapon nor shield in my other hand, I do +2 on the attack roll with that melee weapon. This condition will always be false if the bonus action 'Off-hand Attack' exists."
 			]
 		},
 		extraAC : {
@@ -522,1448 +504,6 @@ var FightingStylesLL = {
 	}
 };
 
-// Exploits list
-
-/* HOW TO ADD AN EXPLOIT 
-	Exploits attributes are split into two parts:
-	1. Exploit exclusive attributes
-	2. Regular spell attributes
-	
-	Exploit exclusive attributes are detailed below:
-	isExploit // REQUIRED // 
-		TYPE: boolean
-		Has to be set to true for ALL Exploits
-		Setting it to false is the same as not putting it
-
-	submenu // OPTIONAL //
-		TYPE: string
-		Determines the submenu in which the Exploit will be added, if any
-		It is recommended to use a submenu related to the degree of the Exploit
-
-	prereqeval // OPTIONAL //
-		TYPE: function or, for backwards-compatibility, string that is evaluated using eval()
-		This should return 'true' if the prerequisite is met or 'false' otherwise
-		NOTE: Do not add the class level preqrequisite, as it is calculated using the spell level attribute
-		For more details: https://github.com/morepurplemorebetter/MPMBs-Character-Record-Sheet/blob/master/additional%20content%20syntax/feat%20(FeatsList).js#L146
-
-	addMod // OPTIONAL //
-		TYPE: array of objects (variable length)
-		This should only be used if the exploit gives a passive bonus (eg, replacing a skill check with another ability)
-		For more details: https://github.com/morepurplemorebetter/MPMBs-Character-Record-Sheet/blob/master/additional%20content%20syntax/_common%20attributes.js#L2108 
-
-	Regular spell attributes are detailed below:
-	classes // REQUIRED //
-		TYPE: array (variable length)
-		This determines which classes can access this Exploit
-
-	level // REQUIRED //
-		TYPE: number (0-5)
-		This is the exploit's degree
-
-	school // OPTIONAL //
-		TYPE: string
-		This determines the school in which the spell belongs
-		For Exploits, there are currently the following schools: Combat, Skill & Order
-
-		You can also define a new spell school abbreviation by adding it to the "spellSchoolList" object, like so:
-			spellSchoolList["NewSc"] = "new school";
-		Be aware that the object name can use capitalization but the entered string can't.
-
-	components // OPTIONAL //
-		TYPE: string
-		This determines the required components for the spell
-		For Exploits, there might be components such as a ranged weapon, a melee weapon, a free hand, etc.
-
-	All other spell attributes can be found at:
-	https://github.com/morepurplemorebetter/MPMBs-Character-Record-Sheet/blob/master/additional%20content%20syntax/spell%20(SpellsList).js
-
-*/
-
-// New spell schools
-spellSchoolList["Combat"] = "combat";
-spellSchoolList["Skill"] = "skill";
-spellSchoolList["Order"] = "order";
-
-// Martial Exploits
-// 1st degree martial exploits
-SpellsList["arresting strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "Arresting Strike",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a weapon attack",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "Instantaneous",
-	save : "Dex",
-	description : "On hit, target makes Dex saving throw or speed reduced to 0 and takes an Exploit Die of bonus dmg",
-	descriptionFull : "When you hit a target with a weapon attack, you can expend one Exploit Die and force it to make a Dexterity saving throw. On a failure, it takes bonus damage equal to one roll of your Exploit Die and its speed is 0 until the start of your next turn."
-};
-
-SpellsList["brace up"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Con') >= 11},
-	// Regular spell attributes
-	name : "Brace Up",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Gain 1+Con temporary hit points",
-	descriptionFull : "You steel yourself for combat, preparing yourself to take a hit. As a bonus action, you can expend one Exploit Die and gain temporary hit points equal to 1 + your Constitution modifier."
-};
-
-SpellsList["commanding presence"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Str') >= 11 || What('Cha') >= 11},
-	addMod : { type : "skill", field : "Intimidation", mod : "max(Str-Cha|0)", text : "I can replace Charisma (Intimidation) checks with Strength (Intimidation)" },
-	// Regular spell attributes
-	name : "Commanding Presence",
-	classes : ["fighter(laserllama)", "barbarian(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to Persuasion and Intimidation checks; Can make Str (Intimidation) checks (passive)",
-	descriptionFull : "When making a Charisma (Persuasion) or Charisma (Intimidation) check, you can expend one Exploit Die, roll it, and add the result to your ability check after rolling the d20 but before determining success.\n\nAdditionally, when required to make a Charisma (Intimidation) check, you can opt to make a Strength (Intimidation) check instead."
-};
-
-SpellsList["counter"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Counter",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when someone misses you with a melee attack",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "When a crea misses me in melee; Use my reaction for melee attack; Add exploit die to dmg",
-	descriptionFull : "When a creature you can see misses you with a melee attack, you can use your reaction to expend an Exploit Die, make a single melee weapon attack against your attacker, and on hit, add one roll of your Exploit Die to the damage roll of that attack."
-};
-
-SpellsList["cunning instinct"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Wis') >= 11},
-	// Regular spell attributes
-	name : "Cunning Instinct",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a Wisdom (Perception) or Wisdom (Survival) check",
-	descriptionFull : "When making a Wisdom (Perception) or Wisdom (Survival) check, you can expend one Exploit Die, roll it, and add the result to your ability check after rolling but before determining success or failure."
-};
-
-SpellsList["disarm"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "Disarm",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a weapon attack",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "Instantaneous",
-	save : "Str",
-	description : "On hit, target makes Str saving throw or drops one item and takes an Exploit Die of bonus dmg",
-	descriptionFull : "When you hit a creature with a weapon attack, you can expend an Exploit Die and attempt to disarm it. It must succeed on a Strength saving throw, or it takes additional damage equal to one roll of your Exploit Die, and it drops one item of your choice that it is currently holding on the ground in the space that it is currently occupying."
-};
-
-SpellsList["feat of strength"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Str') >= 11 || What('Con') >= 11},
-	// Regular spell attributes
-	name : "Feat of Strength",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add any Exploit Die up to my Prof Bonus to a Str or Con ability check",
-	descriptionFull : "Whenever you make a Strength or Constitution ability check you can expend Exploit Dice (up to your proficiency bonus), roll those dice, and add the total to the result of your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["feint"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "Feint",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 bns",
-	range : "15 ft",
-	duration : "Instantaneous",
-	description : "One creature makes Wis save or I have adv on all my attacks against them until the end of my turn",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to feint, forcing a creature that can see you within 15 feet to make a Wisdom saving throw. On a failed save, you have advantage on your attacks against it until the end of your current turn."
-};
-
-SpellsList["first aid"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "First Aid",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 a",
-	timeFull : "An action",
-	range : "Touch",
-	duration : "Instantaneous",
-	description : "Touch a creature with at least 1 hp, expend any Exploit Die up to Prof Bonus to heal total roll + its Con",
-	descriptionFull : "As an action, you can touch a creature that has at least 1 hit point and expend Exploit Dice (up to your proficiency bonus), roll those dice, and that creature regains a number of hit points equal to the total roll + its Constitution modifier."
-};
-
-SpellsList["heroic fortitude"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	// Regular spell attributes
-	name : "Heroic Fortitude",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Save",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a Str, Dex or Con saving throw",
-	descriptionFull : "Whenever you are forced to make a Strength, Dexterity, or Constitution saving throw you can expend an Exploit Die, roll it, and add the result to your saving throw. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["hurl"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Str') >= 11},
-	// Regular spell attributes
-	name : "Hurl",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Attack",
-	timeFull : "In place of an attack",
-	range : "60/120 ft",
-	duration : "Instantaneous",
-	save : "Dex",
-	description : "1 crea makes Dex saving throw or both crea and thrown object take Exploit Die + Str bludg dmg",
-	descriptionFull : "In place of an attack, you can expend an Exploit Die to throw an object that you are holding at a target you can see within 60 feet. The target must succeed on a Dexterity saving throw or both the object and target take bludgeoning damage equal to one roll of your Exploit Die + your Strength modifier.\n\nAt 11th level, the range of this Exploit becomes 120 feet"
-};
-
-SpellsList["inquisitive eye"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Int') >= 11 ||What('Wis') >= 11},
-	// Regular spell attributes
-	name : "Inquisitive Eye",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to an Intelligence (Investigation) or a Wisdom (Insight) check",
-	descriptionFull : "When you make an Intelligence (Investigation) or a Wisdom (Insight) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["lightstep"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Lightstep",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a Dexterity (Acrobatics) or a Dexterity (Stealth) check",
-	descriptionFull : "When you make a Dexterity (Acrobatics) or a Dexterity (Stealth) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["lunge"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Lunge",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Attack",
-	timeFull : "No action required, as part of a weapon attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon attack",
-	duration : "Instantaneous",
-	description : "Increase range of a melee weapon attack by 5 ft; Add Exploit Die to dmg",
-	descriptionFull : "As part of a melee weapon attack you can expend an Exploit Die to increase the range of that attack by 5 feet. On hit, you deal additional damage equal to one roll of your Exploit Die."
-};
-
-SpellsList["mighty leap"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Mighty Leap",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Jump",
-	timeFull : "After moving at least 10 ft immediately before jumping",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Increase jump distance by 10 ft * Exploit Die expended (up to prof bonus) even if it exceeds my speed",
-	descriptionFull : "When you move at least 10 feet immediately before you jump, you can expend Exploit Dice (up to your proficiency bonus) to increase the distance of your jump by 10 feet for each Exploit Die expended, even if this exceeds your remaining speed."
-};
-
-SpellsList["mighty thrust"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Str') >= 11},
-	// Regular spell attributes
-	name : "Mighty Thrust",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Attack",
-	timeFull : "In place of an attack",
-	range : "Touch",
-	duration : "Instantaneous",
-	save : "Dex",
-	description : "One crea makes Str save (larger crea have adv.) or knocked back in line by 5 ft times my Str mod",
-	descriptionFull : "In place of an attack, you can expend an Exploit Die to force one target you touch to make a Strength saving throw. On a failed save, it is knocked back in a line number of feet equal to 5 times your Strength modifier. A target that is more than one size larger than you has advantage on its saving throw."
-};
-
-SpellsList["parry and riposte"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Parry and Riposte",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when someone hits you with a melee attack",
-	components : "W*", // W = weapon, adding a * so the user knows it's more specific
-	compMaterial : "Finesse or versatile weapon",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to AC against 1 attack; Melee attack as part of the reaction if turns hit into miss",
-	descriptionFull : "While you are wielding a finesse or versatile weapon, and a creature you can see hits you with a melee attack, you can use your reaction to expend one Exploit Die, roll it, and add it to your Armor Class against that attack. Should this cause the attack to miss, you can make one melee weapon attack against your attacker as part of the same reaction."
-};
-
-SpellsList["precision strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Precision Strike",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Attack",
-	timeFull : "No action required, as part of a weapon attack",
-	range : "Self",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to attack roll",
-	descriptionFull : "As part of a weapon attack you can expend one Exploit Die, roll it, and add the result to your attack roll. You can use this Exploit after you roll, but before you know if you hit or miss."
-};
-
-SpellsList["rustic intuition"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Wis') >= 11},
-	// Regular spell attributes
-	name : "Rustic Intuition",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to an Intelligence (Nature), Wisdom (Animal Handling), or Wisdom (Medicine) check",
-	descriptionFull : "When you make an Intelligence (Nature), Wisdom (Animal Handling), or Wisdom (Medicine) check you can expend an Exploit Die, roll it, and add the result to your ability check. You can do so after you roll, but before you know the result."
-};
-
-SpellsList["ruthless strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Str') >= 11},
-	// Regular spell attributes
-	name : "Ruthless Strike",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, when you hit a nonmagical object with an attack",
-	range : "Melee",
-	duration : "Instantaneous",
-	description : "On hit, expend any Exploit Die up to Prof Bonus as bonus dmg",
-	descriptionFull : "When you hit a target with a melee weapon attack, you can expend Exploit Dice (up to your proficiency bonus), roll the dice, and add them to the damage roll of that attack."
-};
-
-SpellsList["scholarly recall"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Int') >= 11},
-	// Regular spell attributes
-	name : "Scholarly Recall",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to an Intelligence (Arcana), Intelligence (History), or Intelligence (Religion) check",
-	descriptionFull : "Whenever you make an Intelligence (Arcana), Intelligence (History), or Intelligence (Religion) check you can expend an Exploit Die, roll it, and add the result to your ability check. You can do so after you roll, but before you know the result."
-};
-
-SpellsList["shield impact"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Str') >= 11},
-	// Regular spell attributes
-	name : "Shield Impact",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when someone hits you with an attack",
-	components : "Shield",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Reduce dmg taken by Exploit Die (up to my Prof Bonus) + Str",
-	descriptionFull : "When a creature you can see hits you with an attack, you can use a reaction to expend Exploit Dice (up to your proficiency bonus), roll those dice, and reduce the damage of that attack by an amount equal to the total you rolled + your Strength modifier. You must be wielding a shield to use this Exploit."
-};
-
-SpellsList["skilled rider"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Wis') >= 11},
-	// Regular spell attributes
-	name : "Skilled Rider",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	components : "Mount",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to an Animal Handling check to control my mount or any d20 roll my mount makes",
-	descriptionFull : "When your trained mount makes an ability check, attack roll, or saving throw, or you make a Wisdom (Animal Handling) check to control it, you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["subtle con"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Dex') >= 11 || What('Cha') >= 11},
-	// Regular spell attributes
-	name : "Subtle Con",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a Dex (Sleight of Hand), a Cha (Deception), or a Cha (Performance) check",
-	descriptionFull : "When you make a Dexterity (Sleight of Hand), a Charisma (Deception), or a Charisma (Performance) check you can expend an Exploit Die, roll it, and add it to your ability check. You can do so after you roll, but before you know the result."
-};
-
-SpellsList["sweeping strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "Sweeping Strike",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, when you hit a nonmagical object with an attack",
-	range : "Melee",
-	duration : "Instantaneous",
-	description : "On hit, force target to make a Dex saving throw or take Exploit Die of bludg dmg and fall prone",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die and force it to make a Dexterity saving throw. On a failure, it takes bludgeoning damage equal to one roll of your Exploit Die and falls prone. A creature more than one size larger than you has advantage on its saving throw."
-};
-
-SpellsList["warding strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "Warding Strike",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when someone moves within the reach of a melee weapon you are wielding",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "When a crea moves within my melee reach; Use my reaction for melee attack; Add exploit die to dmg",
-	descriptionFull : "When a creature moves within the reach of a melee weapon you are wielding, you can use a reaction to expend an Exploit Die and make a single attack against it with that weapon. On hit, you add one roll of your Exploit Die to your damage roll."
-};
-
-// From the expanded fighter
-SpellsList["destructive strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Str') >= 11},
-	// Regular spell attributes
-	name : "Destructive Strike",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, when you hit a nonmagical object with an attack",
-	range : "Attack",
-	duration : "Instantaneous",
-	description : "On hit on a non-magical item, treat attack dmg as maximum dmg and add roll of Exploit Die to dmg",
-	descriptionFull : "When you hit a nonmagical object with an attack, you can expend an Exploit Die, add it to the damage roll, and cause that attack to deal maximum damage in place of rolling."
-};
-
-SpellsList["eloquent speech"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Int') >= 11},
-	addMod : [
-		{ type : "skill", field : "Persuasion", mod : "max(Int-Cha|0)", text : "I can replace Charisma (Persuasion) checks with Intelligence (Persuasion)" },
-		{ type : "skill", field : "Deception", mod : "max(Int-Cha|0)", text : "I can replace Charisma (Deception) checks with Intelligence (Deception)" }
-	],
-	// Regular spell attributes
-	name : "Eloquent Speech",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to Pers and Decep checks; Can make Int (Persuasion) & Int (Persuasion) checks (passive)",
-	descriptionFull : "Whenever you would normally make a Charisma (Deception) or Charisma (Persuasion) check, you can choose to use your Intelligence in place of Charisma for that ability check.\n\nAlso, whenever you make an Intelligence (Deception) or Intelligence (Persuasion) check you can expend one Exploit Die, roll it, and add the result to your check. You can do so after you roll the d20, but before you know if you succeed."
-};
-
-SpellsList["mechanical insight"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Int') >= 11},
-	// Regular spell attributes
-	name : "Mechanical Insight",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	components : "M",
-	compMaterial : "Thieves' tools or tinker's tools",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a thieves' tools or tinker's tools check",
-	descriptionFull : "Whenever you make an ability check with a set of thieves' tools or tinker's tools you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["reposition"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	// Regular spell attributes
-	name : "Reposition",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 bns",
-	range : "5 ft",
-	duration : "Instantaneous",
-	description : "Switch place with a conscious and willing creature, either me or target gains Exploit Die of temp hp",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to switch places with a conscious and willing creature within 5 feet of you. This movement does not provoke opportunity attacks. Either you or the creature you switched places with gains temporary hit points equal to one roll of your Exploit Die."
-};
-
-SpellsList["savvy explorer"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Int') >= 11 || What('Wis') >= 11},
-	// Regular spell attributes
-	name : "Savvy Explorer",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	components : "M",
-	compMaterial : "Land/water vehicle, cartographer's tools, or navigator's tools",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a land/water vehicles, cartographer's tools, or navigator's tools check",
-	descriptionFull : "When you make an ability check with land or water vehicles, cartographer's tools, or navigator's tools you can expend one Exploit Die, roll it, and add it to your ability check. You can do so after you roll the d20, but before you know if you succeed."
-};
-
-SpellsList["streetwise"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (checks)]",
-	prereqeval : function(v) { return What('Cha') >= 11},
-	addMod : [
-		{ type : "skill", field : "History", mod : "max(Cha-Int|0)", text : "I can replace Intelligence (History) checks with Charisma (History)" },
-		{ type : "skill", field : "Investigation", mod : "max(Cha-Int|0)", text : "I can replace Intelligence (Investigation) checks with Charisma (Investigation)" }
-	],
-	// Regular spell attributes
-	name : "Streetwise",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to Hist and Invest checks; Can make Cha (History) & Cha (Investigation) checks (passive)",
-	descriptionFull : "If you are in a settlement, you can make Charisma (History) and Charisma (Investigation) checks instead of the normal Intelligence (History) or Intelligence (Investigation) checks.\n\nAlso, when you make a Charisma (History) or a Charisma (Investigation) check you can expend one Exploit Die, roll it, and add the result to your ability check. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["take down"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[1st-degree exploits (combat)]",
-	prereqeval : function(v) { return What('Str') >= 11},
-	// Regular spell attributes
-	name : "Take Down",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 1,
-	school : "Combat",
-	time : "1 bns",
-	range : "Touch",
-	duration : "Instantaneous",
-	description : "Attempt to shove or grapple a creature and add Exploit Die to the Strength (Athletics) check",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to touch a creature and attempt to Shove or Grapple it, and add one roll of your Exploit Die to your Strength (Athletics) check."
-};
-
-// 2nd-Degree Martial Exploits
-SpellsList["aggressive sprint"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Aggressive sprint",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Move up to my walk speed toward a hostile creature; Single melee weapon attack against it",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to move up to your walking speed toward a hostile creature that you can see and make a single melee weapon attack against it."
-};
-
-SpellsList["blinding debris"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 11},
-	// Regular spell attributes
-	name : "Blinding Debris",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "10 ft",
-	save : "Con",
-	duration : "1 rnd",
-	description : "One crea Con saving throw or blinded until beginning of my next turn",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to attempt to blind a creature with debris. A creature you can see within 10 feet must succeed on a Constitution saving throw or take piercing damage equal to one roll of your Exploit Die and become blinded until the beginning of your next turn."
-};
-
-SpellsList["concussive blow"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13},
-	// Regular spell attributes
-	name : "Concussive Blow",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a melee weapon attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon attack",
-	save : "Con",
-	duration : "1 rnd",
-	description : "On fail, 0 speed, can't speak, disadv. on attacks, skills and dex saving throws and attacks have adv.",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to empower your attack and force it to make a Constitution saving throw. On a failed save, the target suffers the effects below until the beginning of your next turn:\nIts speed becomes 0, and it can speak only falteringly.\nIt has disadvantage on attack rolls and ability checks.\nIt has disadvantage on Dexterity saving throws.\nAttack rolls against it have advantage."
-};
-
-SpellsList["crippling strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Crippling Strike",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a weapon attack",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "1 rnd",
-	save : "Con",
-	description : "On hit, one crea save or Exploit Die of bonus dmg and blinded or deafened or can't speak (my choice)",
-	descriptionFull : "When you hit a target with a weapon attack, you can expend an Exploit Die to cripple one of its senses. It must succeed on a Constitution saving throw or it takes additional damage equal to one roll of your Exploit Die and is blinded, deafened, or cannot speak (your choice) until the start of your next turn."
-};
-
-SpellsList["defensive stance"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Defensive Stance",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "1 rnd",
-	description : "Add Exploit Die to my AC to every attack from a creature I can see that targets me",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to enter a defensive stance that lasts until the start of your next turn. Each time a creature you can see targets you with an attack while you are in this stance, you gain a bonus to your Armor Class against that attack equal to a roll of your Exploit Die."
-};
-
-SpellsList["dirty hit"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 13},
-	// Regular spell attributes
-	name : "Dirty Hit",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a melee weapon attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "1 rnd",
-	save : "Con",
-	description : "On hit, one crea save or Exploit Die of bonus dmg and prone and can't take reactions",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to strike at a vulnerable area. It must succeed on a Constitution saving throw or it takes additional damage equal to a roll of your Exploit Die, falls prone, and it cannot take reactions until the start of your next turn."
-};
-
-SpellsList["heroic will"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Heroic Will",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Skill",
-	time : "Save",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to an Int, Wis or Cha saving throw",
-	descriptionFull : "Whenever you are forced to make an Intelligence, Wisdom, or Charisma saving throw you can expend an Exploit Die, roll it, and add the result to your saving throw. You can do so after you roll the d20, but before you know if you succeed or fail."
-};
-
-SpellsList["honor duel"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Honor Duel",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "30 ft",
-	components : "V",
-	duration : "1 min",
-	save : "Wis",
-	description : "One crea save or dis. on attacks vs. not-me; Extra save each turn; Ends if I attack someone else",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die and shout a challenge at a foe. One creature of your choice within 30 feet that can see or hear you must make a Wisdom saving throw. On a failed save, the creature has disadvantage on all attack rolls it makes against targets other than you for 1 minute. The creature can repeat this saving throw at the end of each of its turns, ending the effect on a success. This effect ends early if you attack a creature other than the target."
-};
-
-SpellsList["martial focus"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Martial Focus",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Attack",
-	timeFull : "No action required, as part of a weapon attack",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "Instantaneous",
-	description : "As part of the attack, grant myself advantage",
-	descriptionFull : "As part of a weapon attack you can expend an Exploit Die to grant yourself advantage on your attack roll. You can use this Exploit after you roll, but before you know if you hit or miss."
-};
-
-SpellsList["menacing shout"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Con') >= 13 || What('Cha') >= 13},
-	// Regular spell attributes
-	name : "Menacing Shout",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "30 ft",
-	components : "V",
-	duration : "1 rnd",
-	save : "Wis",
-	description : "One crea save or frightened of me and must use their action to move away (without harming itself)",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die and force one creature within 30 feet that can see or hear you to make a Wisdom saving throw. On a failed save, it is frightened of you until the end of your next turn and must use its action to move as far away from you as possible without harming itself."
-};
-
-SpellsList["redirect"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Redirect",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when a creature you can see misses you with a melee attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "Instantaneous",
-	description : "Redirect melee attack to another target of my choice within range, adding Exploit Die to attack roll",
-	descriptionFull : "When a creature you can see misses you with a melee attack, you can use your reaction to expend an Exploit Die and force it to attack another creature of your choice within range of its attack, adding one roll of your Exploit Die to its attack roll."
-};
-
-SpellsList["rending strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13},
-	// Regular spell attributes
-	name : "Rending Strike",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a melee weapon attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "Until long rest",
-	description : "On hit, Dex saving throw or -1 to AC and Exploit Die of bonus dmg",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to rend its armor. It must succeed on a Dexterity saving throw or it takes additional damage equal to one roll of your Exploit Die and its Armor Class is reduced by 1 until the damage is repaired, or it finishes a long rest."
-};
-
-SpellsList["volley"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 13},
-	// Regular spell attributes
-	name : "Volley",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "1 a",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Ranged weapon",
-	duration : "Instantaneous",
-	description : "All crea of my choice within 5 ft of chosen point save or take Exploit Die + Dex dmg (half on success)",
-	descriptionFull : "As an action, you can expend one Exploit Die to fire a volley of ammunition at a point you can see within normal range of your weapon. Creatures of your choice within 5 feet of that point must make a Dexterity Saving throw. On a failure, they take piercing damage equal to one roll of your Exploit Die + your Dexterity modifier, and half as much on a success."
-};
-
-SpellsList["whirlwind strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 || What('Dex') >= 13},
-	// Regular spell attributes
-	name : "Whirlwind Strike",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon",
-	duration : "Instantaneous",
-	description : "All crea within reach of a melee weapon save or take Exploit Die + Str/Dex dmg (half on success)",
-	descriptionFull : "In place of an attack, you can expend an Exploit Die to force each target within reach of a melee weapon you are wielding to make a Dexterity saving throw. Targets take damage equal to a roll of your Exploit Die + your Strength or Dexterity modifier on a failed save, and half as much on a success."
-};
-
-// From the expanded fighter
-SpellsList["exposing strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Exposing Strike",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a weapon attack",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Weapon attack",
-	duration : "1 rnd",
-	description : "On hit, the next attack against that crea before my turn has adv and adds Exploit Die to dmg",
-	descriptionFull : "When you hit a creature with a weapon attack, you can expend an Exploit Die to temporarily weaken it. The first attack made against that creature before the beginning of your next turn has advantage, and on hit, that attack deals additional damage equal to one roll of your Exploit Die."
-};
-
-SpellsList["exposing strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Exposing Strike",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Miss",
-	timeFull : "No action required, on miss with a melee weapon attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon attack",
-	duration : "Instantaneous",
-	description : "On miss, repeat my attack against another target within reach of my weapon",
-	descriptionFull : "When you make a melee weapon attack and miss, you can expend an Exploit Die to immediately repeat your attack against another target within the reach of your weapon."
-};
-
-SpellsList["hold the line"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 || What('Con') >= 13 },
-	// Regular spell attributes
-	name : "Hold the Line",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "S:10-ft rad",
-	duration : "Until move",
-	description : "All allied crea with a weapon/shield within range gain half cover (see book)",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to form your allies into a defensive position. You and allied creatures within 10 feet that are wielding a weapon or shield gain the benefits of half cover, which also apply to ability checks and saving throws made to avoid being moved against your will.\n\nThe benefits of this Exploit instantly end if you leave your space, and they have no effect on incapacitated creatures."
-};
-
-SpellsList["immovable stance"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 || What('Con') >= 13 },
-	// Regular spell attributes
-	name : "Immovable Stance",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "Until move",
-	save : "Str",
-	description : "Each time a crea tries to grapple, move me or move in my space, Str saving throw or is grappled/prone",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to enter an immovable stance that lasts until you move from the space. Each time a creature attempts to grapple, move you against your will, or move through your space while you are in this stance it must first succeed on a Strength saving throw. On a failed save, you can instantly grapple it or knock it prone."
-};
-
-SpellsList["improvised skill"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	// Regular spell attributes
-	name : "Improvised Skill",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Skill",
-	time : "Check",
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Add Exploit Die to a non proficient check",
-	descriptionFull : "When you make an ability check that doesn't include your proficiency bonus, you can expend an Exploit Die and add it to your roll. You can use this Exploit after you roll, but before you know if you succeed or fail."
-};
-
-SpellsList["intimidating command"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Cha') >= 13 },
-	// Regular spell attributes
-	name : "Intimidating Command",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 2,
-	school : "Combat",
-	time : "1 bns",
-	range : "30 ft",
-	components : "V",
-	duration : "1 rnd",
-	save : "Wis",
-	description : "1 crea save or follow one word command (cannot be directly harmful), e.g. approach, drop, flee, halt",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to shout a one-word command at one creature that can hear you within 30 feet. It must succeed on a Wisdom saving throw, or it is compelled to obey your command to the best of its ability on its next turn unless its actions would be directly harmful to it"
-};
-
-SpellsList["ringing strike"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 },
-	// Regular spell attributes
-	name : "Ringing Strike",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Hit",
-	range : "Attack",
-	duration : "1 min",
-	save : "Wis",
-	description : "On hit, one crea save or -1d4 penalty to all d20 it makes; extra save end of each turn",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to send it reeling. It must succeed on a Wisdom saving throw or it must subtract 1d4 from all ability checks, attack rolls, and saving throws it makes for 1 minute.\n\nA creature can repeat this saving throw at the end of each of its turns, ending the effect on a success."
-};
-
-SpellsList["shattering slam"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 },
-	// Regular spell attributes
-	name : "Shattering Slam",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Attack",
-	range : "S:5-ft rad",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon attack",
-	duration : "Instantaneous",
-	save : "Dex",
-	description : "All crea within range Dex save or fall prone and take Exploit Die + Str dmg (half on save); diff. terrain",
-	descriptionFull : "In place of an attack, you can expend an Exploit Die to strike the ground at your feet with a melee weapon. All creatures within 5 feet of you must succeed on a Dexterity saving throw or take bludgeoning damage equal to one roll of your Exploit Die + your Strength modifier and fall prone. On a successful save, they take half as much damage and don't fall prone.\n\nTerrain in this area that is loose earth or stone becomes difficult terrain until a creature uses its action to clear it."
-};
-
-SpellsList["thunderous blow"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 },
-	// Regular spell attributes
-	name : "Thunderous Blow",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Attack",
-	range : "Melee",
-	time : "Hit",
-	timeFull : "No action required, on hit with a melee weapon attack",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon attack",
-	duration : "Instantaneous",
-	save : "Dex",
-	description : "On hit, one crea save (larger crea have adv.) or Expl Die of bonus dmg and pushed 5 ft times my Str mod",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend an Exploit Die to empower your attack with immense force. The creature must succeed on a Strength saving throw or take additional damage equal to a roll of your Exploit Die and be knocked back in a straight line number of feet equal to 5 times your Strength modifier. Creatures more than one size larger than you have advantage on their saving throw."
-};
-
-SpellsList["trick shot"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 13 || What('Int') >= 13 },
-	// Regular spell attributes
-	name : "Trick Shot",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "Attack",
-	range : "Melee",
-	time : "1 bns",
-	components : "W*", // W = weapon
-	compMaterial : "Ranged weapon that has both the finesse and thrown properties",
-	duration : "Instantaneous",
-	description : "Attack that ignores cover if it can ricochet; Ignore disadv; Add Exploit Die to dmg",
-	descriptionFull : "As a bonus action, you can expend an Exploit Die to make a special ranged weapon attack with a weapon that has both the finesse and thrown properties.\n\nThis attack ignores the benefits of cover, so long as it can ricochet off one surface and hit a target in range. If this attack would normally have disadvantage, it does not, and on hit, it deals additional damage equal to one roll of your Exploit Die."
-};
-
-SpellsList["zephyr slash"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[2nd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 13 || What('Dex') >= 13},
-	// Regular spell attributes
-	name : "Zephyr Slash",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 2,
-	school : "Combat",
-	time : "1 a",
-	range : "S:30-ft line",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon",
-	duration : "Instantaneous",
-	description : "Move up to 30 ft, all crea I go through Dex save or take 2 Exploit Die + Str/Dex dmg",
-	descriptionFull : "As an action, you can expend an Exploit Die and flourish your melee weapon instantly move up to 30 feet in a straight line, without provoking attacks of opportunity. Any creatures that you pass through must succeed on a Dexterity saving throw or take damage equal to two rolls of your Exploit Die + either your Strength or Dexterity modifier."
-};
-
-// 3rd degree exploits
-SpellsList["disorienting blow"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[3rd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 15},
-	// Regular spell attributes
-	name : "Disorienting Blow",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 3,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a melee weapon attack",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon attack",
-	range : "Melee",
-	duration : "1 min",
-	save : "Wis",
-	description : "Add 2 ED to dmg; save or -2 AC, speed halved, disadv. on Dex saves, no rea, only 1 a (1 atk) or 1 bns",
-	descriptionFull : "When you hit with a creature with a melee weapon attack, you can expend an Exploit Die to strike with great force, dealing additional damage equal to two rolls of your Exploit Die and it must succeed on a Wisdom saving throw or suffer the effects below for 1 minute: \nIts speed is halved and it cannot take reactions.\nIts Armor Class is reduced by 2.\nIt has disadvantage on Dexterity saving throws.\nOn its turn it can only take an action or a bonus action.\nIt cannot make more than one attack during its turn, even if a feature would allow it to make multiple.\n\nIt can make a Wisdom saving throw at the end of each of its turns, ending these effects on a success.\nThis Exploit's effects do not stack with the slow spell."
-};
-
-SpellsList["heroic focus"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[3rd-degree exploits]",
-	// Regular spell attributes
-	name : "Heroic Focus",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 3,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "Conc, 1 min",
-	description : "+2 AC, speed doubled, adv. on Dex saves, extra action (1 attack, dash, disengage, hide, search, object)",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to enter a heightened state of focus which you must concentrate on as if you were concentrating on a spell. For 1 minute, or until you lose concentration, you gain the following benefits:\nMy speed is doubled, I gain a +2 bonus to AC, I have advantage on Dexterity saving throws, and I gain an additional action on each of my turns. That action can be used only to take the Attack (one weapon attack only), Dash, Disengage, Hide, or Use an Object action.\nWhen the effect ends, you must succeed on a Constitution saving throw against your Exploit save DC, or you can't move or take actions until after the end of your next turn.\nThis Exploit's effects do not stack with the haste spell."
-};
-
-SpellsList["mythic athleticism"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[3rd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 15 || What('Con') >= 15 },
-	// Regular spell attributes
-	name : "Mythic Athleticism",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 3,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "Conc, ED*10m",
-	description : "Str & Con check cannot be <10, walk speed increases by 5*Str, one size larger carry/grap, double jump",
-	descriptionFull : "As a bonus action, you can expend Exploit Dice (up to your proficiency bonus) to enter a heightened state of physical performance which you must concentrate on as if you were concentrating on a spell. You gain the benefits listed below:\nWhenever you make a Strength or Constitution check, you can treat a roll of 9 or lower on the d20 as a 10.\nYour walking speed increases by a number of feet equal to 5 times your Strength modifier (minimum of 5 feet).\nYou count as one size larger for the purposes of carrying capacity and the size of creatures that you can grapple.\nBoth your long and high jump distances double, even if that distance would exceed your remaining movement.\nThe effects last for 10 minutes for each Exploit Die spent."
-};
-
-SpellsList["mythic resilience"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[3rd-degree exploits]",
-	// Regular spell attributes
-	name : "Mythic Resilience",
-	classes : ["fighter(laserllama)"],
-	source : ["GMB:LL", 0],
-	level : 3,
-	school : "Combat",
-	time : "Special",
-	timeFull : "No action required, when you take damage from a source you can see", // NOTE: RAW it doesn't consume the reaction, though I'm not sure if it's intended
-	range : "Self",
-	duration : "Instantaneous",
-	description : "Reduce dmg by (3*ED+Con) * ED spent (up to my prof bns); Excess dmg reduction becomes temp HP",
-	descriptionFull : "When you take damage from a source you can see, you can expend Exploit Dice (up to your proficiency bonus) to reduce the incoming damage.\nFor each Exploit Die you expend you roll three Exploit Dice, adding your Constitution modifier to the total of all the dice. You reduce the damage by the total.\nIf the total rolled exceeds the amount of damage, you gain temporary hit points equal to the remaining amount."
-};
-
-SpellsList["thunderous shot"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[3rd-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 15 || What('Dex') >= 15 },
-	// Regular spell attributes
-	name : "Thunderous Shot",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 3,
-	school : "Combat",
-	time : "Attack",
-	range : "Line (W)",
-	components : "W", // W = weapon
-	compMaterial : "Ranged weapon",
-	duration : "Instantaneous",
-	description : "All crea in line save or take (2 ED) * ED spent (up to my PB) + Str/Dex dmg and prone (half on success)",
-	descriptionFull : "In place of an attack, you can expend Exploit Dice (up to your proficiency bonus) and fire one piece of ammunition in a line, out to the weapon's normal range. Creatures in the line must succeed on a Dexterity saving throw or take piercing damage equal to two rolls of your Exploit Die for each Die you spent + either your Strength or Dexterity modifier and fall prone. On a success, they take half that damage and don't fall prone."
-};
-
-SpellsList["war cry"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[3rd-degree exploits]",
-	// Regular spell attributes
-	name : "War Cry",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 3,
-	school : "Combat",
-	time : "1 a",
-	range : "S:30" + (typePF ? "-" : "") + "ft cone",
-	components : "V",
-	duration : "1 min",
-	save : "Wis",
-	description : "All crea save or drop what it is holding and frightened; extra save at end of turn if not in line of sight",
-	descriptionFull : "As an action, you can expend one Exploit Die and issue a mighty cry, forcing creatures of your choice that can hear you in an adjacent 30-foot cone to make a Wisdom saving throw. On a failed save, they drop whatever they are holding and are frightened of you for 1 minute. If a frightened creature ends its turn and does not have line of sight to you, it can repeat the saving throw, ending the effect on a success."
-};
-
-// 4th degree exploits
-SpellsList["expert determination"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[4th-degree exploits]",
-	// Regular spell attributes
-	name : "Expert Determination",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 4,
-	school : "Skill",
-	time : "1 a",
-	range : "Self",
-	duration : "1 h",
-	description : "Choose one skill/tool I'm proficient in; Add Exploit die to all checks for this skill/tool",
-	descriptionFull : "As an action, you can expend one Exploit Die to focus your mind and temporarily sharpen one of your skills. Choose a skill or tool that you are proficient in. For the next hour, you can add one roll of your Exploit Die to any check you make that uses that skill, without expending an Exploit Die."
-};
-
-SpellsList["fluid movements"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[4th-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 17 },
-	// Regular spell attributes
-	name : "Fluid Movements",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 4,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	duration : "Conc, 1 min",
-	description : "Dash & diseng as 1 bns; magic/terrain cannot reduce speed, paralyze, restrain; 5 ft to escape (see book)",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die to enter a heightened state of movement which you must concentrate on as if you were concentrating on a spell. For 1 minute, or until you lose concentration, you gain the following benefits:\n\u2022 Your movement is unaffected by difficult terrain.\n\u2022 You can use a bonus action on your turn to gain the benefits of both the Dash and Disengage action.\n\u2022 Spells and other magical effects can neither reduce your speed nor cause you to be paralyzed or restrained.\n\u2022 You can spend 5 feet of movement to instantly escape from nonmagical restraints like manacles or a grapple.\n\u2022 Swimming or being underwater imposes no penalties on your movements or your attack rolls."
-};
-
-SpellsList["quick draw"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[4th-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 17 },
-	// Regular spell attributes
-	name : "Quick Draw",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 4,
-	school : "Combat",
-	time : "1 bns",
-	range : "Self",
-	components : "W", // W = weapon
-	compMaterial : "Ranged weapon",
-	duration : "Conc, 1 min",
-	description : "Use bns (including when activating this expl) to make 2 ranged weapon atks as long as I have ammo",
-	descriptionFull : "As a bonus action, you can expend one Exploit Die and enter into a heightened state of focus which you must concentrate on as if concentrating on a spell. For the next minute, or until you lose concentration, you can use a bonus action, including the bonus action you used to use this Exploit to make two ranged weapon attacks so long as you have ammunition.\nThis Exploit's effects don't stack with the swift quiver spell."
-};
-
-SpellsList["staggering blow"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[4th-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 17 },
-	// Regular spell attributes
-	name : "Staggering Blow",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 4,
-	school : "Combat",
-	time : "Hit",
-	timeFull : "No action required, on hit with a melee weapon attack",
-	range : "Melee",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon",
-	duration : "1 min",
-	description : "Add 3 expl die to dmg; Wis saving throw or disadv. on checks & attack rolls and can't take reactions",
-	descriptionFull : "When you hit a creature with a melee weapon attack, you can expend one Exploit Die to strike with near-supernatural power, dealing additional damage equal to three rolls of your Exploit Die. It must succeed on a Wisdom saving throw, or for the next minute it has disadvantage on ability checks and attack rolls and can't take reactions. The creature can make a Wisdom saving throw at the start of each of its turns, ending these effects on a success."
-};
-
-SpellsList["unbreakable"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[4th-degree exploits]",
-	prereqeval : function(v) { return What('Con') >= 17 },
-	// Regular spell attributes
-	name : "Unbreakable",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 4,
-	school : "Combat",
-	time : "Special",
-	timeFull : "No action required, when you take damage that would reduce you to 0 hit points, even if that damage would kill you outright",
-	range : "Self",
-	duration : "1 min",
-	description : "Fall to 1 HP and gain temp HP equal to (3 expl die) * Expl die spent (up to prof bonus)",
-	descriptionFull : "When you take damage that would reduce you to 0 hit points, even if that damage would kill you outright, you can expend Exploit Dice (up to your proficiency bonus) and fall to 1 hit point. For each Exploit Die you spent, you roll three Exploit Dice, and you gain temporary hit points equal to the total roll."
-};
-
-// 5th degree exploits
-SpellsList["storm of arrows"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[5th-degree exploits]",
-	prereqeval : function(v) { return What('Dex') >= 19 },
-	// Regular spell attributes
-	name : "Storm of Arrows",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 5,
-	school : "Combat",
-	time : "1 a",
-	range : "Attack",
-	components : "W", // W = weapon
-	compMaterial : "Ranged weapon",
-	duration : "Instantaneous",
-	description : "All crea I choose within 30 ft; Dex saving throw or (2 ED) * ED spent (up to PB) + Dex dmg (half on save)",
-	descriptionFull : "As an action on your turn, you can expend Exploit Dice (up to your proficiency bonus) to fire a volley of ammunition at a point you can see within the range of your weapon. Creatures of your choice within 30 feet of that point must succeed on a Dexterity saving throw or they take piercing damage equal to two rolls of your Exploit Die for each Exploit Die you spent + your Dexterity modifier. Any creature that succeeds on its saving throw takes half as much piercing damage. You must have enough ammunition to hit each target."
-};
-
-SpellsList["steel wind slash"] = {
-	// Exploit exclusive attributes
-	isExploit : true,
-	submenu : "[5th-degree exploits]",
-	prereqeval : function(v) { return What('Str') >= 19 || What('Dex') >= 19},
-	// Regular spell attributes
-	name : "Steel Wind Slash",
-	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
-	level : 5,
-	school : "Combat",
-	time : "1 a",
-	range : "30 ft",
-	components : "W", // W = weapon
-	compMaterial : "Melee weapon",
-	duration : "Instantaneous",
-	description : "Melee attack vs 5 crea in range; (2 ED) * ED spent (up to PB) + Dex/Str dmg; Teleport next to one target",
-	descriptionFull : "As an action on your turn, you can expend Exploit Dice (up to your proficiency bonus) and flourish a melee weapon then vanish. Choose up to five targets that you can see within 30 feet and make one melee weapon attack against each one.\nOn a hit, each target takes damage of your weapon's type equal to two rolls of your Exploit Die for each Exploit Die you spent + either your Strength or Dexterity modifier.\nYou then appear in an unoccupied space of your choice you can see within 5 feet of one of the targets of this Exploit."
-};
-
 // Main class
 ClassList["fighter(laserllama)"] = {
 
@@ -2074,7 +614,22 @@ ClassList["fighter(laserllama)"] = {
 				// Exploit dice
 				usages : ['', 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 6],
 				additional : ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"],
-				recovery : "short rest"
+				recovery : "short rest",
+
+				// Eval
+                eval: function() {
+                    if (!CurrentSpells["martial exploits"]) {
+                        // Defining the Fighter spell sheet - also known as Martial exploits
+                        CurrentSpells["martial exploits"] = {
+                            name : "Martial Exploits",
+                            shortname : "Martial Exploits",
+                            ability: 2,
+                            bonus : {},
+                            typeSp:"known",
+                            refType:"feat"
+                        }
+                    }
+                }
 			}
 
 			// Make a filtered spell list that contains only Fighter(laserllama) "spells"
@@ -2104,8 +659,17 @@ ClassList["fighter(laserllama)"] = {
 					addMod: NewSpell.addMod,
 					submenu: NewSpell.submenu,
 					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
-					eval : MartialEvalFactory(FighterSpells[i]),
-					removeeval : MartialRemoveFactory(FighterSpells[i])
+					eval: MartialExploits.eval, // in case the user removes all exploits
+					spellcastingBonusElsewhere : {
+                        addTo : "martial exploits",
+                        spellcastingBonus : {
+                            name : "Martial Exploits",
+                            spellcastingAbility : 4,
+                            spells : [FighterSpells[i]],
+                            selection : [FighterSpells[i]]
+                            //prepared : true // enable that for the subclass but not main class
+                        }
+                    }
 				}
 			}
 
@@ -2381,7 +945,7 @@ AddSubClass("fighter(laserllama)", "commander", {
 		"subclassfeature3" : {
 			name : "Commander Exploits",
 			source : [["GMB:LL", 0]],
-			minlevel : 7,
+			minlevel : 3,
 			description : desc(["I learn exploits from the Warlord class who don't count against my total", "This feature has not been implemented yet (interested in this? shoot me a dm!)"])
 		},
 		"subclassfeature3.1" : {
@@ -2572,7 +1136,22 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				extraTimes : levels.map(function (n) {
 					return n < 3 ? 0 : n < 5 ? 2 : n < 9 ? 4 : 5;
 				}),
-				extrachoices : []
+				extrachoices : [],
+
+				// Eval
+                eval: function() {
+                    if (!CurrentSpells["martial exploits"]) {
+                        // Defining the Fighter spell sheet - also known as Martial exploits
+                        CurrentSpells["martial exploits"] = {
+                            name : "Martial Exploits",
+                            shortname : "Martial Exploits",
+                            ability: 2,
+                            bonus : {},
+                            typeSp:"known",
+                            refType:"feat"
+                        }
+                    }
+                }
 			}
 
 			// Make a filtered spell list that contains only Fighter(laserllama) "spells" of degree <= 3
@@ -2602,8 +1181,16 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					addMod: NewSpell.addMod,
 					submenu: NewSpell.submenu,
 					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
-					eval : MartialEvalFactory(FighterSpells[i]),
-					removeeval : MartialRemoveFactory(FighterSpells[i])
+					eval: MartialExploits.eval, // in case the user removes all exploits
+					spellcastingBonusElsewhere : {
+                        addTo : "martial exploits",
+                        spellcastingBonus : {
+                            name : "Master at Arms Exploits",
+                            spellcastingAbility : 4,
+                            spells : [FighterSpells[i]],
+                            selection : [FighterSpells[i]]
+                        }
+                    }
 				}
 			}
 
@@ -2687,6 +1274,21 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					name : "Master of Forms Exploits",
 					note : desc(["Below are my Master of Forms exploits. Each 3rd and 4th degree exploits can only be used once per short rest. Each 5th degree exploit can only be used once per long rest."])
 				}],
+
+				// Eval
+                eval: function() {
+                    if (!CurrentSpells["martial exploits"]) {
+                        // Defining the Fighter spell sheet - also known as Martial exploits
+                        CurrentSpells["martial exploits"] = {
+                            name : "Martial Exploits",
+                            shortname : "Martial Exploits",
+                            ability: 2,
+                            bonus : {},
+                            typeSp:"known",
+                            refType:"feat"
+                        }
+                    }
+                }
 			}
 
 			// Make a filtered spell list that contains only exploits
@@ -2710,8 +1312,16 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					addMod: NewSpell.addMod,
 					submenu: NewSpell.submenu,
 					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
-					eval : MartialEvalFactory(FighterSpells[i]),
-					removeeval : MartialRemoveFactory(FighterSpells[i])
+					eval: MartialExploits.eval, // in case the user removes all exploits
+					spellcastingBonusElsewhere : {
+                        addTo : "martial exploits",
+                        spellcastingBonus : {
+                            name : "Master of Forms Exploits",
+                            spellcastingAbility : 4,
+                            spells : [FighterSpells[i]],
+                            selection : [FighterSpells[i]]
+                        }
+                    }
 				}
 			}
 
@@ -3035,13 +1645,16 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"As a reaction when I or another I can see within 30 ft is hit by an attack, I can invoke this",
 					"I select another target for the attack within 30 ft of me, using the same roll (within range)"
 				]),
-				spellcastingBonus : [{ // What is added to the spellcasting sheet
-					name : "Cloud Rune Exploit",
-					spellcastingAbility : 1,
-					spells : ["subtle con"],
-					selection : ["subtle con"],
-					firstCol: 'atwill'
-				}],
+	            spellcastingBonusElsewhere : {
+	                addTo : "martial exploits",
+					spellcastingBonus : [{ // What is added to the spellcasting sheet
+						name : "Cloud Rune Exploit",
+						spellcastingAbility : 1,
+						spells : ["subtle con"],
+						selection : ["subtle con"],
+						firstCol: 'atwill'
+					}]
+	            },
 				toNotesPage : [{ // What is added to the notes page
 					name : SpellsList["subtle con"].name,
 					note : desc(SpellsList["subtle con"].descriptionFull),
@@ -3073,13 +1686,16 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"I learn the Cunning Instinct exploit",
 					"As a bonus action, I can invoke this to add my Exploit Die on Str and Con checks and saves for 10 min"
 				]),
-				spellcastingBonus : [{ // What is added to the spellcasting sheet
-					name : "Frost Rune Exploit",
-					spellcastingAbility : 1,
-					spells : ["cunning instinct"],
-					selection : ["cunning instinct"],
-					firstCol: 'atwill'
-				}],
+	            spellcastingBonusElsewhere : {
+	                addTo : "martial exploits",
+					spellcastingBonus : [{ // What is added to the spellcasting sheet
+						name : "Frost Rune Exploit",
+						spellcastingAbility : 1,
+						spells : ["cunning instinct"],
+						selection : ["cunning instinct"],
+						firstCol: 'atwill'
+					}]
+	            },
 				toNotesPage : [{ // What is added to the notes page
 					name : SpellsList["cunning instinct"].name,
 					note : desc(SpellsList["cunning instinct"].descriptionFull),
@@ -3101,13 +1717,16 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"While charmed, it descends into a dreamy stupor, becoming incapacitated and has speed 0",
 					"It can repeat the save at the end of each of its turns, ending the effect on a success"
 				]),
-				spellcastingBonus : [{ // What is added to the spellcasting sheet
-					name : "Stone Rune Exploit",
-					spellcastingAbility : 1,
-					spells : ["inquisitive eye"],
-					selection : ["inquisitive eye"],
-					firstCol: 'atwill'
-				}],
+	            spellcastingBonusElsewhere : {
+	                addTo : "martial exploits",
+					spellcastingBonus : [{ // What is added to the spellcasting sheet
+						name : "Stone Rune Exploit",
+						spellcastingAbility : 1,
+						spells : ["inquisitive eye"],
+						selection : ["inquisitive eye"],
+						firstCol: 'atwill'
+					}]
+	            },
 				toNotesPage : [{ // What is added to the notes page
 					name : SpellsList["inquisitive eye"].name,
 					note : desc(SpellsList["inquisitive eye"].descriptionFull),
@@ -3126,13 +1745,16 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"As a bonus action, I can invoke it to gain resistance to bludg/slash/pierc damage for 1 min",
 					"When I use Runic Might, I can invoke this Rune as part of that same bonus action"
 				]),
-				spellcastingBonus : [{ // What is added to the spellcasting sheet
-					name : "Hill Rune Exploit",
-					spellcastingAbility : 1,
-					spells : ["brace up"],
-					selection : ["brace up"],
-					firstCol: 'atwill'
-				}],
+	            spellcastingBonusElsewhere : {
+	                addTo : "martial exploits",
+					spellcastingBonus : [{ // What is added to the spellcasting sheet
+						name : "Hill Rune Exploit",
+						spellcastingAbility : 1,
+						spells : ["brace up"],
+						selection : ["brace up"],
+						firstCol: 'atwill'
+					}]
+	            },
 				toNotesPage : [{ // What is added to the notes page
 					name : SpellsList["brace up"].name,
 					note : desc(SpellsList["brace up"].descriptionFull),
@@ -3153,13 +1775,16 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"While in this state, I can use a reaction to add or substract a roll of my Exploit Die from a roll",
 					"I can do this for attacks, saves, and checks of myself or others I can see within 30 ft of me"
 				]),
-				spellcastingBonus : [{ // What is added to the spellcasting sheet
-					name : "Storm Rune Exploit",
-					spellcastingAbility : 1,
-					spells : ["scholarly recall"],
-					selection : ["scholarly recall"],
-					firstCol: 'atwill'
-				}],
+	            spellcastingBonusElsewhere : {
+	                addTo : "martial exploits",
+					spellcastingBonus : [{ // What is added to the spellcasting sheet
+						name : "Storm Rune Exploit",
+						spellcastingAbility : 1,
+						spells : ["scholarly recall"],
+						selection : ["scholarly recall"],
+						firstCol: 'atwill'
+					}]
+	            },
 				toNotesPage : [{ // What is added to the notes page
 					name : SpellsList["scholarly recall"].name,
 					note : desc(SpellsList["scholarly recall"].descriptionFull),
