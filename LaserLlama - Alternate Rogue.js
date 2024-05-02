@@ -4,6 +4,7 @@
 
     -KEEP IN MIND-
     It is recommended to enter the code in a fresh sheet before adding any other information (i.e. before making your character with it).
+    This script requires importing the Exploits first!
 	
     -INFORMATION-
     Subject:    Alternate Rogue
@@ -22,6 +23,13 @@
 // Meta information
 var iFileName = "LaserLlama - Rogue.js";
 RequiredSheetVersion("13.0.6");
+
+// Check that exploits are properly imported
+try {
+    var test = SpellsList["disarm"].isExploit
+} catch (error) {
+    throw new Error("Please import the 'Laserllama - Exploits.js' file before importing this file as otherwise it cannot function properly. You can get it on the github repository.");
+}
 
 // Edit official rogue regex to avoid conflict with laserllama rogue
 if(ClassList["rogue"]) {

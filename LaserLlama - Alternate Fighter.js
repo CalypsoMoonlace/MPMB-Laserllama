@@ -4,6 +4,7 @@
 
     -KEEP IN MIND-
     It is recommended to enter the code in a fresh sheet before adding any other information (i.e. before making your character with it).
+    This script requires importing the Exploits first!
 	
     -INFORMATION-
     Subject:    Alternate Fighter
@@ -18,9 +19,17 @@
     Code by:    Original script by CalypsoMoonlace
 */
 
+
 // Meta information
 var iFileName = "LaserLlama - Fighter.js";
 RequiredSheetVersion("13.0.6");
+
+// Check that exploits are properly imported
+try {
+    var test = SpellsList["disarm"].isExploit
+} catch (error) {
+    throw new Error("Please import the 'Laserllama - Exploits.js' file before importing this file as otherwise it cannot function properly. You can get it on the github repository.");
+}
 
 // Utility function
 function GetSubclassExploits(subclass_name, exploit_list) {
@@ -104,7 +113,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 }
 
 function ExploitPrereqFactory(tempSpell, class_name) {
-	// pre: tempSpell is the key of an item from SpellsList, class_name is a class name (daring today aren't we) eg "fighter"
+	// pre: tempSpell is the key of an item from SpellsList, class_name is a class name (daring today aren't we) eg "fighter(laserllama)"
 	// post: returns a prereqeval() function
 
 	// spell has its own prereq
@@ -667,7 +676,6 @@ ClassList["fighter(laserllama)"] = {
                             spellcastingAbility : 4,
                             spells : [FighterSpells[i]],
                             selection : [FighterSpells[i]]
-                            //prepared : true // enable that for the subclass but not main class
                         }
                     }
 				}
@@ -782,13 +790,7 @@ ClassSubList["fighter(laserllama)-arcane knight"] = {
 	abilitySave : 4,
 	spellcastingFactor : 3,
 	spellcastingList : {
-		spells : [
-			"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
-			"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
-			"arcane scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
-			"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
-			"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
-		]
+		spells : ArcaneKnightList
 	},
 	spellcastingKnown : {
 		cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -2435,7 +2437,7 @@ FeatsList["martial training"] = {
 	}],
 	extraLimitedFeatures : [{
 		name : "Martial Exploits",
-		usages : 2, // I don't think it's easily doable to check for the condition soooo just gonna leave it like that
+		usages : 2, // TODO: update it to 1 if already have some maneuvers
 		additional : 'd4',
 		recovery : "short rest",
 		addToExisting : true
