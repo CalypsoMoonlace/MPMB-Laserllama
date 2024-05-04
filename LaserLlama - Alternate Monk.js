@@ -59,13 +59,13 @@ ClassList["monk(laserllama)"] = {
 	features : {
 		"unarmored defense" : {
 			name : "Unarmored Defense",
-			source : [["SRD", 26], ["P", 78]],
+			source : ["GMB:LL"],
 			minlevel : 1,
 			description : desc("Without armor and no shield, my AC is 10 + Dexterity modifier + Wisdom modifier"),
 			armorOptions : [{
 				regExpSearch : /justToAddToDropDown/,
 				name : "Unarmored Defense (Wis)",
-				source : [["SRD", 26], ["P", 78]],
+				source : ["GMB:LL"],
 				ac : "10+Wis",
 				affectsWildShape : true
 			}],
@@ -73,16 +73,16 @@ ClassList["monk(laserllama)"] = {
 		},
 		"martial arts" : {
 			name : "Martial Arts",
-			source : [["SRD", 26], ["P", 78]],
+			source : ["GMB:LL"],
 			minlevel : 1,
 			description : desc([
-				"Monk weapons: any simple melee (not two-handed/heavy), unarmed strike, shortsword",
+				"Monk weapons: any simple melee (not special/heavy), unarmed strike, shortsword",
 				"With monk weapons, I can use Dex instead of Str and use the Martial Arts damage die",
 				"When taking an Attack action with these, I get one unarmed strike as a bonus action",
-				"I can replace Strength (Athletics) checks to grapple or shove with a Dexterity (Athletics) check"
+				"I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks"
 			]),
 			addMod : [
-				{ type : "skill", field : "Athletics", mod : "max(Dex-Str|0)", text : "I can replace Strength (Athletics) checks to grapple or shove with a Dexterity (Athletics) check" }
+				{ type : "skill", field : "Athletics", mod : "max(Dex-Str|0)", text : "I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks" }
 			],
 			additional : levels.map(function (n) {
 				return "1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
@@ -121,7 +121,7 @@ ClassList["monk(laserllama)"] = {
 		},
 		"ki" : {
 			name : "Ki",
-			source : [["SRD", 27], ["P", 78]],
+			source : ["GMB:LL"],
 			minlevel : 2,
 			description : desc([
 				"I can spend ki points to fuel special actions (see third page)",
@@ -139,21 +139,21 @@ ClassList["monk(laserllama)"] = {
 			"flurry of blows" : {
 				name : "Flurry of Blows",
 				extraname : "Ki Feature",
-				source : [["SRD", 27], ["P", 78]],
+				source : ["GMB:LL"],
 				description : " [1 ki point]" + desc("After taking the Attack action, I can make 2 unarmed attacks as a bonus action"),
 				action : ["bonus action", " (after Attack action)"]
 			},
 			"patient defense" : {
 				name : "Patient Defense",
 				extraname : "Ki Feature",
-				source : [["SRD", 27], ["P", 78]],
+				source : ["GMB:LL"],
 				description : " [1 ki point]" + desc("As a bonus action, I can take the Dodge action"),
 				action : ["bonus action", ""]
 			},
 			"step of the wind" : {
 				name : "Step of the Wind",
 				extraname : "Ki Feature",
-				source : [["SRD", 27], ["P", 78]],
+				source : ["GMB:LL"],
 				description : " [1 ki point]" + desc("As a bonus action, I can either Dash or Disengage; My jump distance doubles when I do so"),
 				action : ["bonus action", ""]
 			},
@@ -167,7 +167,7 @@ ClassList["monk(laserllama)"] = {
 		},
 		"unarmored movement" : {
 			name : "Unarmored Movement",
-			source : [["SRD", 27], ["P", 78]],
+			source : ["GMB:LL"],
 			minlevel : 2,
 			description : desc("Speed increases and eventually lets me traverse some surfaces without falling as I move"),
 			additional : levels.map(function (n) {
@@ -183,7 +183,7 @@ ClassList["monk(laserllama)"] = {
 		},
 		"subclassfeature3" : {
 			name : "Monastic Tradition",
-			source : [["SRD", 27], ["P", 78]],
+			source : ["GMB:LL"],
 			minlevel : 3,
 			description : desc('Choose a Monastic Tradition to commit to and put it in the "Class" field ')
 		},
@@ -223,7 +223,7 @@ ClassList["monk(laserllama)"] = {
 		},*/
 		"enlightened fist" : {
 			name : "Enlightened Fist",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 6,
 			description : desc("My unarmed strikes count as magical for overcoming resistances and immunities"),
 			calcChanges : {
@@ -239,20 +239,20 @@ ClassList["monk(laserllama)"] = {
 		},
 		"evasion" : {
 			name : "Evasion",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 7,
 			description : desc("My Dexterity saves vs. areas of effect negate damage on success and halve it on failure"),
 			savetxt : { text : ["Dex save vs. area effects: fail \u2015 half dmg, success \u2015 no dmg"] }
 		},
 		"ki adept" : {
 			name : "Ki Adept",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 11,
 			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, or Flurry of Blows without spending Ki")
 		},
 		"purity of body" : {
 			name : "Purity of Body",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 13,
 			description : desc("I gain proficiency in Con saving throws; I am immune to the poisoned condition and disease"),
 			savetxt : { immune : ["poisoned", "disease"] },
@@ -260,14 +260,14 @@ ClassList["monk(laserllama)"] = {
 		},
 		"diamond soul" : {
 			name : "Diamond Soul",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 14,
 			description : desc("I can spend 1 Ki Point to instantly end either the charmed or frightened condition on myself"),
 			additional : "1 ki point"
 		},
 		"timeless body" : {
 			name : "Timeless Body",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 15,
 			description : desc(["I don't require food or water; I don't suffer age penalties and can't be aged magically","For every 10 years that pass my physical body only ages 1 year"])
 		},
@@ -296,9 +296,163 @@ ClassList["monk(laserllama)"] = {
 		},*/
 		"perfect self" : {
 			name : "Perfect Self",
-			source : [["SRD", 28], ["P", 79]],
+			source : ["GMB:LL"],
 			minlevel : 20,
 			description : desc("I regain all expended Ki Points by meditating or performing only light activity for 10 minutes")
 		}
 	}
+}
+
+// Way of the Wuxia
+RunFunctionAtEnd(function () {
+	var theKenseiSubclassName = AddSubClass("monk(laserllama)", "way of the wuxia", {
+		regExpSearch : /wuxia/i,
+		subname : "Way of the Wuxia",
+		source : ["GMB:LL"],
+		fullname : "Wuxia",
+		features : {
+			"subclassfeature3" : {
+				name : "Student of Steel",
+				source : ["GMB:LL"],
+				minlevel : 3,
+				description : desc([
+					"Some weapons, that don't have the heavy or special property, are Wuxia weapons for me",
+					"At least one ranged and one melee weapon, more at higher levels",
+					"With these: proficient, count as a monk weapons, special bonuses:",
+					"\u2022 Masterful Aim: As a bonus action on my turn, I can focus and for the next Wuxia Weapon attack roll I make before the end of my current turn, I can treat a d20 roll of 7 or lower as an 8",
+					"\u2022 Masterful Parry: When hit in melee by a creature I can see while wielding a melee Wuxia weapon, I can use a reaction to add my Wis mod (min of +1) to my AC against that attack"
+				]),
+				action: [["bonus action", "Masterful Aim"], ["reaction", "Masterful Parry"]],
+				additional : levels.map( function(n) { return n < 3 ? "" : (n < 6 ? 2 : n < 11 ? 3 : n < 17 ? 4 : 5) + " wuxia weapons"; }),
+				extraname : "Wuxia Weapon",
+				extrachoices : [], // add these dynamically, see below
+				extraTimes : levels.map( function(n) { return n < 3 ? 0 : n < 6 ? 2 : n < 11 ? 3 : n < 17 ? 4 : 5; }),
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							var theKenseiWeapons = GetFeatureChoice("class", "monk(laserllama)", "subclassfeature3", true);
+							if (theKenseiWeapons.indexOf(v.baseWeaponName) != -1 || ((/wuxia/i).test(v.WeaponTextName) && !v.theWea.special && (!(/heavy|special/i).test(fields.Description)))) {
+								v.theWea.monkweapon = true;
+								v.theWea.kenseiweapon = true;
+								fields.Proficiency = true;
+							};
+						},
+						"For the weapons that I select using the \"Choose Feature\" button on the second page or when I include the word 'Wuxia' in the name of a weapon that doesn't have the Heavy or Special attribute, that weapon gains the same benefits as any other 'Monk Weapon'",
+						1
+					]
+				}
+			},
+			"subclassfeature3.1" : {
+				name : "Wuxia Techniques",
+				source : [["GMB:LL", 0]],
+				minlevel : 3,
+				description : desc(["I learn additional Techniques who don't count against my total and can't be switched"]),
+				"patient defense" : {
+					name : "Patient Defense",
+					extraname : "Ki Feature",
+					source : ["GMB:LL"],
+					description : " [1 ki point]" + desc("As a bonus action, I can take the Dodge action"),
+					action : ["bonus action", ""]
+				},
+				"seeking strike" : {
+					name : "Seeking Strike",
+					extraname : "Ki Feature",
+					source : ["GMB:LL"],
+					description : " [1 ki point]" + desc("When I miss with a Martial Arts attack, I can spend 1 Ki Point to re-roll my attack. I must use the new result."),
+				},
+				"heavenly step" : {
+					name : "Heavenly Step",
+					extraname : "Ki Feature",
+					source : ["GMB:LL"],
+					description : " [1 ki point]" + desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move","If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
+				},
+				autoSelectExtrachoices : [{
+					extrachoice : "patient defense",
+					minlevel : 3
+				}, {
+					extrachoice : "seeking strike",
+					minlevel : 5
+				}, {
+					extrachoice : "heavenly step",
+					minlevel : 9
+				}]
+			},
+			"enlightened fist" : {
+				name : "Ki-Infused Weapons",
+				source : ["GMB:LL"],
+				minlevel : 6,
+				description : desc(["My unarmed strikes and Wuxia weapon attacks count as magical", "When I use Flurry of Blows, I can replace unarmed strikes with melee Wuxia Weapon attacks"]),
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.thisWeapon[1] && !v.theWea.isMagicWeapon && !(/counts as( a)? magical/i).test(fields.Description) && (v.baseWeaponName === "unarmed strike" || v.theWea.kenseiweapon)) {
+								fields.Description += (fields.Description ? '; ' : '') + 'Counts as magical';
+							};
+						},
+						"My unarmed strikes and any Wuxia Weapons count as magical for overcoming resistances and immunities."
+					]
+				},
+				"deft strike" : {
+					name : "Deft Strike",
+					extraname : "Way of the Wuxia 6",
+					source : ["GMB:LL"],
+					description : "\n   " + "Once per turn when I hit with a Wuxia weapon, I can do a martial arts die extra damage",
+					additional : "1 ki point"
+				},
+				"spirit blade" : {
+					name : "Spirit Blade",
+					extraname : "Way of the Wuxia 11",
+					source : ["GMB:LL"],
+					description : desc([
+						"As a bonus action, I can increase the crit range of my Wuxia weapon",
+						"This bonus is equal to the number of ki points I spend and doesn't stack with magic",
+						"This lasts only works for me and lasts for 1 minute or until I use this feature again"
+					]),
+					additional : "1 to 3 ki points",
+					action : ["bonus action", ""]
+				},
+				autoSelectExtrachoices : [{
+					extrachoice : "deft strike"
+				}, {
+					extrachoice : "spirit blade",
+					minlevel : 11
+				}]
+			},
+			"subclassfeature17" : {
+				name : "Master of Steel",
+				source : ["GMB:LL"],
+				minlevel : 17,
+				description : desc(["Once per short rest, I can use my monk level instead of rolling the d20 for an attack"]),
+				recovery : "short rest",
+            	usages : 1
+			}
+		}
+	});
+
+	var itsFea = ClassSubList[theKenseiSubclassName].features.subclassfeature3;
+	for (var weapon in WeaponsList) {
+		var aWea = WeaponsList[weapon];
+		// skip attacks that are not simple or martial weapons, that have the heavy or special property, are magic weapons, or those that are spells or cantrips
+		if ((aWea.isMagicWeapon || !(/simple|martial/i).test(aWea.type) || (/heavy|special/i).test(aWea.description) || aWea.special || (/spell|cantrip/i).test(aWea.list))) continue;
+		itsFea.extrachoices.push(aWea.name);
+		itsFea[aWea.name.toLowerCase()] = {
+			name : aWea.name,
+			description : "",
+			source : aWea.source,
+			weaponProfs : [false, false, [weapon]],
+			weaponsAdd : [aWea.name],
+			submenu : ((/simple/i).test(aWea.type) ? "\x1BSimple weapon, " : "Martial weapon, ") + ((/^(?!.*melee).*\d+.*$/i).test(aWea.range) ? "ranged" : "melee"),
+			prereqeval : 'testSource("' + weapon + '", WeaponsList["' + weapon + '"], "weapExcl") ? "skip" : true;'
+		}
+	}
+});
+
+// Source information
+SourceList["GMB:LL"] = {
+	name : "LaserLlama",
+	abbreviation : "GMB:LL",
+	abbreviationSpellsheet : "LL",
+	group : "GM Binder",
+	url : "https://www.gmbinder.com/profile/laserllama",
+	date : "2018/04/22"
 }
