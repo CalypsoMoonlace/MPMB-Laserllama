@@ -27,6 +27,7 @@ Below is the list of what I did so far, and what I have planned.
 ### In Progress
 - [ ] Alternate Barbarian
 - [ ] Alternate Rogue
+- [ ] Alternate Monk
 - [ ] Alternate Fighter Expanded
 
 ### Done ✓
