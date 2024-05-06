@@ -131,7 +131,8 @@ ClassList["monk(laserllama)"] = {
 			]),
 			extraname : "Monk Techniques",
 			extraTimes : ['', 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10],
-			extrachoices : ["Patient Defense","Step of the Wind"],
+			extrachoices : ["Arresting Strike","Crippling Strike","Empowered Strike","Mystic Healing","Patient Defense","Slow Fall","Step of the Wind",
+				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike"],
 			limfeaname : "Ki Points",
 			usages : "Monk level + Wisdom modifier per ",
 			usagescalc : "event.value = classes.known['monk(laserllama)'].level + What('Wis Mod');",
@@ -140,30 +141,119 @@ ClassList["monk(laserllama)"] = {
 				name : "Flurry of Blows",
 				extraname : "Ki Feature",
 				source : ["GMB:LL"],
-				description : " [1 ki point]" + desc("After taking the Attack action, I can make 2 unarmed attacks as a bonus action"),
+				description : desc("After taking the Attack action, I can make 2 unarmed attacks as a bonus action"),
+				additional : "1 ki point",
 				action : ["bonus action", " (after Attack action)"]
+			},
+			"arresting strike" : {
+				name : "Arresting Strike",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("On hit with melee Martial Arts attack, target makes Dex save or has speed reduced to 0"),
+				additional : "1 ki point"
+			},
+			"crippling strike" : {
+				name : "Crippling Strike",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("On hit with melee Martial Arts attack, target makes Con save or is blinded, deafened or unable to speak (my choice)"),
+				additional : "1 ki point"
+			},
+			"empowered strike" : {
+				name : "Empowered Strike",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("On hit with melee Martial Arts attack, target makes Str save (adv. if larger than me) or is pushed in a straight line by 5 ft times my Wis mod (min 5ft) and falls prone"),
+				additional : "1 ki point"
+			},
+			"mystic healing" : {
+				name : "Mystic Healing",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("As an action, I regain hit points equal to one roll of my Martial Arts die + my Wis mod"),
+				additional : "2 ki points",
+				action : ["action", ""]
 			},
 			"patient defense" : {
 				name : "Patient Defense",
-				extraname : "Ki Feature",
+				extraname : "Monk Technique",
 				source : ["GMB:LL"],
-				description : " [1 ki point]" + desc("As a bonus action, I can take the Dodge action"),
-				action : ["bonus action", ""]
+				description : desc("As a bonus action, I can take the Dodge action"),
+				action : ["bonus action", ""],
+				additional : "1 ki point",
+			},
+			"slow fall" : {
+				name : "Slow Fall",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("As long as I am conscious, I can reduce any falling damage I would take by five times my level")
 			},
 			"step of the wind" : {
 				name : "Step of the Wind",
-				extraname : "Ki Feature",
+				extraname : "Monk Technique",
 				source : ["GMB:LL"],
-				description : " [1 ki point]" + desc("As a bonus action, I can either Dash or Disengage; My jump distance doubles when I do so"),
+				description : desc("As a bonus action, I can either Dash or Disengage; My jump distance doubles when I do so"),
 				action : ["bonus action", ""]
 			},
-			autoSelectExtrachoices : [
-			{extrachoice : "flurry of blows"}
-			/*, {
-				extrachoice : "patient defense"
-			}, {
-				extrachoice : "step of the wind"
-			}*/]
+			"deflect missiles" : {
+				name : "Deflect Missiles",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					if (n < 11) {
+						return desc([
+							"As a reaction, I can reduce ranged weapon attack damage done to me",
+							"If the damage is negated, I catch and may throw it back (20/60 ft) as a monk weapon"
+						])
+					} else {
+						return desc([
+							"As a reaction, I can reduce ranged weapon attack damage done to me",
+							"If the damage is negated, I catch and may throw it back (20/60 ft) as a monk weapon",
+							"I can also spend 1 Ki to use this reaction whenever I am hit by a spell attack"
+						])
+					}
+				}),
+				action : ["reaction", ""],
+				additional : levels.map(function (n) {
+					return "1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " + " + n + " + Dexterity modifier; 1 ki to throw";
+				}),
+				submenu : "[monk level 5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"gentling touch" : {
+				name : "Gentling Touch",
+				source : ["GMB:LL"],
+				description : desc(["In place of an attack, touch a creature and roll five times my martial arts die",
+					"If the total is more or equal to their current HP, they fall asleep for 10 min or until woken",
+					"I can spend more Ki to add one roll of my Martial Die for each additional Ki spent"]),
+				additional : "1 to Wis mod ki points",
+				submenu : "[monk level 5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"seeking strike" : {
+				name : "Seeking Strike",
+				source : ["GMB:LL"],
+				description : desc("On miss with a Martial Arts attack, I can reroll the attack roll and must use the new result"),
+				additional : "1 ki point",
+				submenu : "[monk level 5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"slowing strike" : {
+				name : "Slowing Strike",
+				source : ["GMB:LL"],
+				description : desc(["On hit with melee Martial Arts attack, target makes Wis save or suffers from Slow spell", "This lasts until the beginning of my next turn and I don't need to concentrate on it"]),
+				additional : "1 ki point",
+				submenu : "[monk level 5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"stunning strike" : {
+				name : "Stunning Strike",
+				source : ["GMB:LL"],
+				description : desc(["On hit with melee Martial Arts attack, target makes Con save or is stunned","This lasts until the beginning of my next turn"]),
+				additional : "1 ki point",
+				submenu : "[monk level 5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			autoSelectExtrachoices : [{extrachoice : "flurry of blows"}]
 		},
 		"unarmored movement" : {
 			name : "Unarmored Movement",
@@ -187,40 +277,6 @@ ClassList["monk(laserllama)"] = {
 			minlevel : 3,
 			description : desc('Choose a Monastic Tradition to commit to and put it in the "Class" field ')
 		},
-		/*"deflect missiles" : {
-			name : "Deflect Missiles",
-			source : [["SRD", 27], ["P", 78]],
-			minlevel : 3,
-			description : desc([
-				"As a reaction, I can reduce ranged weapon attack damage done to me",
-				"If the damage is negated, I catch and may throw it back (20/60 ft) as a monk weapon"
-			]),
-			action : ["reaction", ""],
-			additional : levels.map(function (n) {
-				return n < 3 ? "" : "1d10 + " + n + " + Dexterity modifier; 1 ki to throw";
-			})
-		},
-		"slow fall" : {
-			name : "Slow Fall",
-			source : [["SRD", 27], ["P", 78]],
-			minlevel : 4,
-			description : desc("As a reaction, I can reduce any falling damage I take by five times my monk level"),
-			additional : levels.map(function (n) { return n < 4 ? "" : (n*5) + " less falling damage" }),
-			action : ["reaction", ""],
-			"stunning strike" : {
-				name : "Stunning Strike",
-				extraname : "Monk 5",
-				source : [["SRD", 27], ["P", 79]],
-				description : " [1 ki point]" + desc([
-					"After I hit a creature with a melee weapon attack, I can spend a ki point to try to stun it",
-					"It has to succeed on a Constitution save or be stunned until the end of my next turn"
-				])
-			},
-			autoSelectExtrachoices : [{
-				extrachoice : "stunning strike",
-				minlevel : 5
-			}]
-		},*/
 		"enlightened fist" : {
 			name : "Enlightened Fist",
 			source : ["GMB:LL"],
@@ -349,20 +405,20 @@ RunFunctionAtEnd(function () {
 				description : desc(["I learn additional Techniques who don't count against my total and can't be switched"]),
 				"patient defense" : {
 					name : "Patient Defense",
-					extraname : "Ki Feature",
+					extraname : "Wuxia Technique",
 					source : ["GMB:LL"],
 					description : " [1 ki point]" + desc("As a bonus action, I can take the Dodge action"),
 					action : ["bonus action", ""]
 				},
 				"seeking strike" : {
 					name : "Seeking Strike",
-					extraname : "Ki Feature",
 					source : ["GMB:LL"],
-					description : " [1 ki point]" + desc("When I miss with a Martial Arts attack, I can spend 1 Ki Point to re-roll my attack. I must use the new result."),
+					description : desc("On miss with a Martial Arts attack, I can reroll the attack roll and must use the new result"),
+					additional : "1 ki point"
 				},
 				"heavenly step" : {
 					name : "Heavenly Step",
-					extraname : "Ki Feature",
+					extraname : "Wuxia Technique",
 					source : ["GMB:LL"],
 					description : " [1 ki point]" + desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move","If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
 				},
