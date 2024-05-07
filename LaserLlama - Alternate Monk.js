@@ -134,7 +134,8 @@ ClassList["monk(laserllama)"] = {
 			extrachoices : ["Arresting Strike","Crippling Strike","Empowered Strike","Mystic Healing","Patient Defense","Slow Fall","Step of the Wind",
 				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike",
 				"Aura Sight", "Heavenly Step", "Indomitable Spirit", "Mantle of Courtesy",
-				"Armor of the Ascetic", "Mystical Integrity", "Tongue of Sun and Moon"],
+				"Armor of the Ascetic", "Mystical Integrity", "Tongue of Sun and Moon",
+				"Empty Body", "Quivering Palm"],
 			limfeaname : "Ki Points",
 			usages : "Monk level + Wisdom modifier per ",
 			usagescalc : "event.value = classes.known['monk(laserllama)'].level + What('Wis Mod');",
@@ -328,6 +329,46 @@ ClassList["monk(laserllama)"] = {
 				submenu : "[monk level 13+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; }
 			},
+			"empty body" : {
+				name : "Empty Body",
+				source : ["GMB:LL"],
+				description : desc("Be invisible and resist non-force damage for 1 min or cast Astral Projection on self"),
+				additional : "Invisible: 4 ki points; Astral Projection: 8 ki points",
+				submenu : "[monk level 18+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 18; },
+				action : ["bonus action", ""],
+				spellcastingBonus : {
+					name : "Empty Body",
+					spells : ["astral projection"],
+					selection : ["astral projection"],
+					firstCol : 8
+				},
+				spellFirstColTitle : "Ki",
+				spellChanges : {
+					"astral projection" : {
+						components : "V,S",
+						compMaterial : "",
+						description : "I project myself to the Astral Plane with identical statistics, see book",
+						changes : "I can spend 8 ki points to cast Astral Projection without requiring material components, although I can't bring other creatures with me."
+					}
+				}
+			},
+			"quivering palm" : {
+				name : "Quivering Palm",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					descr = [
+						"On hit, infuse target's soul with vibrations that last up to "+n+" days",
+						"While me and the target are on the same plane of existence, I can use an action to end the vibrations and force the target to make a Con save",
+						"It is reduced to 0 HP on a fail and takes 10d10 necrotic damage on a success",
+						"I can only have one target at a time, using it on a second target ends it harmlessly for the first"]
+					return desc(descr);
+				}),
+				additional : "5 ki points",
+				action : ["action", " (end vibrations)"],
+				submenu : "[monk level 18+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 18; }
+			},
 			autoSelectExtrachoices : [{extrachoice : "flurry of blows"}]
 		},
 		"unarmored movement" : {
@@ -402,29 +443,6 @@ ClassList["monk(laserllama)"] = {
 			minlevel : 15,
 			description : desc(["I don't require food or water; I don't suffer age penalties and can't be aged magically","For every 10 years that pass my physical body only ages 1 year"])
 		},
-		/*"empty body" : {
-			name : "Empty Body",
-			source : [["SRD", 28], ["P", 79]],
-			minlevel : 18,
-			description : desc("Be invisible and resist non-force damage for 1 min or cast Astral Projection on self"),
-			additional : "Invisible: 4 ki points; Astral Projection: 8 ki points",
-			action : ["action", ""],
-			spellcastingBonus : {
-				name : "Empty Body",
-				spells : ["astral projection"],
-				selection : ["astral projection"],
-				firstCol : 8
-			},
-			spellFirstColTitle : "Ki",
-			spellChanges : {
-				"astral projection" : {
-					components : "V,S",
-					compMaterial : "",
-					description : "I project myself to the Astral Plane with identical statistics, see book",
-					changes : "I can spend 8 ki points to cast Astral Projection without requiring material components, although I can't bring other creatures with me."
-				}
-			}
-		},*/
 		"perfect self" : {
 			name : "Perfect Self",
 			source : ["GMB:LL"],
