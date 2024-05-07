@@ -132,7 +132,9 @@ ClassList["monk(laserllama)"] = {
 			extraname : "Monk Techniques",
 			extraTimes : ['', 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10],
 			extrachoices : ["Arresting Strike","Crippling Strike","Empowered Strike","Mystic Healing","Patient Defense","Slow Fall","Step of the Wind",
-				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike"],
+				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike",
+				"Aura Sight", "Heavenly Step", "Indomitable Spirit", "Mantle of Courtesy",
+				"Armor of the Ascetic", "Mystical Integrity", "Tongue of Sun and Moon"],
 			limfeaname : "Ki Points",
 			usages : "Monk level + Wisdom modifier per ",
 			usagescalc : "event.value = classes.known['monk(laserllama)'].level + What('Wis Mod');",
@@ -216,7 +218,7 @@ ClassList["monk(laserllama)"] = {
 				additional : levels.map(function (n) {
 					return "1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " + " + n + " + Dexterity modifier; 1 ki to throw";
 				}),
-				submenu : "[monk level 5+]",
+				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
 			},
 			"gentling touch" : {
@@ -226,7 +228,7 @@ ClassList["monk(laserllama)"] = {
 					"If the total is more or equal to their current HP, they fall asleep for 10 min or until woken",
 					"I can spend more Ki to add one roll of my Martial Die for each additional Ki spent"]),
 				additional : "1 to Wis mod ki points",
-				submenu : "[monk level 5+]",
+				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
 			},
 			"seeking strike" : {
@@ -234,7 +236,7 @@ ClassList["monk(laserllama)"] = {
 				source : ["GMB:LL"],
 				description : desc("On miss with a Martial Arts attack, I can reroll the attack roll and must use the new result"),
 				additional : "1 ki point",
-				submenu : "[monk level 5+]",
+				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
 			},
 			"slowing strike" : {
@@ -242,7 +244,7 @@ ClassList["monk(laserllama)"] = {
 				source : ["GMB:LL"],
 				description : desc(["On hit with melee Martial Arts attack, target makes Wis save or suffers from Slow spell", "This lasts until the beginning of my next turn and I don't need to concentrate on it"]),
 				additional : "1 ki point",
-				submenu : "[monk level 5+]",
+				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
 			},
 			"stunning strike" : {
@@ -250,8 +252,81 @@ ClassList["monk(laserllama)"] = {
 				source : ["GMB:LL"],
 				description : desc(["On hit with melee Martial Arts attack, target makes Con save or is stunned","This lasts until the beginning of my next turn"]),
 				additional : "1 ki point",
-				submenu : "[monk level 5+]",
+				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"aura sight" : {
+				name : "Aura Sight",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					var newRange = n < 13 ? 20 : n < 18 ? 30 : 60;
+					descr = ["I gain "+newRange+" ft blindsight and can see anything that isn't behind total cover within that range","I can see invisible creatures within range unless the creature successfully hides from me"]
+					return desc(descr);
+				}),
+				submenu : "[monk level  9+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+				changeeval : function(lvl, chc) {
+				    var srcNm = "Aura Sight Monk Technique";
+				    var curRange = CurrentProfs.vision.blindsight && CurrentProfs.vision.blindsight.ranges[srcNm];
+				    var newRange = lvl[1] < 13 ? 20 : lvl[1] < 18 ? 30 : 60; 
+
+				    // Only do something if the range changed
+				    if (curRange !== newRange) {
+				        // First remove the old range, if any
+				        if (curRange) SetProf('vision', false, "Blindsight", srcNm, curRange);
+				        // Then set the new range, unless the feature is removed (i.e. lvl[1] === 0)
+				        if (newRange) SetProf('vision', true,  "Blindsight", srcNm, newRange);
+				    }
+				}
+			},
+			"heavenly step" : {
+				name : "Heavenly Step",
+				source : ["GMB:LL"],
+				description : desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move","If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
+				additional : "1 ki point",
+				submenu : "[monk level  9+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+			},
+			"indomitable spirit" : {
+				name : "Indomitable Spirit",
+				source : ["GMB:LL"],
+				description : desc(["Add my Wis mod (min 1) to a Strength (Athletics) or Dexterity (Athletics) check","I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
+				additional : "1 ki point",
+				submenu : "[monk level  9+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+			},
+			"mantle of courtesy" : {
+				name : "Mantle of Courtesy",
+				source : ["GMB:LL"],
+				description : desc(["I gain proficiency in Persuasion and can add my Wis mod (min 1) to Cha (Persuasion) checks"]),
+				submenu : "[monk level  9+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+				skills : ["Persuasion"],
+				addMod : { type : "skill", field : "Persuasion", mod : "max(Wis|1)", text : "I can add my Wis mod (min 1) to Cha (Persuasion) checks" }
+			},
+			"armor of the ascetic" : {
+				name : "Armor of the Ascetic",
+				source : ["GMB:LL"],
+				description : desc(["At the end of a short or long rest, I gain the effects of sanctuary spell","This lasts until the start of my next short or long rest and can end early as normal"]),
+				submenu : "[monk level 13+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; },
+				recovery : "short rest",
+            	usages : 1
+			},
+			"mystical integrity" : {
+				name : "Mystical Integrity",
+				source : ["GMB:LL"],
+				description : desc(["I am immune to any spell or effect that would alter my form or force me to teleport, unless I wish to be affected"]),
+				submenu : "[monk level 13+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; },
+				savetxt : { immune : ["forced teleportation", "form alterations"] }
+			},
+			"tongue of sun and moon" : { // '&' is an invalid character here
+				name : "Tongue of Sun and Moon",
+				source : ["GMB:LL"],
+				description : desc(["I can touch the Ki of other minds and communicate with any creature that speaks a language","Creatures that speak no languages can communicate and understand simple ideas"]),
+				submenu : "[monk level 13+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; }
 			},
 			autoSelectExtrachoices : [{extrachoice : "flurry of blows"}]
 		},
