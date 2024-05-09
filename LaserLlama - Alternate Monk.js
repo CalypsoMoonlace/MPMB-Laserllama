@@ -131,11 +131,15 @@ ClassList["monk(laserllama)"] = {
 			]),
 			extraname : "Monk Techniques",
 			extraTimes : ['', 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10],
-			extrachoices : ["Arresting Strike","Crippling Strike","Empowered Strike","Mystic Healing","Patient Defense","Slow Fall","Step of the Wind",
-				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike",
-				"Aura Sight", "Heavenly Step", "Indomitable Spirit", "Mantle of Courtesy",
-				"Armor of the Ascetic", "Mystical Integrity", "Tongue of Sun and Moon",
-				"Empty Body", "Quivering Palm"],
+			extrachoices : ["Arresting Strike","Crippling Strike","Empowered Strike","Mystic Healing", // no prereq
+				"Patient Defense","Slow Fall","Step of the Wind","Improvised Strikes", "Spiritual Armor", "Whirling Strike", // no prereq
+				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike", // prereq: lvl 5
+				"Adept Fighting Style (Archery)", "Adept Fighting Style (Blind Warrior)", "Adept Fighting Style (Defense)", "Adept Fighting Style (Dueling)", "Adept Fighting Style (Featherweight)", "Adept Fighting Style (Thrown)", "Adept Fighting Style (Wrestler)", // prereq: lvl 5 & max one from this list
+				"Crushing Strike", "Divine Light", "Unyielding Perseverance", // prereq: lvl 5
+				"Aura Sight", "Heavenly Step", "Indomitable Spirit", "Mantle of Courtesy", // prereq: lvl 9
+				"Commune with Self", "Friend of Beast and Leaf", "Monastic Fortitude", // prereq: lvl 9
+				"Armor of the Ascetic", "Mystical Integrity", "Tongue of Sun and Moon", "Banishing Strike","Conjure Previous Life", // prereq: lvl 13
+				"Empty Body", "Quivering Palm", "Awaken the Third Eye", "Word of Creation"], // prereq: lvl 18
 			limfeaname : "Ki Points",
 			usages : "Monk level + Wisdom modifier per ",
 			usagescalc : "event.value = classes.known['monk(laserllama)'].level + What('Wis Mod');",
@@ -175,7 +179,8 @@ ClassList["monk(laserllama)"] = {
 				source : ["GMB:LL"],
 				description : desc("As an action, I regain hit points equal to one roll of my Martial Arts die + my Wis mod"),
 				additional : "2 ki points",
-				action : ["action", ""]
+				action : ["action", ""],
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 1 } // For the Ki Warrior feat
 			},
 			"patient defense" : {
 				name : "Patient Defense",
@@ -197,6 +202,49 @@ ClassList["monk(laserllama)"] = {
 				source : ["GMB:LL"],
 				description : desc("As a bonus action, I can either Dash or Disengage; My jump distance doubles when I do so"),
 				action : ["bonus action", ""]
+			},
+			"improvised strikes" : {
+				name : "Improvised Strikes",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("I gain proficiency with improvised weapons, they count as Martial Arts attacks for me"),
+				weaponProfs : [false, false, ["Improvised weapons"]],
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (((/improvised/i).test(v.WeaponName + v.baseWeaponName) || (/improvised weapon/i).test(v.theWea.type))) {
+								v.theWea.monkweapon = true; // The lvl 1 feature eval handles the rest
+							};
+						},
+						"I can use either Strength or Dexterity and my Martial Arts damage die in place of the normal damage die for any 'Monk Weapons', which include unarmed strike, shortsword, and any simple melee weapon that is not heavy or has the 'special' property.",
+						1
+					]
+				}
+			},
+			"spiritual armor" : {
+				name : "Spiritual Armor",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					descr = ["As a bonus action, I gain temp HP equal to my Wis mod", 
+						"The first time a crea reduces those temp HP, I can use my reaction to deal it 1d"+(n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12)+" force dmg"]
+					return desc(descr);
+				}),
+				additional : "1 ki point",
+				action : ["bonus action", ""],
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 1 } // For the Ki Warrior feat
+			},
+			"whirling strike" : {
+				name : "Whirling Strike",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					descr = ["As an action, every crea within reach Dex save or 1d"+(n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12)+" + Dex mod bludgeoning dmg"]
+					return desc(descr);
+				}),
+				additional : "1 ki point",
+				action : ["action", ""],
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 1 } // For the Ki Warrior feat
 			},
 			"deflect missiles" : {
 				name : "Deflect Missiles",
@@ -256,6 +304,232 @@ ClassList["monk(laserllama)"] = {
 				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
 			},
+			"adept fighting style (archery)" : {
+				name : "Adept Fighting Style (Archery)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("+2 bonus to attack rolls I make with ranged weapons"),
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (blind warrior)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (defense)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (dueling)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (featherweight)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (thrown)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (wrestler)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				},
+				calcChanges : {
+					atkCalc : [
+						function (fields, v, output) {
+							if (v.isRangedWeapon && !v.isNaturalWeapon && !v.isDC) output.extraHit += 2;
+						},
+						"My ranged weapons get a +2 bonus on the To Hit."
+					]
+				}
+			},
+			"adept fighting style (blind warrior)" : {
+				name : "Adept Fighting Style (Blind Warrior)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc(["I gain blindsight for a range of 5 times my prof bonus",
+							"In that range, I can see invisible creatures and anything that isn't behind total cover or hidden"]),
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (archery)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (defense)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (dueling)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (featherweight)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (thrown)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (wrestler)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				},
+				changeeval : function(lvl, chc) {
+				    var srcNm = "Blind Warrior Fighting Style";
+				    var curRange = CurrentProfs.vision.blindsight && CurrentProfs.vision.blindsight.ranges[srcNm];
+				    var newRange = lvl[1] && Number(How('Proficiency Bonus')) * 5;
+
+				    // Only do something if the range changed
+				    if (curRange !== newRange) {
+				        // First remove the old range, if any
+				        if (curRange) SetProf('vision', false, "Blindsight", srcNm, curRange);
+				        // Then set the new range, unless the feature is removed (i.e. lvl[1] === 0)
+				        if (newRange) SetProf('vision', true,  "Blindsight", srcNm, newRange);
+				    }
+				}
+			},
+			"adept fighting style (defense)" : {
+				name : "Adept Fighting Style (Defense)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("+1 bonus to AC when I'm wearing armor or wielding a shield"),
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (archery)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (blind warrior)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (dueling)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (featherweight)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (thrown)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (wrestler)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				},
+				extraAC : {
+					name : "Defense Fighting Style", // necessary for features referring to fighting style properties directly
+					mod : 1,
+					text : "I gain a +1 bonus to AC while wearing armor or wielding a shield.",
+					stopeval : function (v) { return !v.wearingArmor && !v.usingShield; }
+				}
+			},
+			"adept fighting style (dueling)" : {
+				name : "Adept Fighting Style (Dueling)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("+2 to damage rolls when wielding a melee weapon in one hand and no other weapon"),
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (archery)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (blind warrior)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (defense)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (featherweight)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (thrown)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (wrestler)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				},
+				calcChanges : {
+					atkCalc : [
+						function (fields, v, output) {
+							for (var i = 1; i <= FieldNumbers.actions; i++) {
+								if ((/off.hand.attack/i).test(What('Bonus Action ' + i))) return;
+							};
+							if (v.isMeleeWeapon && !v.isNaturalWeapon && !(/((^|[^+-]\b)2|\btwo).?hand(ed)?s?\b/i).test(fields.Description)) output.extraDmg += 2;
+						},
+						"When I'm wielding a melee weapon in one hand and no weapon in my other hand, I do +2 damage with that melee weapon. This condition will always be false if the bonus action 'Off-hand Attack' exists."
+					]
+				}
+			},
+			"adept fighting style (featherweight)" : {
+				name : "Adept Fighting Style (Featherweight)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("+1 bonus to damage rolls and +10 ft to speed when wielding only light weapons and not wearing medium or heavy armor nor shield"),
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (archery)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (blind warrior)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (defense)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (dueling)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (thrown)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (wrestler)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				},
+				calcChanges : {
+					atkCalc : [
+						function (fields, v, output) {
+							if ((/\blight\b/i).test(fields.Description)) output.extraDmg += 1;
+						},
+						"When I'm wielding light weapons and not wearing medium or heavy armor nor a shield, I do +1 damage with light weapons."
+					]
+				},
+				speed : {
+					allModes : "+10"
+				}
+			},
+			"adept fighting style (thrown)" : {
+				name : "Adept Fighting Style (Thrown)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc("+2 bonus to damage rolls with thrown weapons as ranged attack"),
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (archery)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (blind warrior)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (defense)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (dueling)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (featherweight)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (wrestler)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				},
+				calcChanges : {
+					atkCalc : [
+						function (fields, v, output) {
+							if (v.isThrownWeapon) output.extraDmg += 2;
+						},
+						"My thrown weapons get a +2 bonus damage when thrown."
+					]
+				}
+			},
+			"adept fighting style (wrestler)" : {
+				name : "Adept Fighting Style (Wrestler)",
+				extraname : "Monk Technique",
+				source : ["GMB:LL"],
+				description : desc(["When hitting someone on my turn, I can attempt to grapple or shove them as a bonus action",
+						"I can drag grappled creatures up to my full speed"]),
+				action : ["bonus action", "Grapple or shove (after hitting with Attack action)"],
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { 
+					techniques = GetFeatureChoice('classes', 'monk(laserllama)', 'ki', true);
+
+					if (techniques.indexOf("adept fighting style (archery)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (blind warrior)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (defense)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (dueling)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (featherweight)") !== -1) return false;
+					if (techniques.indexOf("adept fighting style (thrown)") !== -1) return false;
+
+					return (classes.known["monk(laserllama)"].level >= 5)
+				}
+			},
+			"crushing strike" : {
+				name : "Crushing Strike",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					return desc(["On hit with unarmed strike, add 1d"+(n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12)+" bludgeoning dmg for each Ki spent"])
+				}),
+				additional : "1 to Wis mod ki points",
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"divine light" : {
+				name : "Divine Light",
+				source : ["GMB:LL"],
+				description : desc(["I learn two cantrips from the Cleric spell list and can cast them using Wisdom"]),
+				submenu : "[monk level  5+]",
+				spellcastingBonus : {
+					name : "Divine Light Monk Technique",
+					spellcastingAbility : 5,
+					'class' : 'cleric',
+					level : [0, 0],
+					firstCol : "atwill",
+					times : 2
+				},
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
+			"unyielding perseverance" : {
+				name : "Unyielding Perseverance",
+				source : ["GMB:LL"],
+				description : desc(["Add +1 to an ability check or saving throw for each Ki spent","I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
+				additional : "1 to Wis mod ki points",
+				submenu : "[monk level  5+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
+			},
 			"aura sight" : {
 				name : "Aura Sight",
 				source : ["GMB:LL"],
@@ -305,6 +579,59 @@ ClassList["monk(laserllama)"] = {
 				skills : ["Persuasion"],
 				addMod : { type : "skill", field : "Persuasion", mod : "max(Wis|1)", text : "I can add my Wis mod (min 1) to Cha (Persuasion) checks" }
 			},
+			"commune with self" : {
+				name : "Commune with Self",
+				source : ["GMB:LL"],
+				description : desc(["I can meditate for 10 min to gain the benefits of the commune spell"]),
+				additional : "5 ki points",
+				submenu : "[monk level  9+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+				spellcastingBonus : {
+					name : "Commune with Self",
+					spells : ["commune"],
+					selection : ["commune"],
+					firstCol : 5
+				},
+				spellFirstColTitle : "Ki",
+				spellChanges : {
+					"commune" : {
+						time : "10 min",
+						changes : "I can meditate for 10 min to gain the benefits of the communespell"
+					}
+				}
+			},
+			"friend of beast and leaf" : { // '&' is an invalid character here
+				name : "Friend of Beast and Leaf",
+				source : ["GMB:LL"],
+				description : desc(["I can meditate for 10 min to gain the benefits of the commune with nature spell"]),
+				additional : "5 ki points",
+				submenu : "[monk level  9+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+				spellcastingBonus : {
+					name : "Friend of Beast and Leaf",
+					spells : ["commune with nature"],
+					selection : ["commune with nature"],
+					firstCol : 5
+				},
+				spellFirstColTitle : "Ki",
+				spellChanges : {
+					"commune with nature" : {
+						time : "10 min",
+						changes : "I can meditate for 10 min to gain the benefits of the commune with nature spell"
+					}
+				}
+			},
+			"monastic fortitude" : {
+				name : "Monastic Fortitude",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					return desc(["As a reaction when taking damage, reduce the damage by 2d"+(n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12)+" + my Wis mod"])
+				}),
+				additional : "2 ki points",
+				submenu : "[monk level  9+]",
+				action : ["reaction", ""],
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
+			},
 			"armor of the ascetic" : {
 				name : "Armor of the Ascetic",
 				source : ["GMB:LL"],
@@ -312,7 +639,22 @@ ClassList["monk(laserllama)"] = {
 				submenu : "[monk level 13+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; },
 				recovery : "short rest",
-            	usages : 1
+            	usages : 1,
+				spellcastingBonus : {
+					name : "Armor of the Ascetic",
+					spells : ["sanctuary"],
+					selection : ["sanctuary"],
+					firstCol : "oncesr"
+				},
+				spellChanges : {
+					"sanctuary" : {
+						range : "Self",
+						time : "-",
+						components : "-",
+						duration : "Until rest",
+						changes : "At the end of a short or long rest, I gain the effects of sanctuary spell; This lasts until the start of my next short or long rest and can end early as normal"
+					}
+				}
 			},
 			"mystical integrity" : {
 				name : "Mystical Integrity",
@@ -328,6 +670,43 @@ ClassList["monk(laserllama)"] = {
 				description : desc(["I can touch the Ki of other minds and communicate with any creature that speaks a language","Creatures that speak no languages can communicate and understand simple ideas"]),
 				submenu : "[monk level 13+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; }
+			},
+			"banishing strike" : {
+				name : "Banishing Strike",
+				source : ["GMB:LL"],
+				description : levels.map(function (n) {
+					return desc(["On hit with melee Martial Arts attack, target makes Cha save or takes 3d"+(n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12)+" additional force dmg (half on save). If this reduces the target to 50 HP or less, it is shunted to a harmless demiplane where it is incapacitated. The crea reappears in the unoccupied space nearest to the last space it occupied at the end of my next turn."])
+				}),
+				submenu : "[monk level 13+]",
+				additional : "3 ki points",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; }
+			},
+			"conjure previous life" : {
+				name : "Conjure Previous Life",
+				source : ["GMB:LL"],
+				description : desc(["As an action, I cast a special version of summon celestial (defender) at 5th-level"]),
+				submenu : "[monk level 13+]",
+				additional : "3 ki points",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; },
+				spellcastingBonus : {
+					name : "Conjure Previous Life",
+					spells : ["summon celestial"],
+					selection : ["summon celestial"],
+					firstCol : 5
+				},
+				spellFirstColTitle : "Ki",
+				spellChanges : {
+					"summon celestial" : {
+						components : "-",
+						description : "Summon Defender celestial; obeys commands; takes turn after mine; disappears at 0 hp (see book)",
+						descriptionFull : "You call forth a celestial spirit. It manifests in an angelic form in an unoccupied space that you can see within range. This corporeal form uses the Defender Celestial Spirit stat block with the changes below:"
+							+ "\n\u2022 It is a Medium creature that resembles a humanoid Monk, though it may not be the same race as you are."
+							+ "\n\u2022 Its Radiant Mace attacks resemble unarmed strikes"
+							+ "\n\u2022 When summoned you can infuse it with a number of Ki Points of your choice, and your Ki Point maximum is reduced by the same amount while it is summoned. It can use the infused Ki to use any Techniques you know, though it cannot use conjure previous life again."
+							+ "\n\nThe creature disappears when it drops to 0 hit points or when the spell ends.\n   The creature is an ally to you and your companions. In combat, the creature shares your initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don't issue any, it takes the Dodge action and uses its move to avoid danger.",
+						changes : "As an action, I can spend 5 Ki Points and cast summon celestial (defender) at 5th-level, with special changes"
+					}
+				}
 			},
 			"empty body" : {
 				name : "Empty Body",
@@ -368,6 +747,53 @@ ClassList["monk(laserllama)"] = {
 				action : ["action", " (end vibrations)"],
 				submenu : "[monk level 18+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 18; }
+			},
+			"awaken the third eye" : {
+				name : "Awaken the Third Eye",
+				source : ["GMB:LL"],
+				description : desc("Spend 1 min to cast Foresight on myself; This reduces my max Ki by 8 while active"),
+				additional : "8 ki points",
+				submenu : "[monk level 18+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 18; },
+				spellcastingBonus : {
+					name : "Empty Body",
+					spells : ["foresight"],
+					selection : ["foresight"],
+					firstCol : 8
+				},
+				spellFirstColTitle : "Ki",
+				spellChanges : {
+					"foresight" : {
+						range : "Self",
+						components : "-",
+						description : "I can end this effect as an action",
+						changes : "I can cast Foresight on myself"
+					}
+				}
+			},
+			"word of creation" : {
+				name : "Word of Creation",
+				source : ["GMB:LL"],
+				description : desc("As an action, cast Divine Word; I can only do this once per short rest"),
+				additional : "7 ki points",
+				submenu : "[monk level 18+]",
+				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 18; },
+				spellcastingBonus : {
+					name : "Word of Creation",
+					spells : ["divine word"],
+					selection : ["divine word"],
+					firstCol : 7
+				},
+				spellFirstColTitle : "Ki",
+				spellChanges : {
+					"divine word" : {
+						components : "-",
+						time : "1 a",
+						changes : "As an action, I can spend 7 Ki Points to cast divine word, using Wisdom as my spellcasting modifier"
+					}
+				},
+				recovery : "short rest",
+            	usages : 1
 			},
 			autoSelectExtrachoices : [{extrachoice : "flurry of blows"}]
 		},
@@ -595,6 +1021,55 @@ RunFunctionAtEnd(function () {
 		}
 	}
 });
+
+FeatsList["martial arts initiate"] = {
+	name : "Martial Arts Initiate",
+	source : [["GMB:LL"]],
+	descriptionFull : "You have some basic martial arts training, giving you some skill in both unarmed combat and unarmed defense. So long as you aren't wearing armor or a shield, your Armor Class equals 13 + your Dexterity modifier. Your unarmed strikes deal bludgeoning damage equal to 1d4 + your Strength or Dexterity modifier on hit. When you take the Attack action on your turn and only make unarmed strikes, you can make a single unarmed strike as a bonus action on that same turn.",
+	description : "My AC when unarmoured is 13 + Dex. My unarmoured strikes deal 1d4 + Str or Dex. When I take the Attack action and only make unarmed strikes, I can make a single unarmed strike as a bonus action on that same turn.",
+	calcChanges : {
+		atkAdd : [
+			function (fields, v) {
+				if (fields.Mod === 1 || fields.Mod === 2 || What(AbilityScores.abbreviations[fields.Mod - 1] + " Mod") < What(AbilityScores.abbreviations[v.StrDex - 1] + " Mod")) {
+					fields.Mod = v.StrDex;
+				}
+
+				if (v.baseWeaponName == "unarmed strike") {
+					if (fields.Damage_Die == 1) fields.Damage_Die = '1d4';
+				};
+			},
+			"My unarmed strikes deal 1d4 damage + Str or Dex. If I used my action to make only unarmed strikes, I can make a single unarmed strike as bonus action.",
+			1
+		]
+	},
+	action : ['bonus action', 'Unarmed Strike (with Attack action)'],
+	armorOptions : [{
+		regExpSearch : /justToAddToDropDown/,
+		name : "Unarmored Defense (+3)",
+		source : ["GMB:LL"],
+		ac : "13",
+		affectsWildShape : true
+	}],
+	armorAdd : "Unarmored Defense (+3)"
+};
+
+FeatsList["ki warrior"] = {
+	name : "Ki Warrior",
+	source : [["GMB:LL"]],
+	descriptionFull : "You have studied and mastered monastic Techniques which allow you to perform supernatural feats of spiritual power. You learn two Techniques from the Alternate Monk class. If the Technique has a prerequisite or mentions a Martial Arts die, you can learn it only if you are a Monk and you meet its prerequisites. If a Technique requires the target to make a saving throw to resist its effects, the DC equals 8 + your proficiency bonus + your Wisdom modifier. You gain 2 Ki Points to spend on Techniques. You regain all of your expended Ki Points when you finish a short or long rest. If you have Ki from another feature, these Ki Points are added to your total pool of Ki Points.",
+	description : "I learn two techniques from the Alternate Monk. I can only learn Techniques without prerequesites and that don't use Martial Arts Die unless I'm a monk. Those techniques use my Wis for the DC. I also gain 2 Ki, which are added to my pool if I have any.",
+	bonusClassExtrachoices : [{
+		"class" : "monk(laserllama)",
+		"feature" : "ki",
+		"bonus" : 2
+	}],
+	extraLimitedFeatures : [{
+		name : "Ki Points",
+		usages : 2,
+		recovery : "short rest",
+		addToExisting : true // Due to naming conflicts, this does not seem to work unless the official Monk is removed from the sheet
+	}]
+};
 
 // Source information
 SourceList["GMB:LL"] = {
