@@ -440,9 +440,9 @@ ClassList["monk(laserllama)"] = {
 				calcChanges : {
 					atkCalc : [
 						function (fields, v, output) {
-							if ((/\blight\b/i).test(fields.Description)) output.extraDmg += 1;
+							if (v.baseWeaponName == "unarmed strike" || (/\blight\b/i).test(fields.Description)) output.extraDmg += 1;
 						},
-						"When I'm wielding light weapons and not wearing medium or heavy armor nor a shield, I do +1 damage with light weapons."
+						"When I'm wielding light weapons and not wearing medium or heavy armor nor a shield, I do +1 damage with light weapons and unarmed strikes."
 					]
 				},
 				speed : {
