@@ -1205,9 +1205,8 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 			FSfea.source = [["GMB:LL", 0]];
 			FSfea.minlevel = 3;
 			FSfea.description = levels.map(function (n) {
-					if (n < 3) return '';
 
-					if (n >= 3 && n < 7) {
+					if (n < 7) {
 						var result = ["I learn an additional Fighting Style but can only benefit from one at a time",
 							"I can switch between Fighting Styles I know as a bonus action"]
 					}
@@ -2359,13 +2358,12 @@ FeatsList["masterful technique"] = {
 	bonusClassExtrachoices : [{
 		"class" : "fighter(laserllama)",
 		"subclass" : "fighter(laserllama)-master at arms",
-		feature : "subclassfeature3",
+		"feature" : "subclassfeature3.1",
 		bonus : 1
 	}],
 	action: [["bonus action", "Change fighting style"]],
 	prerequisite : "At least one Fighting Style known",
-	prereqeval : function (v) { return classes.known["fighter"] || classes.known["fighter(laserllama)"] || (classes.known["ranger"] && classes.known["ranger"].level >= 2) || (classes.known["paladin"] && classes.known["paladin"].level >= 2)}, 
-	// NOTE: The prerequesite is not exhaustive. It is probably possible to make it dynamically instead of hard-coded, but I don't think it's worth the time investment since you can bypass it anyways.
+	prereqeval : function (v) { return Object.keys(GetFightingStyleSelection()).length != 0}, 
 	scorestxt : "+1 Strength, Dexterity or Constitution"
 };
 
