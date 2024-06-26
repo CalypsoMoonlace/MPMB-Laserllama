@@ -619,6 +619,7 @@ ClassList["fighter(laserllama)"] = {
 				extraname : "Martial Exploits",
 				extraTimes : ['', 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10],
 				extrachoices : [],
+				limfeaname : "Exploit Dice",
 
 				// Exploit dice
 				usages : ['', 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 6],
@@ -1081,6 +1082,92 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 	abilitySaveAlt : 2,
 	features : {
 
+		// Override martial exploits because size of die increases
+		// NOTE: This has been copy pasted from the main class. IT WON'T WORK IF YOU TRY TO USE newObj ! (it will cause a crash because of some variable's scope)
+		// I do not know how to fix that scoping bug, so I went for the more brute force approach. If it works, it aint stupid ;)
+		"martial exploits": function(){
+
+			// Fixed attributes
+			MartialExploits = {
+				name : "Martial Exploits",
+				minlevel : 2,
+				source : [["GMB:LL", 0]],
+				description : desc(["I gain Exploit Dice, which are used to fuel my Martial Exploits", "Use the \"Choose Feature\" button above to choose Martial Exploits"]),
+				toNotesPage : [{
+					name : "Martial Exploits",
+					note : desc(["Below are all Martial Exploits I know. Each 3rd and 4th degree exploits can only be used once per short rest. Each 5th degree exploit can only be used once per long rest."])
+				}],
+
+				// Martial Exploits
+				extraname : "Martial Exploits",
+				extraTimes : ['', 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10],
+				extrachoices : [],
+				limfeaname : "Exploit Dice",
+
+				// Exploit dice
+				usages : ['', 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 6],
+				additional : ['', "d6", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12"],
+				recovery : "short rest",
+
+				// Eval
+                eval: function() {
+                    if (!CurrentSpells["martial exploits"]) {
+                        // Defining the Fighter spell sheet - also known as Martial exploits
+                        CurrentSpells["martial exploits"] = {
+                            name : "Martial Exploits",
+                            shortname : "Martial Exploits",
+                            ability: 2,
+                            bonus : {},
+                            typeSp:"known",
+                            refType:"feat"
+                        }
+                    }
+                }
+			}
+
+			// Make a filtered spell list that contains only Fighter(laserllama) "spells"
+			const FighterSpells = Object.keys(SpellsList).filter((key) => SpellsList[key].isExploit).filter((key) => {
+				for (var i = 0; i < SpellsList[key].classes.length; i++) {
+					if (SpellsList[key].classes[i] == "fighter(laserllama)") return true;
+				}
+				return false;
+				// NOTE: this is literally a SpellsList[key].classes.includes("fighter(laserllama)") but for some cursed reason I can't use that function
+			});
+			
+			// Iterate over all Fighter(laserllama) "spells"
+			for (var i = 0; i < FighterSpells.length; i++) {
+				var NewSpell = SpellsList[FighterSpells[i]];
+				var tempSpell = FighterSpells[i];
+
+				MartialExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
+
+				MartialExploits[FighterSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
+					name: NewSpell.name,
+					toNotesPage : [{ // What is added to the notes page
+						name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
+						note : desc(NewSpell.descriptionFull),
+						amendTo : "Martial Exploits"
+					}],
+					source: NewSpell.source,
+					addMod: NewSpell.addMod,
+					submenu: NewSpell.submenu,
+					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
+					eval: MartialExploits.eval, // in case the user removes all exploits
+					spellcastingBonusElsewhere : {
+                        addTo : "martial exploits",
+                        spellcastingBonus : {
+                            name : "Martial Exploits",
+                            spellcastingAbility : 4,
+                            spells : [FighterSpells[i]],
+                            selection : [FighterSpells[i]]
+                        }
+                    }
+				}
+			}
+
+			return MartialExploits;
+		}(),
+
 		// Override action surge because of the lvl 10 subclass feature
 		"action surge": function() {
 			var actsurge = newObj(ClassList["fighter(laserllama)"].features["action surge"]);
@@ -1089,7 +1176,6 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 		}(),
 
 		"subclassfeature3" : function(){
-			ClassList["fighter(laserllama)"].features["martial exploits"].additional = ['', "d6", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12", "d12"];
 
 			// Fixed attributes
 			MartialExploits = {
@@ -1127,7 +1213,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 					}],
 
 				extraLimitedFeatures : [{
-					name : "Martial Exploits",
+					name : "Exploit Dice",
 					usages : 1,
 					recovery : "short rest",
 					addToExisting : true
@@ -2433,13 +2519,37 @@ FeatsList["martial training"] = {
 		"feature" : "martial exploits",
 		"bonus" : 2
 	}],
-	extraLimitedFeatures : [{
-		name : "Martial Exploits",
-		usages : 2, // TODO: update it to 1 if already have some maneuvers
-		additional : 'd4',
-		recovery : "short rest",
-		addToExisting : true
-	}]
+	choices : ["Fighter", "Not a fighter"],
+	selfChoosing : function () { // This function does not take into account other sources of exploit die, since this sheet is only about alt Fighter
+		if (classes.known["fighter(laserllama)"] && classes.known["fighter(laserllama)"].level >= 2) { 
+			return "fighter" 
+		} else { 
+			return "not a fighter"
+		};
+	},
+	"fighter" : {
+		name : "Martial\u200A Training", // The special character is there to differentiate the feat versions
+		description : "",
+		calculate : "event.value = 'I learn two maneuvers of my choice from those available to the Fighter (2nd page \"Choose Feature\" button). The saving throw DC for this is ' + (8 + Number(How('Proficiency Bonus')) + Math.max(Number(What('Str Mod')), Number(What('Dex Mod')))) + ' (8 + proficiency bonus + Str/Dex mod). I gain one more Exploit die, which I regain when I finish a short rest.';",
+		extraLimitedFeatures : [{
+			name : "Exploit Dice",
+			usages : 1,
+			recovery : "short rest",
+			addToExisting : true
+		}]
+	},
+	"not a fighter" : {
+		name : "Martial\u200A\u200A Training",
+		description : "",
+		calculate : "event.value = 'I learn two maneuvers of my choice from those available to the Fighter (2nd page \"Choose Feature\" button). The saving throw DC for this is ' + (8 + Number(How('Proficiency Bonus')) + Math.max(Number(What('Str Mod')), Number(What('Dex Mod')))) + ' (8 + proficiency bonus + Str/Dex mod). I gain two Exploit dice (d4), which I regain when I finish a short rest.';",
+		extraLimitedFeatures : [{
+			name : "Exploit Dice",
+			usages : 2,
+			additional : 'd4',
+			recovery : "short rest",
+			addToExisting : true
+		}]
+	},
 };
 
 // Add the fighting initiate only when all other code has run, so that we get fighting styles added by the code
