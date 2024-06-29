@@ -31,7 +31,24 @@ try {
     throw new Error("Please import the 'Laserllama - Exploits.js' file before importing this file as otherwise it cannot function properly. You can get it on the github repository.");
 }
 
-// Utility function
+// Utility functions
+function CreateMartialSpellsheet() {
+	// This function is called by different eval attributes and is required before EACH USE OF spellcastingBonusElsewhere
+	// The reason for that is an edge case: if the player has the sheet created by picking exploits, then removes those picks, the spellsheet is entirely removed
+
+	// Defining the Fighter spell sheet - also known as Martial exploits
+	if (!CurrentSpells["martial exploits"]) {
+		CurrentSpells["martial exploits"] = {
+			name : "Martial Exploits",
+			shortname : "Martial Exploits",
+			ability: 1,
+			bonus : {},
+			typeSp:"known",
+			refType:"feat"
+		}
+	}
+}
+
 function GetSubclassExploits(subclass_name, exploit_list) {
 	/* pre: subclass_name is a string
 			exploit_list is an array of length 5
@@ -83,19 +100,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
 			source: SpellsList[NewSpellKey].source,
 			addMod: SpellsList[NewSpellKey].addMod,
 			submenu: SpellsList[NewSpellKey].submenu,
-            eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-                if (!CurrentSpells["martial exploits"]) {
-					// Defining the Fighter spell sheet - also known as Martial exploits
-					CurrentSpells["martial exploits"] = {
-						name : "Martial Exploits",
-						shortname : "Martial Exploits",
-						ability: 1,
-						bonus : {},
-						typeSp:"known",
-						refType:"feat"
-					}
-				}
-            },
+            eval: CreateMartialSpellsheet,
             spellcastingBonusElsewhere : {
                 addTo : "martial exploits",
                 spellcastingBonus : {
@@ -630,19 +635,7 @@ ClassList["fighter(laserllama)"] = {
 				recovery : "short rest",
 
 				// Eval
-                eval: function() {
-                    if (!CurrentSpells["martial exploits"]) {
-                        // Defining the Fighter spell sheet - also known as Martial exploits
-                        CurrentSpells["martial exploits"] = {
-                            name : "Martial Exploits",
-                            shortname : "Martial Exploits",
-                            ability: 2,
-                            bonus : {},
-                            typeSp:"known",
-                            refType:"feat"
-                        }
-                    }
-                }
+                eval: CreateMartialSpellsheet
 			}
 
 			// Make a filtered spell list that contains only Fighter(laserllama) "spells"
@@ -672,7 +665,7 @@ ClassList["fighter(laserllama)"] = {
 					addMod: NewSpell.addMod,
 					submenu: NewSpell.submenu,
 					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
-					eval: MartialExploits.eval, // in case the user removes all exploits
+					eval: CreateMartialSpellsheet, // in case the user removes all exploits
 					spellcastingBonusElsewhere : {
                         addTo : "martial exploits",
                         spellcastingBonus : {
@@ -1110,19 +1103,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				recovery : "short rest",
 
 				// Eval
-                eval: function() {
-                    if (!CurrentSpells["martial exploits"]) {
-                        // Defining the Fighter spell sheet - also known as Martial exploits
-                        CurrentSpells["martial exploits"] = {
-                            name : "Martial Exploits",
-                            shortname : "Martial Exploits",
-                            ability: 2,
-                            bonus : {},
-                            typeSp:"known",
-                            refType:"feat"
-                        }
-                    }
-                }
+                eval: CreateMartialSpellsheet
 			}
 
 			// Make a filtered spell list that contains only Fighter(laserllama) "spells"
@@ -1227,19 +1208,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				extrachoices : [],
 
 				// Eval
-                eval: function() {
-                    if (!CurrentSpells["martial exploits"]) {
-                        // Defining the Fighter spell sheet - also known as Martial exploits
-                        CurrentSpells["martial exploits"] = {
-                            name : "Martial Exploits",
-                            shortname : "Martial Exploits",
-                            ability: 2,
-                            bonus : {},
-                            typeSp:"known",
-                            refType:"feat"
-                        }
-                    }
-                }
+                eval: CreateMartialSpellsheet
 			}
 
 			// Make a filtered spell list that contains only Fighter(laserllama) "spells" of degree <= 3
@@ -1363,19 +1332,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 				}],
 
 				// Eval
-                eval: function() {
-                    if (!CurrentSpells["martial exploits"]) {
-                        // Defining the Fighter spell sheet - also known as Martial exploits
-                        CurrentSpells["martial exploits"] = {
-                            name : "Martial Exploits",
-                            shortname : "Martial Exploits",
-                            ability: 2,
-                            bonus : {},
-                            typeSp:"known",
-                            refType:"feat"
-                        }
-                    }
-                }
+                eval: CreateMartialSpellsheet
 			}
 
 			// Make a filtered spell list that contains only exploits
@@ -1777,19 +1734,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"As a reaction when I or another I can see within 30 ft is hit by an attack, I can invoke this",
 					"I select another target for the attack within 30 ft of me, using the same roll (within range)"
 				]),
-				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-	                if (!CurrentSpells["martial exploits"]) {
-						// Defining the Fighter spell sheet - also known as Martial exploits
-						CurrentSpells["martial exploits"] = {
-							name : "Martial Exploits",
-							shortname : "Martial Exploits",
-							ability: 1,
-							bonus : {},
-							typeSp:"known",
-							refType:"feat"
-						}
-					}
-	            },
+				eval: CreateMartialSpellsheet,
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1831,19 +1776,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"I learn the Cunning Instinct exploit and can use it at will",
 					"As a bonus action, I can invoke this to add my Exploit Die on Str and Con checks and saves for 10 min"
 				]),
-				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-	                if (!CurrentSpells["martial exploits"]) {
-						// Defining the Fighter spell sheet - also known as Martial exploits
-						CurrentSpells["martial exploits"] = {
-							name : "Martial Exploits",
-							shortname : "Martial Exploits",
-							ability: 1,
-							bonus : {},
-							typeSp:"known",
-							refType:"feat"
-						}
-					}
-	            },
+				eval: CreateMartialSpellsheet,
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1875,19 +1808,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"While charmed, it descends into a dreamy stupor, becoming incapacitated and has speed 0",
 					"It can repeat the save at the end of each of its turns, ending the effect on a success"
 				]),
-				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-	                if (!CurrentSpells["martial exploits"]) {
-						// Defining the Fighter spell sheet - also known as Martial exploits
-						CurrentSpells["martial exploits"] = {
-							name : "Martial Exploits",
-							shortname : "Martial Exploits",
-							ability: 1,
-							bonus : {},
-							typeSp:"known",
-							refType:"feat"
-						}
-					}
-	            },
+				eval: CreateMartialSpellsheet,
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1916,19 +1837,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"As a bonus action, I can invoke it to gain resistance to bludg/slash/pierc damage for 1 min",
 					"When I use Runic Might, I can invoke this Rune as part of that same bonus action"
 				]),
-				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-	                if (!CurrentSpells["martial exploits"]) {
-						// Defining the Fighter spell sheet - also known as Martial exploits
-						CurrentSpells["martial exploits"] = {
-							name : "Martial Exploits",
-							shortname : "Martial Exploits",
-							ability: 1,
-							bonus : {},
-							typeSp:"known",
-							refType:"feat"
-						}
-					}
-	            },
+				eval: CreateMartialSpellsheet,
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1959,19 +1868,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 					"While in this state, I can use a reaction to add or substract a roll of my Exploit Die from a roll",
 					"I can do this for attacks, saves, and checks of myself or others I can see within 30 ft of me"
 				]),
-				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-	                if (!CurrentSpells["martial exploits"]) {
-						// Defining the Fighter spell sheet - also known as Martial exploits
-						CurrentSpells["martial exploits"] = {
-							name : "Martial Exploits",
-							shortname : "Martial Exploits",
-							ability: 1,
-							bonus : {},
-							typeSp:"known",
-							refType:"feat"
-						}
-					}
-	            },
+				eval: CreateMartialSpellsheet,
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -3305,19 +3202,7 @@ AddSubClass("fighter(laserllama)", "tinker knight", {
 			minlevel : 3,
 			description : desc(["I learn the mechanical insight exploit, it doesn't count against my total and can't be switched",
 				"I gain proficiency with tinker's tools and smith's tools (or any other tool if already proficient)"]),
-			eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-                if (!CurrentSpells["martial exploits"]) {
-					// Defining the Fighter spell sheet - also known as Martial exploits
-					CurrentSpells["martial exploits"] = {
-						name : "Martial Exploits",
-						shortname : "Martial Exploits",
-						ability: 1,
-						bonus : {},
-						typeSp:"known",
-						refType:"feat"
-					}
-				}
-            },
+			eval: CreateMartialSpellsheet,
             spellcastingBonusElsewhere : {
                 addTo : "martial exploits",
                 spellcastingBonus : {
