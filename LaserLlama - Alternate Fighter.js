@@ -250,8 +250,7 @@ var FightingStylesLL = {
 	great_weapon : {
 		name : "Great Weapon Fighting Style",
 		description : desc([
-				"While wielding a heavy melee weapon in two hands and making an attack with my action,",
-				"I treat total damage dice rolls lower than 5 as 6"
+				"While wielding a heavy melee weapon in two hands and making an attack with my action, I treat total damage dice rolls lower than 5 as 6"
 			]),
 		calcChanges : {
 			atkAdd : [
@@ -268,7 +267,7 @@ var FightingStylesLL = {
 	improvised : {
 		name : "Improvised Fighting Style",
 		description : desc([
-				"I am proficient with improvised weapons,",
+				"I am proficient with improvised weapons",
 				"I can reroll damage once per turn but it destroys non-magical objects"
 			]),
 		weaponProfs : [false, false, ["Improvised weapons"]]
@@ -544,7 +543,7 @@ ClassList["fighter(laserllama)"] = {
 				"\n \u2022 light crossbow and 20 bolts -or- two handaxes;" +
 				"\n \u2022 a dungeoneer’s pack -or- an explorer’s pack;" + 
 				"\n\nAlternatively, choose 5d4 x 10 gp worth of starting equipment instead of both the class' and the background's starting equipment.", 
-	subclasses : ["Warrior Archetype", ["fighter(laserllama)-arcane knight"]],
+	subclasses : ["Warrior Archetype", ["fighter(laserllama)-arcane knight","fighter(laserllama)-witchblade"]],
 	attacks : [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4],
 	abilitySave : 1, // Alt Fighter uses Strength or Dex for foes' saving throws
 	abilitySaveAlt : 2,
@@ -587,9 +586,13 @@ ClassList["fighter(laserllama)"] = {
 			name : "Second Wind",
 			source : [["GMB:LL", 0]],
 			minlevel : 1,
-			description : desc([
-				"As a bonus action, I can regain hit points equal to 1d10 + fighter level"
-			]),
+			description : levels.map(function (n) {
+				if (n < 11) {
+					return desc(["As a bonus action, I can regain hit points equal to 1d10 + fighter level"]);
+				} else {
+					return desc(["As a bonus action, I can regain hit points equal to 1d10 + fighter level and an exploit die"]);
+				}
+			}),
 			additional : levels.map(function (n) {
 				if (n < 11) {
 					return "1d10+" + n;
@@ -597,7 +600,7 @@ ClassList["fighter(laserllama)"] = {
 					return "1d10+" + n + ", exploit die";
 				}
 			}),
-			usages : levels.map(function (n) { return n < 1 ? "" : n < 20 ? 1 : 2 }),
+			usages : levels.map(function (n) { return n < 1 ? "" : n < 14 ? 1 : 2 }),
 			recovery : "short rest",
 			action : [["bonus action", ""]]
 		},
@@ -746,9 +749,7 @@ ClassList["fighter(laserllama)"] = {
 			name : "Martial Superiority",
 			source : [["GMB:LL", 0]],
 			minlevel : 11,
-			description : desc(["Whenever I use second wind, I regain an exploit die",
-				"Also, I regain all expended exploit die if I spend 10 minutes only doing light activity"
-			])
+			description : desc("I regain all expended exploit die if I spend 10 minutes only doing light activity")
 		},
 
 		"relentless" : {
@@ -765,7 +766,7 @@ ClassList["fighter(laserllama)"] = {
 
 // Edit official eldritch knight regex to avoid conflict with arcane knight
 if(ClassSubList["fighter-eldritch knight"]) {
-    ClassSubList["fighter-eldritch knight"].regExpSearch = /^(?!.*(exalted|sacred|holy|divine|nature|natural|purple.*dragon|green|arcane archer))(?=.*(knight|fighter|warrior|militant|warlord|phalanx|gladiator|trooper))(?=.*\b(eldritch|magic|mage|witch)\b).*$/i
+    ClassSubList["fighter-eldritch knight"].regExpSearch = /^(?!.*(exalted|sacred|holy|divine|nature|natural|purple.*dragon|green|arcane archer))(?=.*(knight|fighter|warrior|militant|warlord|phalanx|gladiator|trooper))(?=.*\b(eldritch|magic|mage)\b).*$/i
 };
 
 // Create arcane knight spell list
@@ -901,7 +902,10 @@ AddSubClass("fighter(laserllama)", "champion", {
 			name : "Remarkable Strength",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
-			description : desc("Whenever I make a Strength or Constitution ability check or saving throw, I gain a bonus to my roll equal to one roll of my Exploit Die")
+			description : desc("Whenever I make a Strength or Constitution ability check or saving throw, I gain a bonus to my roll equal to one roll of my Exploit Die"),
+			savetxt : {
+				text : ["Add Expl Die to Str and Con saves"]
+			}
 		},
 		"subclassfeature7" : {
 			name : "Peak Athlete",
@@ -950,6 +954,7 @@ AddSubClass("fighter(laserllama)", "commander", {
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
 			description : desc(["I learn exploits from the Warlord class who don't count against my total", "This feature has not been implemented yet (interested in this? shoot me a dm!)"])
+			// TODO: add warlord exploits
 		},
 		"subclassfeature3.1" : {
 			name : "Student of War",
@@ -999,12 +1004,15 @@ AddSubClass("fighter(laserllama)", "marksman", {
 			name : "Marksman's Focus",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
-			description : desc([
-					"When I begin my turn and am not surprised or incapacitated, I can choose to enter a state of Focus, which imposes the following benefits and effects until the end of my turn:",
-					"\u2022 My speed is reduced to 0 feet",
-					"\u2022 Until I hit a creature with a ranged attack, I have adv. on all ranged weapon attack rolls",
-					"\u2022 I can reroll 1 and 2 (but must take the new roll) on my damage rolls with a ranged weapon"
-				])
+			description : levels.map(function (n) {
+				var SpeedReduction = n < 18 ? "0 ft" : "10 ft"
+				var AdvantageCondition = n < 18 ? "Until I hit a creature with a ranged attack, I have adv. on all ranged weapon attack rolls" : "I have adv. on all ranged weapon attack rolls"
+				var FocusLength = n < 18 ? "until the end of my turn" : "for 1 minute or until I end it (no action required)"
+				return desc(["When I begin my turn and am not surprised or incapacitated, I can choose to enter a state of Focus, which imposes the following "+FocusLength+":",
+					"\u2022 My speed is reduced to " + SpeedReduction,
+					"\u2022 " + AdvantageCondition,
+					"\u2022 I can reroll 1 and 2 (but must take the new roll) on my damage rolls with a ranged weapon"])
+			})
 		},
 		"subclassfeature3.2" : {
 			name : "Elite Training",
@@ -1012,7 +1020,7 @@ AddSubClass("fighter(laserllama)", "marksman", {
 			minlevel : 3,
 			description : desc([
 				"When I make a Dex check or saving throw, I can expend an Exploit Die and add it to my roll", 
-				"I can do so after I roll, but before I know the result."
+				"I can do so after I roll, but before I know the result"
 			])
 		},
 		"subclassfeature7" : {
@@ -1059,16 +1067,8 @@ AddSubClass("fighter(laserllama)", "marksman", {
 					"My normal and long range for ranged weapon attacks increases by 10 ft times my Fighter lvl"
 			    ],
 			}
-		},
-		"subclassfeature18" : {
-			name : "Legendary Marksman",
-			source : [["GMB:LL", 0]],
-			minlevel : 18,
-			description : desc([
-				"When I Focus, the benefits last for 1 minute, and I have adv. on all ranged weapon attacks for the duration and my speed is only reduced to 10 ft",
-				"At the start of my turn, I can end my Focus (no action required)"
-			])
 		}
+		// The lvl 18 feature is added by editing Marksman's focus
 	}
 })
 
@@ -1431,6 +1431,18 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 	}
 })
 
+// Create mystic spell list
+var MysticList = [
+	"alarm", "catapult", "cause fear", "charm person", "command", "comprehend languages", "detect magic", "disguise self", "dissonant whispers", "expeditious retreat", "faerie fire", "tasha's hideous laughter", "id insinuation", "identify", "jump", "longstrider", "magic missile", "shield", "silent image", "sleep", "unseen servant", // 1st level
+	"nathair's mischief", "blindness/deafness", "blur", "calm emotions", "crown of madness", "detect thoughts", "enlarge/reduce", "hold person", "invisibility", "levitate", "mind spike", "tasha's mind whip", "mirror image", "misty step", "phantasmal force", "see invisibility", "suggestion", "tower of iron will", // 2nd level
+	"blink", "catnap", "cerebral blast", "clairvoyance", "enemies abound", "fear", "feign death", "fly", "haste", "hypnotic pattern", "intellect fortress", "life transference", "major image", "nondetection", "sending", "slow", "tongues", "water walk", // 3rd level
+	"arcane eye", "charm monster", "compulsion", "confusion", "dimension door", "ego scourge", "freedom of movement", "greater invisibility", "hallucinatory terrain", "phantasmal killer", "raulothim's psychic lance", "otiluke's resilient sphere" // 4th level
+]
+
+for (var i = 0; i < MysticList.length; i++) {
+	SpellsList[MysticList[i]].classes.push("mystic")
+}
+
 // Mystic (psi warrior)
 AddSubClass("fighter(laserllama)", "mystic", {
 	regExpSearch : /mystic/i,
@@ -1438,27 +1450,71 @@ AddSubClass("fighter(laserllama)", "mystic", {
 	fullname : "Mystic",
 	source : [["GMB:LL", 0]],
 	abilitySave : 4,
-	spellcastingFactor : 3,
-	/*spellcastingList : {
-		spells : [
-			"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
-			"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
-			"arcane scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
-			"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
-			"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
-		]
+	spellcastingFactor : 3, // Mystic is a 3rd caster but uses psi points instead of spell slots
+	// Unfortunately there's no way around this, because if (spellcastingfactor > level || spell slots == 0), it won't let the player pick spells
+	spellcastingList : {
+		spells : MysticList
 	},
 	spellcastingKnown : {
-		cantrips : [0, 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-		spells : [0, 0, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12]
-	},*/
+		spells : [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7]
+	},
 	features : {
 		"subclassfeature3" : {
 			name : "Spellcasting",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
-			description : desc(["I can cast known Psion spells, using Intelligence as my spellcasting ability", "This feature has not been implemented yet (interested in this? shoot me a dm!)"]),
-			//additional : ["", "", "2 cantrips \u0026 3 spells known", "2 cantrips \u0026 4 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 8 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 9 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 10 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 11 spells known", "3 cantrips \u0026 12 spells known", "3 cantrips \u0026 12 spells known"],
+			description : desc("I can cast known Psion spells, using Intelligence as my spellcasting ability (see 3rd page)"),
+			limfeaname : "Psi points",
+			usages : [0, 0, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8],
+			recovery : "short rest",
+			eval : function() {
+				AddString('Extra.Notes', 'Psi point features:');
+				show3rdPageNotes();
+			},
+			removeeval : function() {
+				AddString('Extra.Notes', 'Psi point features:');
+			},
+			"spellcasting" : {
+				name : "Spellcasting",
+				extraname : "Mystic 3",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var mentalLimit = n < 7 ? "1st" : n < 13 ? "2nd" : n < 19 ? "3rd" : "4th";
+
+					return desc(["I can cast known Psion spells, using Intelligence as my spellcasting ability",
+						"To manifest a spell, I expend Psi Points equal to the spell's level (0 for cantrips)",
+						"My mind is my spell focus but I must have a hand free if the spell has a S or M component",
+						"I cannot cast or learn spells of a level above my mental limit (" + mentalLimit + " level)",
+						"I can replace any spell I know with another when I gain a Fighter level"]);
+				})
+			},
+			"inscrutable mind" : {
+				name : "Inscrutable Mind",
+				extraname : "Mystic 10",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					return desc(["Whenever I succeed on an Int, Wis, or Cha save, I can spend 1 Psi Point to force the attacker to succeed an Int save or take "+n+" psychic dmg"]);
+				}),
+				additional : "1 Psi Point"
+			},
+			"psionic ward" : {
+				name : "Psionic Ward",
+				extraname : "Mystic 15",
+				source : [["GMB:LL", 0]],
+				description : desc(["As a bonus action, project a Psionic Ward around me for a 30-foot radius for 1 minute", "Me, and creatures of my choice within range gain resistance to psychic damage and can add my Int mod (min of +1) to any Int, Wis, and Cha saving throws that we make"]),
+				additional : "5 Psi Points",
+				action : ["bonus action", ""]
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "spellcasting",
+				minlevel : 3
+			}, {
+				extrachoice : "inscrutable mind",
+				minlevel : 10
+			}, {
+				extrachoice : "psionic ward",
+				minlevel : 15
+			}]
 		},
 		"subclassfeature3.1" : {
 			name : "Minor Telekinesis",
@@ -1501,16 +1557,8 @@ AddSubClass("fighter(laserllama)", "mystic", {
 			name : "Inscrutable Mind",
 			source : [["GMB:LL", 0]],
 			minlevel : 10,
-			description : desc(["I have adv. on saving throws to resist being charmed, frightened, or having my thoughts read", "Also, whenever I succeed on an Int, Wis, or Cha saving throw, I can spend 1 Psi Point to force the attacker to succeed an Int saving throw or take psychic dmg equal to my Fighter lvl"]),
+			description : desc(["I have adv. on saving throws to resist being charmed, frightened, or having my thoughts read"]),
 			savetxt : { adv_vs : ["charmed", "frightened", "mind reading"] }
-		},
-		"subclassfeature15" : {
-			name : "Psionic Ward",
-			source : [["GMB:LL", 0]],
-			minlevel : 15,
-			description : desc(["As a bonus action, project a Psionic Ward around me for a 30-foot radius for 1 minute", "Me, and creatures of my choice within range gain resistance to psychic damage and can add my Int mod (min of +1) to any Int, Wis, and Cha saving throws that we make"]),
-			additional : "5 Psi Points",
-			action : ["bonus action", ""]
 		},
 		"subclassfeature18" : {
 			name : "Legendary Mystic",
@@ -1528,7 +1576,9 @@ AddSubClass("fighter(laserllama)", "mystic", {
 					components : "",
 					changes : "Using Legendary Mystic, I can cast Telekinesis without requiring components and without spell slots"
 				}
-			}
+			},
+			usages : 1,
+			recovery : "long rest"
 		}
 	}
 })
@@ -1621,14 +1671,15 @@ AddSubClass("fighter(laserllama)", "knight errant", {
 			minlevel : 3,
 			skillstxt : "Choose one from: Animal Handling, History, Insight, Performance, or Persuasion",
 			description : desc(["I learn to speak, read, and write one additional language of my choice and gain proficiency in either Animal Handling, History, Insight, Performance, or Persuasion.",
-				"I cannot be knocked against my will from a trained mount unless me or the mount is incapacitated and mounting/dismounting only takes me 5 ft of movement"])
+				"I cannot be knocked against my will from a trained mount unless me or the mount is incapacitated and mounting/dismounting only takes me 5 ft of movement"]),
+			savetxt : { immune : ["falling off my mount"] }
 		},
 		"subclassfeature3.2" : {
 			name : "Chivalric Mark",
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
 			description : desc([
-				"Once per turn, if hit a creature with a melee weapon attack, I can mark it until the end of my next turn",
+				"Once per turn, on hit with a melee weapon attack, I can mark until the end of my next turn",
 				"While it is within 10 ft of me, a marked target has disadv. on attacks not directed at me",
 				"If it damages anybody but me, I can make a special melee attack vs. it with my reaction",
 				"I can give myself adv. on that attack by expending an Exploit Die and add it to the damage"
@@ -1639,8 +1690,7 @@ AddSubClass("fighter(laserllama)", "knight errant", {
 			name : "Noble Guardian",
 			source : [["GMB:LL", 0]],
 			minlevel : 7,
-			description : desc(["I learn the Protector Fighting Style (or another if I already know it)",
-			 "As a reaction, I can add my Exploit Die to AC against an attack made vs. me or someone within 5 ft of me. I need to be wielding a shield or a melee weapon to do this.",
+			description : desc(["As a reaction, I can add my Exploit Die to AC against an attack made vs. me or someone within 5 ft of me. I need to be wielding a shield or a melee weapon to do this.",
 			 "If the attack still hits, I can expend an Exploit Die to grant the target resistance to the attack"]),
 			action : ["reaction", "Protector Fighting Style"]
 		},
@@ -1662,11 +1712,8 @@ AddSubClass("fighter(laserllama)", "knight errant", {
 			name : "Perilous Charge",
 			source : [["GMB:LL", 0]],
 			minlevel : 15,
-			description : desc([
-				"If I hit a creature after moving 10 ft in a straight line, it must make a Strength save",
-				"If failed, the target is knocked prone; I can do this only once per turn",
-				"It has disadvantage on the saving throw if I am mounted"
-			])
+			description : desc(["If I hit a creature after moving 10 ft in a line, it must make a Str save, disadv if I am mounted",
+				"If failed, the target is knocked prone; I can do this only once per turn"])
 		},
 		"subclassfeature18" : {
 			name : "Legendary Knight Errant",
@@ -1706,11 +1753,9 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 			description : desc([
 				"I learn how to use magic runes to enhance my gear that I can wear or hold in my hand",
 				"When I finish a short/long rest, I can inscribe each rune I know upon a different item I touch",
-				"Runes inscribed on a carried object grant both a passive and a limited-use active effect",
 				"Each rune can only be on one item at a time, and recharge after a short/long rest",
 				"Whenever I gain a fighter level, I can swap a rune I know for another",
-				"Only me can trigger runes; The DC for a rune's abilities is my Exploit Die DC",
-				"Exploits learned through runes can be used at will and don't count against my total"
+				"Only me can trigger runes; The DC for a rune's abilities is my Exploit Die DC"
 			]),
 			toNotesPage : [{
 					name : "Runecarver Exploits",
@@ -1728,10 +1773,23 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 				name : "Cloud Rune",
 				source : [["GMB:LL", 0]],
 				description : desc([
-					"I learn the Subtle Con exploit",
+					"I learn the Subtle Con exploit and can use it at will",
 					"As a reaction when I or another I can see within 30 ft is hit by an attack, I can invoke this",
 					"I select another target for the attack within 30 ft of me, using the same roll (within range)"
 				]),
+				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+	                if (!CurrentSpells["martial exploits"]) {
+						// Defining the Fighter spell sheet - also known as Martial exploits
+						CurrentSpells["martial exploits"] = {
+							name : "Martial Exploits",
+							shortname : "Martial Exploits",
+							ability: 1,
+							bonus : {},
+							typeSp:"known",
+							refType:"feat"
+						}
+					}
+	            },
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1770,9 +1828,22 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 				name : "Frost Rune",
 				source : [["GMB:LL", 0]],
 				description : desc([
-					"I learn the Cunning Instinct exploit",
+					"I learn the Cunning Instinct exploit and can use it at will",
 					"As a bonus action, I can invoke this to add my Exploit Die on Str and Con checks and saves for 10 min"
 				]),
+				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+	                if (!CurrentSpells["martial exploits"]) {
+						// Defining the Fighter spell sheet - also known as Martial exploits
+						CurrentSpells["martial exploits"] = {
+							name : "Martial Exploits",
+							shortname : "Martial Exploits",
+							ability: 1,
+							bonus : {},
+							typeSp:"known",
+							refType:"feat"
+						}
+					}
+	            },
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1798,12 +1869,25 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 				name : "Stone Rune",
 				source : [["GMB:LL", 0]],
 				description : desc([
-					"I learn the Inquisitive Eye exploit",
+					"I learn the Inquisitive Eye exploit and can use it at will",
 					"As a reaction when a creature I can see ends it turn within 30 ft, I can invoke this rune",
 					"This causes the creature to make a Wisdom save or be charmed by me for 1 minute",
 					"While charmed, it descends into a dreamy stupor, becoming incapacitated and has speed 0",
 					"It can repeat the save at the end of each of its turns, ending the effect on a success"
 				]),
+				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+	                if (!CurrentSpells["martial exploits"]) {
+						// Defining the Fighter spell sheet - also known as Martial exploits
+						CurrentSpells["martial exploits"] = {
+							name : "Martial Exploits",
+							shortname : "Martial Exploits",
+							ability: 1,
+							bonus : {},
+							typeSp:"known",
+							refType:"feat"
+						}
+					}
+	            },
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1828,10 +1912,23 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 				name : "Hill Rune",
 				source : [["GMB:LL", 0]],
 				description : desc([
-					"I learn the Brace Up exploit",
+					"I learn the Brace Up exploit and can use it at will",
 					"As a bonus action, I can invoke it to gain resistance to bludg/slash/pierc damage for 1 min",
 					"When I use Runic Might, I can invoke this Rune as part of that same bonus action"
 				]),
+				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+	                if (!CurrentSpells["martial exploits"]) {
+						// Defining the Fighter spell sheet - also known as Martial exploits
+						CurrentSpells["martial exploits"] = {
+							name : "Martial Exploits",
+							shortname : "Martial Exploits",
+							ability: 1,
+							bonus : {},
+							typeSp:"known",
+							refType:"feat"
+						}
+					}
+	            },
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1857,11 +1954,24 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 				name : "Storm Rune",
 				source : [["T", 45]],
 				description : desc([
-					"I learn the Scholarly Recall exploit",
+					"I learn the Scholarly Recall exploit and can use it at will",
 					"As a bonus action, I can invoke it to enter a prophetic state for 1 min or till incapacitated",
 					"While in this state, I can use a reaction to add or substract a roll of my Exploit Die from a roll",
 					"I can do this for attacks, saves, and checks of myself or others I can see within 30 ft of me"
 				]),
+				eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+	                if (!CurrentSpells["martial exploits"]) {
+						// Defining the Fighter spell sheet - also known as Martial exploits
+						CurrentSpells["martial exploits"] = {
+							name : "Martial Exploits",
+							shortname : "Martial Exploits",
+							ability: 1,
+							bonus : {},
+							typeSp:"known",
+							refType:"feat"
+						}
+					}
+	            },
 	            spellcastingBonusElsewhere : {
 	                addTo : "martial exploits",
 					spellcastingBonus : [{ // What is added to the spellcasting sheet
@@ -1891,7 +2001,7 @@ AddSubClass("fighter(laserllama)", "runecarver", {
 			description : desc([
 				"As a bonus action, I can imbue myself with runic magic for 1 minute and gain benefits:",
 				" \u2022 Space permitted, I grow to a larger size category along with everything I'm wearing",
-				" \u2022 Once per turn, I can get a bonus equal to my Exploit Die for a Strength-based check, saving throw or weapon damage roll",
+				" \u2022 Once per turn, I can add an Exploit Die for a Str check, save or dmg of Str-based attack",
 			]),
 			additional : levels.map(function (n) {
 				return n < 3 ? "" : (n < 18 ? "Large" : "Huge") + ", +1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " bonus"
@@ -2054,10 +2164,8 @@ AddSubClass("fighter(laserllama)", "shadowdancer", {
 			name : "Shade Strike",
 			source : [["GMB:LL", 0]],
 			minlevel : 7,
-			description : desc([
-				"When I use the Dance of Shadows, I can make one extra melee attack from my or my shade's position",
-				"When I have no uses left, I can expend an Exploit Die as part of Dance of Shadows to make this bonus attack again"
-			]),
+			description : desc(["When using Dance of Shadows, I can make a melee attack from my or my shade's position",
+				"If I have no uses left, I can expend an Exploit Die to make this bonus attack again"]),
 			usages : "Charisma modifier per ",
 			usagescalc : "event.value = Math.max(1, What('Cha Mod'));",
 			recovery : "short rest"
@@ -2070,18 +2178,18 @@ AddSubClass("fighter(laserllama)", "shadowdancer", {
 				"As an action, I can temporarily transfer my consciousness to my shade for up to 10 min",
 				"During this time, I see and hear through its eyes and ears, but not my own eyes and ears",
 				"While I use my shade this way, it can be up to 1 mile away from me without issue",
-				"It ends early if my Shade is destroyed. or I use your bonus action to end it"
+				"It ends early if my Shade is destroyed. or I use my bonus action to end it"
 			]),
-			action : [["action", ""]]
+			action : [["action", " (start)"], ["action", " (end)"]]
 		},
 		"subclassfeature10" : {
 			name : "Dark Sacrifice",
 			source : [["GMB:LL", 0]],
 			minlevel : 10,
-			description : desc([
-				"As a reaction when a creature within 10 ft of my shade is hit, I can make my shade the target",
-				"The damage that the target would take is reduced by an amount equal to my Fighter level, causing my Shade to take the damage instead"
-			]),
+			description : levels.map(function (n) {
+				return desc(["As a reaction when a creature within 10 ft of my shade is hit, I can make my shade the target",
+					"The damage that the target would take is reduced by "+n+", which my shade takes instead"])
+			}),
 			action : [["reaction", ""]]
 		},
 		"subclassfeature15" : {
@@ -2091,7 +2199,8 @@ AddSubClass("fighter(laserllama)", "shadowdancer", {
 			description : desc([
 				"When my echo is destroyed by taking damage, I can use my reaction to regain temp HP",
 				"I gain temporary hit points equal to one roll of my Exploit Die + my Charisma modifier"
-			])
+			]),
+			action : [["reaction", ""]]
 		},
 		"subclassfeature18" : {
 			name : "Legendary Shadowdancer",
@@ -2154,8 +2263,8 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 			]),
 			usages : "Wis mod per ",
 			usagescalc : "event.value = Math.max(1, What('Wis Mod'));",
-			recovery : "long rest",
 			altResource : "ED",
+			recovery : "long rest",
 			additional : levels.map( function(n) { return n < 3 ? "" : (n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6) + " options known"; }),
 			extraname : "Enchanted Shots Options",
 			extrachoices : ["Beguiling Shot", "Bursting Shot", "Enfeebling Shot", "Grasping Shot", "Piercing Shot", "Seeking Shot", "Shadow Shot",
@@ -2237,12 +2346,12 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 					if (n < 3) return "";
 					if (n < 7) return desc([
 							"The target must succeed on a Dexterity save or takes poison damage",
-							"If failed, its speed is halved for 1 minute and it takes additional piercing dmg the first time it moves",
+							"If failed, its speed is halved for 1 minute and it takes piercing dmg the first time it moves",
 							"A creature can use its action to make a Strength check, removing the thorns on a success"
 						]);
 					return desc([
 							"The target must succeed on a Dexterity save or takes poison damage (half on success)",
-							"If failed, its speed is halved for 1 minute and it takes additional piercing dmg the first time it moves",
+							"If failed, its speed is halved for 1 minute and it takes piercing dmg the first time it moves",
 							"A creature can use its action to make a Strength check, removing the thorns on a success"
 						]);
 				}),
@@ -2259,11 +2368,11 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 				description : levels.map( function(n) {
 					if (n < 3) return "";
 					if (n < 7) return desc([
-							"The creature and any creature directly behind it in a straight line out to 30 ft must succeed on a Dex saving throw",
+							"The creature and any creature directly behind it in a straight line out to 30 ft must Dex save",
 							"If failed, they take force damage"
 						])
 					return desc([
-							"The creature and any creature directly behind it in a straight line out to 30 ft must succeed on a Dex saving throw",
+							"The creature and any creature directly behind it in a straight line out to 30 ft must Dex save",
 							"If failed, they take force damage (half on success)"
 						]);
 				}),
@@ -2307,12 +2416,12 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 					if (n < 7) return desc([
 							"The target must succeed on an Intelligence save or takes psychic damage",
 							"If failed, it is blinded for 1 minute",
-							"The creature can repeat this saving throw at the start of each of its turns, ending this effect on a success"
+							"The creature can repeat this save at the start of each of its turns, ending the effect on success"
 						]);
 					return desc([
 							"The target must succeed on an Intelligence save or takes psychic damage (half on success)",
 							"If failed, it is blinded for 1 minute",
-							"The creature can repeat this saving throw at the start of each of its turns, ending this effect on a success"
+							"The creature can repeat this save at the start of each of its turns, ending the effect on success"
 						]);
 				}),
 				additional : levels.map( function(n) {
@@ -2340,7 +2449,7 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 				source : [["GMB:LL", 0]],
 				description : desc([
 					"The target makes a Charisma save or take force dmg and be unable to cast spells",
-					"The creature can repeat this saving throw at the start of each turn, ending the effect on a success"
+					"The creature can repeat this save at the start of each turn, ending the effect on a success"
 				]),
 				submenu : "[fighter level 10+]",
 				prereqeval : function(v) { return classes.known["fighter(laserllama)"].level >= 10; },
@@ -2415,6 +2524,1270 @@ AddSubClass("fighter(laserllama)", "sylvan archer", {
 		}
 	}
 })
+
+// Subclasses from extended fighter
+// Crusader
+AddSubClass("fighter(laserllama)", "crusader", {
+	regExpSearch : /crusader/i,
+	subname : "Crusader",
+	fullname : "Crusader",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Crusader", ["commanding presence", "warding strike","honor duel","intimidating command","inspirational speech"]),
+		"subclassfeature3.1" : {
+			name : "Crusader's Ire",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["As a bonus action, I can Mark a creature within 60 ft for 1 min or until slain, which lets me:",
+				"\u2022 Make another attack with the same weapon once on my turn if I miss",
+				"\u2022 Make an opportunity attack if the creature attacks or casts a spell against another creature",
+				"\u2022 Add an Exploit Die to any saving throw the creature forces me to do",
+				"If I have no uses left, I can expend an Exploit Die to use it again"]),
+			action : [["bonus action", ""]],
+			recovery : "short rest",
+			usages : 1,
+			altResource : "ED"
+		},
+		"subclassfeature3.2" : {
+			name : "Fanatical Disciple",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc("I am proficient in Religion and add an Exploit Die to any Religion checks related to my cause"),
+			skills : ["Religion"]
+		},
+		"subclassfeature7" : {
+			name : "Renewed Fervor",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["When I use Second Wind, I regain the use of Crusader's Ire",
+				"When I Mark a creature, I can move up to 30 ft toward it as part of the same bonus action without expending my movement"])
+		},
+		"subclassfeature10" : {
+			name : "Zealous Fury",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["When I am reduced to 0 HP but not killed outright, I can drop to 1 HP instead and immediately make one weapon attack against my attacker",
+				"If I have no uses left, I can use it again, but I instantly gain a level of exhaustion"]),
+			recovery : "short rest",
+			usages : 1
+		},
+		"subclassfeature15" : {
+			name : "Righteous Judgment",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["On hit, I can end the Mark to have my attack to deal max dmg instead of rolling",
+				"If the attack reduces the target to 0 HP, I instantly regain the use of Crusader's Ire"])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Crusader",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["When the marked crea attacks me, I can make a single weapon attack against it as reaction",
+				"If I use this reaction after the attack hits me, my weapon attack is made with advantage"]),
+			action : [["reaction", ""]]
+		}
+	}
+})
+
+// Guardian
+AddSubClass("fighter(laserllama)", "guardian", {
+	regExpSearch : /guardian/i,
+	subname : "Guardian",
+	fullname : "Guardian",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Guardian", ["reposition", "shield impact","defensive stance","immovable stance","mythic resilience"]),
+		"subclassfeature3.1" : {
+			name : "Guardian Stance",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) { 
+				range = n < 3 ? 0 : n < 15 ? 5 : n < 18 ? 10 : 15
+				bonus = n < 15 ? "+1 to AC" : "half-cover"
+
+				return desc(["As a bonus action, I can enter a guardian stance, which has the following effects:",
+				"\u2022 My speed is reduced by 10 ft",
+				"\u2022 Me & creatures within " + range + " ft of me have " + bonus,
+				"\u2022 As a reaction, I can redirect an attack against another creature within " + range + " ft to me",
+				"\u2022 I can shove as a bonus action",
+				"It lasts indefinitely unless I am incapacitated, doff my shield or end it (no action required)"])
+			}),
+			action : [["bonus action", " (start)"], ["reaction", "Redirect attack (in Guard stance)"], ["bonus action", "Shove (in Guard stance)"]]
+		},
+		"subclassfeature3.2" : {
+			name : "Warrior Smith",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain proficiency in leatherworker's and smith's tools","I can spend 1 h using those tools to reinforce a shield or armor, which adds a +1 bonus to AC"]),
+			toolProfs : ["Leatherworker's tools","Smith's tools"],
+		},
+		"subclassfeature7" : {
+			name : "Rallying Wind",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["When I use Second Wind, creatures I choose within 5 ft that can see/hear me gain temp HP"]),
+			additional : levels.map(function (n) { return n + " temp HP" })
+		},
+		"subclassfeature10" : {
+			name : "Stalwart Defender",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) { 
+				range = n < 3 ? 0 : n < 15 ? 5 : n < 18 ? 10 : 15
+				return desc(["I gain +1 to AC for every allied creature within 5 ft that isn't incapacitated",
+				"I cannot be moved against my will or knocked prone while in my Guardian stance",
+				"Me & allies within " + range + " ft have adv. on Str & Con saves while in my Guardian stance",
+				"When I roll initiative, I can instantly enter my Guardian Stance as long as I am not surprised"])
+			}),
+			savetxt : { text : ["Immune to moved against my will or knocked prone (Guard stance); Adv on Str & Con saves (Guard stance)"] }
+		}
+		// The lvl 15 & 18 features are added by modifying the other entries (see the range & bonus variables)
+	}
+})
+
+// Guerrilla
+AddSubClass("fighter(laserllama)", "guerrilla", {
+	regExpSearch : /guerrilla/i,
+	subname : "Guerrilla",
+	fullname : "Guerrilla",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Guerrilla", ["mighty leap", "savvy explorer","aggressive sprint","improvised skill","survey wilderness"]),
+		"subclassfeature3.1" : {
+			name : "Adaptable Warrior",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can replace an Exploit I know with another by spending 1 h training (can be part of a short/long rest)"])
+		},
+		"subclassfeature3.2" : {
+			name : "Survivalist",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) { 
+				amount = n < 3 ? 0 : n < 7 ? 2 : 4
+				return desc(["I gain proficiency in some of the skills below: Athletics, Perception, Stealth, or Survival",
+				"If already proficient, I instead add an Exploit Die to all checks with the skill I choose"])
+			}),
+			additional : levels.map( function(n) { return (n < 3 ? 0 : n < 7 ? 2 : 4) + " choices" }),
+			extraname : "Survivalist proficiencies",
+			extrachoices : ["Athletics (proficiency)", "Athletics (exploit die)", "Perception (proficiency)", "Perception (exploit die)", 
+				"Stealth (proficiency)", "Stealth (exploit die)", "Survival (proficiency)", "Survival (exploit die)"],
+			extraTimes : levels.map(function (n) {
+				return n < 3 ? 0 : n < 7 ? 2 : 4
+			}),
+			"athletics (proficiency)" : {
+				name : "Athletics (proficiency)",
+				skills : ["Athletics"],
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Athletics") === -1 // must NOT be proficient already
+                }
+			},
+			"athletics (exploit die)" : {
+				name : "Athletics (exploit die)",
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Athletics") !== -1 // must be proficient already
+                }
+			},
+			"perception (proficiency)" : {
+				name : "Perception (proficiency)",
+				skills : ["Perception"],
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Perception") === -1
+                }
+			},
+			"perception (exploit die)" : {
+				name : "Perception (exploit die)",
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Perception") !== -1
+                }
+			},
+			"stealth (proficiency)" : {
+				name : "Stealth (proficiency)",
+				skills : ["Stealth"],
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Stealth") === -1
+                }
+			},
+			"stealth (exploit die)" : {
+				name : "Stealth (exploit die)",
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Stealth") !== -1
+                }
+			},
+			"survival (proficiency)" : {
+				name : "Survival (proficiency)",
+				skills : ["Survival"],
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Survival") === -1
+                }
+			},
+			"survival (exploit die)" : {
+				name : "Survival (exploit die)",
+				prereqeval : function(v) {
+                    return v.skillProfs.indexOf("Survival") !== -1
+                }
+			}
+		},
+		"subclassfeature7" : {
+			name : "By Land or Sea",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I gain a climbing speed and swimming speed equal to my walking speed",
+				"When I fall, I can use my reaction to reduce any falling dmg I would take by my Fighter level",
+				"I can hold my breath for up to 1 hour underwater",
+				"I ignore the effects of nonmagical difficult terrain"]),
+			speed : {
+				swim : { spd : "walk", enc : 0 },
+				climb : { spd : "walk", enc : 0 }
+			},
+			action : [["reaction", " (reduce fall damage)"]],
+			savetxt : { immune : ["nonmagical difficult terrain"] }
+		},
+		"subclassfeature10" : {
+			name : "Adaptable Fighting Style",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["I can replace a Fighting style I know with another by spending 1 h training (can be part of a short/long rest)"])
+		},
+		"subclassfeature15" : {
+			name : "Unwavering",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["When I use Second Wind, I gain the following benefits:",
+				"\u2022 I regain one of my expended Exploit Dice",
+				"\u2022 My level of exhaustion, if any, is reduced by 1",
+				"\u2022 I can add an Exploit Die to the next Str/Con/Dex check/save I make within the next minute"])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Guerrilla",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : levels.map(function (n) { 
+				return desc(["When I roll initiative and am not surprised, I gain one of the following benefits:",
+				"\u2022 I gain " + n + " temp HP",
+				"\u2022 I can move up to my full move speed without provoking opportunity attacks"])
+			})
+		}
+	}
+})
+
+// Hound Master
+AddSubClass("fighter(laserllama)", "hound master", {
+	regExpSearch : /hound master/i,
+	subname : "Hound Master",
+	fullname : "Hound Master",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Hound Master", ["cunning instinct", "reposition","exposing strike","intimidating command","survey wilderness"]),
+		"subclassfeature3.1" : {
+			name : "Loyal Hound",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I have a Hound companion which is friendly to me & my allies and obeys me",
+				'Select a "Loyal Hound" on the companion page for its stats and rules',
+				"If it dies, I can spend time during a long rest to find another worthy beast"]),
+			action : [["bonus action", " (command)"]],
+			creaturesAdd : [["Loyal Hound", true]],
+			creatureOptions : [{
+				name : "Loyal Hound",
+				source : ["GMB:LL", 0],
+				size : 3,
+				type : "Beast",
+				alignment : "Lawful Neutral",
+				ac : "13+Prof",
+				hp : 20,
+				hd : [3, 8],
+				hdLinked : ["fighter(laserllama)"],
+				minlevelLinked : ["fighter(laserllama)"],
+				speed : "40 ft, swim 20 ft",
+				scores : [14, 14, 15, 8, 14, 11],
+				saves : ["", "", "", "", "", ""],
+				senses : "Adv. on Wis (Perception) checks using hearing/smell",
+				passivePerception : 12,
+				languages : "Understands the languages you speak",
+				challengeRating : "0",
+				proficiencyBonus : 2,
+				proficiencyBonusLinked : true,
+				attacksAction : 1,
+				attacks : [{
+					name : "Bite",
+					ability : 1,
+					damage : [1, 6, "piercing"],
+					modifiers : ["", "Prof"],
+					range : "Melee (5 ft)",
+					description : "On hit, Strength save against Exploit save DC or target is grappled; Max one target grappled",
+					abilitytodamage : true
+				}, {
+					name : "Maul",
+					ability : 1,
+					damage : [1, 8, "slashing"],
+					modifiers : ["", "Prof"],
+					range : "Melee (5 ft)",
+					description : "",
+					abilitytodamage : true
+				}],
+				features : [{
+					name : "Loyal Companion",
+					description : "I add my PB to any ability check or saving throw my Companion makes."
+				}, {
+					name : "Keen Senses",
+					description : "The companion has advantage on Wisdom (Perception) checks that rely on sight or smell."
+				}, {
+					name : "Steadfast Companion",
+					minlevel : 10,
+					description : "Your Hound has adv. on any save it is forced to make so long as it is within 30 ft and can see/hear you. Also, whenever you use Second Wind, your Loyal Hound also regains hit points equal to 1d10 + your Fighter level so long as it is within 30 ft and can see/hear you."
+				}],
+				traits : [{
+					name : "Iron Jaws",
+					minlevel : 7,
+					description : "The Hound's Bite and Maul attacks counts as magical for the sake of overcoming resistances and immunities to nonmagical attacks and damage. Any creature that is at least one size smaller than your Hound has disadv. on its Strength save to resist being grappled by your Hound's Bite attack."
+				}, {
+					name : "Canine Fury",
+					minlevel : 15,
+					description : "When you use a bonus action to command your Hound to make an attack, it can make two Maul attacks, or one Maul and one Bite attack."
+				}, {
+					name : "Hound of Legend",
+					minlevel : 18,
+					description : "When you use Action Surge, your Hound also gains one extra action on that turn.",
+					addMod : [
+				        { type : "", field : "Comp.Use.Ability.Str.Score", mod : 4, text : "At level 18, the creature's Strength increases with 4." },
+				        { type : "", field : "Comp.Use.Ability.Dex.Score", mod : 4, text : "At level 18, the creature's Dexterity increases with 4." }
+				    ]
+				}],
+				notes: [{
+					name : "The companion obeys the commands of its leader",
+					description : "and shares its proficiency bonus.",
+					joinString: " "
+				}, {
+					name: "It takes its turn during that of its leader,",
+					description: "on the same initiative count.",
+					joinString: " "
+				}, {
+					name: "It can move and take reactions on its own,",
+					description: "but only takes the Dodge action on its turn unless its leader takes a bonus action to command it to take another action.",
+					joinString: " "
+				}, {
+					name: "Its leader can also forgo one attack during their Attack action",
+					description: "to command the companion to take the Attack action.",
+					joinString: " "
+				}, {
+					name: "If its leader is incapacitated,",
+					description: "the companion can take any action, not just Dodge.",
+					joinString: " "
+				}, {
+					name: "If the companion is reduced to 0 hit points,",
+					description: "it makes death saving throws like a player character would.",
+					joinString: " "
+				}],
+				calcChanges : {
+					hp : function (totalHD, HDobj, prefix) {
+						//if (!classes.known.ranger && !classes.known.rangerua) return;
+						var rngrLvl = classes.known["fighter(laserllama)"] ? classes.known["fighter(laserllama)"].level : classes.known.fighter.level;
+						var rngrLvlM = 5 * rngrLvl;
+						HDobj.alt.push(5 + rngrLvlM);
+						HDobj.altStr.push(" = 5 as a base\n + 5 \xD7 " + rngrLvl + " from five times its leader's fighter level (" + rngrLvlM + ")");
+					},
+					setAltHp : true
+				}
+			}]
+		},
+		"subclassfeature7" : {
+			name : "Iron Jaws",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["My companion's attacks count as magical for overcoming resistances and immunities",
+				"Any creature that is at least one size smaller than my Hound has disadv. on its Str save to resist being grappled by its Bite"])
+		},
+		"subclassfeature10" : {
+			name : "Steadfast Companion",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				return desc(["My Hound has adv. on any save it is forced to make so long as it is within 30 ft and can see/hear me. When I use Second Wind, it also regains 1d10 + "+n+" HP so long as it is within 30 ft and can see/hear me"])
+			})
+		},
+		"subclassfeature15" : {
+			name : "Canine Fury",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["When I use a bonus action to command my Hound to make an attack, it can make two Maul attacks, or one Maul and one Bite attack"])
+		},
+		"subclassfeature18" : {
+			name : "Hound of Legend",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["When I use Action Surge, my Hound also gains one extra action on that turn"])
+		}
+	}
+})
+
+// Pugilist
+AddSubClass("fighter(laserllama)", "pugilist", {
+	regExpSearch : /pugilist/i,
+	subname : "Pugilist",
+	fullname : "Pugilist",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Pugilist", ["streetwise", "take down","concussive blow","defensive stance","disorienting blow"]),
+		"subclassfeature3.1" : {
+			name : "Contender",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				if (n < 3) return "";
+				if (n < 7) return desc(["I learn an additional fighting style. If I already know all from the list, I learn any other."]);
+				if (n < 10) return desc(["I learn two additional fighting styles. If I already know all from the list, I learn any other."]);
+				return desc(["I learn three additional fighting styles. If I already know all from the list, I learn any other."]);
+			}),
+			extraname : "Additional Fighting Styles",
+			extrachoices : ["Brawler", "Improvised Fighting", "Wrestler"],
+			extraTimes : levels.map(function (n) {
+				return n < 3 ? 0 : n < 7 ? 1 : n < 10 ? 2 : 3;
+			}),
+			"brawler": FightingStylesLL.brawler,
+			"improvised fighting" : FightingStylesLL.improvised,
+			"wrestler" : FightingStylesLL.wrestler
+		},
+		"subclassfeature3.2" : {
+			name : "Iron Physique",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["Without armor and no shield, my AC is 10 + Dexterity modifier + Constitution modifier",
+				"I can use my Con to calculate my AC instead of Dex while wearing light/medium armor"]),
+			armorOptions : [{
+				regExpSearch : /justToAddToDropDown/,
+				name : "Unarmored Defense",
+				source : [["SRD", 8], ["P", 48]],
+				ac : "10+Con",
+				affectsWildShape : true
+				}],
+			armorAdd : "Unarmored Defense (Con)",
+			extraAC : [{
+				name : "Iron Physique (light armor)",
+				mod : "max(Con-Dex|0)",
+				text : "I can use my Con to calculate my AC instead of Dex while wearing light armor",
+				stopeval : function (v) { 
+					return (!v.wearingArmor || v.mediumArmor || v.heavyArmor) // light armor only
+				}
+			}/*, {
+				name : "Iron Physique (medium armor)",
+				mod : "min(max(Con-Dex|0)|2)",
+				text : "I can use my Con to calculate my AC instead of Dex while wearing medium armor",
+				stopeval : function (v) { 
+					return !v.mediumArmor // medium armor only
+				}
+			}*/] 
+			// NOTE: It is impossible to put a nested min/max expression (the sheet can't handle it)
+			// It is mathematically impossible to formulate this expression without it, so there's nothing I can do
+		},
+		"subclassfeature7" : {
+			name : "Counter Punch",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["When a creature I can see misses me with a melee attack, I can use my reaction to make a single unarmed strike, improvised weapon, shove, or grapple attack against it",
+				"If I make an Athletics check as part of this reaction, I add my Exploit Die to the roll",
+				"My unarmed strikes and improvised weapons count as magical for overcoming resistances and immunities"]),
+			action : [["reaction", " (when enemy misses)"]],
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if ((v.baseWeaponName == "unarmed strike" || v.baseWeaponName == "improvised weapon") && !v.thisWeapon[1] && !v.theWea.isMagicWeapon && !(/counts as( a)? magical/i).test(fields.Description)) {
+							fields.Description += (fields.Description ? '; ' : '') + 'Counts as magical';
+						};
+					},
+					"My unarmed strikes count as magical for overcoming resistances and immunities."
+				]
+			}
+		},
+		"subclassfeature10" : {
+			name : "Evasive Footwork",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["When I take the Attack action and make at least one unarmed strike, grapple, or shove, I can take the Dash or Disengage action in place of one of my attacks on that turn"])
+		},
+		"subclassfeature15" : {
+			name : "Diamond Physique",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["I learn the Unbreakable exploit, it doesn't count against my total and can't be switched",
+				"I can use it more than once per short rest, but must expend Hit Die instead of Exploit Die"]),
+            spellcastingBonusElsewhere : {
+                addTo : "martial exploits",
+                spellcastingBonus : {
+                    name : "Pugilist Exploits",
+                    spellcastingAbility : 1,
+                    spells : ["unbreakable"],
+                    selection : ["unbreakable"],
+                    prepared : true
+                }
+            },
+            toNotesPage : [{ // What is added to the notes page
+				name : "Unbreakable Exploit [4th degree]",
+				note : desc(SpellsList["unbreakable"].descriptionFull),
+				amendTo : "Pugilist"
+			}]
+		},
+		"subclassfeature18" : {
+			name : "Legendary Pugilist",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["When I make a crit against a crea that has ≤50 current HP, I can make it instantly fall to 0 HP"]),
+			recovery : "short rest",
+			usages : 1
+		}
+	}
+})
+
+// Quartermaster
+AddSubClass("fighter(laserllama)", "quartermaster", {
+	regExpSearch : /quartermaster/i,
+	subname : "Quartermaster",
+	fullname : "Quartermaster",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Quartermaster", ["first aid", "rustic intuition","exposing strike","immovable stance","daring rescue"]),
+		"subclassfeature3.1" : {
+			name : "Down to Earth",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I am proficient with cook's utensils, land vehicles, and Animal Handling",
+				"When I make a check with any of those proficiencies, I add my Exploit Die"]),
+			skills : ["Animal Handling"],
+			toolProfs : ["Cook's utensils","Land vehicles"]
+		},
+		"subclassfeature3.2" : {
+			name : "Rations",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["At the end of a long rest, I can use cook utensils to prepare rations (see notes)",
+				"As a bonus action, a creature can eat a prepared Ration or feed it to a creature within 5 ft",
+				"Consuming a Ration ends any current Ration effects on that creature",
+				"As an action, I can expend an Exploit Die to prepare an additional Ration of my choice, though I don't regain that Exploit Die until that Ration is eaten",
+				"I can eat a Ration or feed it to a creature as part of the action used to create it"]),
+			action : [["action", "Create ration (and eat/feed)"], ["bonus action", "Eat or feed a ration"]],
+			usages : "Constitution modifier per ",
+			usagescalc : "event.value = What('Con Mod');",
+			recovery : "long rest",
+			altResource : "ED",
+			toNotesPage : [{
+				name : "Rations",
+				note : desc(["Below are all rations I can prepare. A creature can only be under the effect of one Ration at a time, eating another ration ends any previous Ration effects."])
+			}],
+			"3rd level rations": {
+				name : "3rd level rations",
+				toNotesPage : {
+					name : "3rd level rations",
+					note : "\n\u2022 Fortifying Ration (1 minute)"
+					+ "\nUpon consumption, the creature chooses either Strength, Dexterity, or Constitution. For the duration, the creature can add your Constitution modifier (minimum of +1) to any ability check or saving throws it makes with the chosen ability score."
+					+ "\nAt 10th level, the duration of the effect increases to 1 hour."
+					+ "\n\n"
+					+ "\u2022 Invigorating Ration (instantaneous)"
+					+ "\nUpon consumption, the creature regains hit points equal to 1d10 + your Constitution modifier (minimum of +1)."
+					+ "\nAt 10th level, this Ration restores an additional 1d10 hit points, and any hit points it regains that exceed its hit point maximum become temporary hit points."
+					+ "\n\n"
+					+ "\u2022 Revitalizing Ration (instantaneous)"
+					+ "\nUpon consumption, the creature ends one of the following conditions currently affecting it: blindness, deafness, poison, or it can reduce its current exhaustion level by 1."
+					+ "\nAt 10th level, this Ration can also cure the charmed, frightened, paralyzed, and stunned conditions."
+					+ "\n\n"
+					+ "\u2022 Stimulating Ration (instantaneous)"
+					+ "\nThis Ration must be consumed as part of a short rest. Upon consumption, the creature gains advantage on its rolls for all Hit Dice it chooses to expend during that short rest."
+					+ "\nAt 10th level, consuming this Ration allows the creature to treat any Hit Dice it expends during that short rest as the maximum possible result instead of rolling. ",
+					amendTo : "Rations"
+				}
+			},
+			"5th level rations": {
+				name : "5th level rations",
+				toNotesPage : {
+					name : "5th level rations",
+					note : "\n\u2022 Limbering Ration (1 minute)"
+					+ "\nUpon consumption, the creature's speed increases by 10 feet."
+					+ "\nAt 10th level, in place of increasing the creature's speed, the creature can take the Dash action as a bonus action."
+					+ "\n\n"
+					+ "\u2022 Thickening Ration (1 minute)"
+					+ "\nUpon consumption, the creature gains resistance to either bludgeoning, piercing, or slashing damage (its choice)."
+					+ "\nAt 10th level, consuming this Ration grants it resistance to bludgeoning, piercing, and slashing damage.",
+					amendTo : "Rations"
+				}
+			},
+			"7th level rations": {
+				name : "7th level rations",
+				toNotesPage : {
+					name : "7th level rations",
+					note : "\n\u2022 Engorging Ration (1 minute)"
+					+ "\nUpon consumption, the creature grows by one size category, for example, from Medium to Large. While the creature's size is increased in this way, its reach increases by 5 feet, it has advantage on Strength checks and saving throws, and any melee weapon attacks it makes deal a bonus 1d4 damage."
+					+ "\nAt 10th level, the duration of the effect becomes 1 hour."
+					+ "\n\n"
+					+ "\u2022 Heightening Ration (1 minute)"
+					+ "\nUpon consumption, the creature chooses either Intelligence, Wisdom, or Charisma. For the duration, the creature can add your Constitution modifier (minimum of +1) to any ability check or saving throw it makes with the chosen ability score."
+					+ "\nAt 10th level, the duration of the effect increases to 1 hour."
+					+ "\n\n"
+					+ "\u2022 Warding Ration (1 minute)"
+					+ "\nUpon consumption, the creature gains resistance to acid, cold, fire, poison, lightning, or thunder damage (its choice)."
+					+ "\nAt 10th level, the duration of the effect increases to 1 hour, and the creature can choose from force, necrotic, psychic, or radiant damage in addition to the other damage types."
+				}
+			},
+			"10th level rations": {
+				name : "10th level rations",
+				toNotesPage : {
+					name : "10th level rations",
+					note : "\n\u2022 Tenacious Ration (1 minute)"
+					+ "\nUpon consumption, the creature gains immunity to one of the following conditions (its choice): blinded, charmed, deafened, frightened, poisoned, paralyzed, or stunned."
+					+ "\nAt 15th level, this Ration grants a creature immunity to two of the conditions from the list above (its choice).",
+					amendTo : "7th level rations"
+				}
+			},
+			"15th level rations": {
+				name : "15th level rations",
+				toNotesPage : {
+					name : "15th level rations",
+					note : "\n\u2022 Berserker Ration (1 minute)"
+					+ "\nUpon consumption, the creature does not fall unconscious when it is reduced to 0 hit points. However, it still makes death saving throws as normal, dying upon failing three."
+					+ "\n\n"
+					+ "\u2022 Rejuvenating Ration (1 minute)"
+					+ "\nUpon consumption, the creature gains all the benefits of a short rest, including the ability to expend its Hit Dice as part of consuming the Ration. At the end of its current turn, the creature gains 1 level of exhaustion."
+					+ "\nAfter a creature eats this Ration, it must finish a long rest before it can gain the benefits of any other Rations.",
+					amendTo : "7th level rations"
+				}
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "3rd level rations",
+				minlevel : 3
+			}, {
+				extrachoice : "5th level rations",
+				minlevel : 5
+			}, {
+				extrachoice : "7th level rations",
+				minlevel : 7
+			}, {
+				extrachoice : "10th level rations",
+				minlevel : 10
+			}, {
+				extrachoice : "15th level rations",
+				minlevel : 15
+			}]
+		},
+		"subclassfeature7" : {
+			name : "Dependable",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I can take the following special actions as a bonus action:",
+				"\u2022 Administer: feed a potion, Ration, or consumable to a willing/unconscious crea within 5 ft",
+				"\u2022 Arm: give a weapon, item, or ammunition to a creature within 5 ft. The creature can then equip the given item, and stow one item as a free action",
+				"\u2022 Encourage: Help action, targeting a creature of my choice within 10 ft that can see/hear me"]),
+			action : [["bonus action", "Administer"], ["bonus action", "Arm"], ["bonus action", "Encourage"]],
+		},
+		"subclassfeature10" : {
+			name : "Quick Ration",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["I can use a bonus action on my turn to create a Ration of my choice, eating it or feeding it to a creature within 5 ft as part of that same bonus action. Any Rations created in this way expire after 1 minute."]),
+			action : [["bonus action", ""]],
+			usages : "Constitution modifier per ",
+			usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+			recovery : "long rest",
+		},
+		"subclassfeature15" : {
+			name : "Ever Ready",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["When I roll initiative, so long as I am not surprised, I prepare one Ration of my choice without expending an Exploit Die"])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Quartermaster",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["I am immune to poisoned, add +2 to my Constitution, and its maximum increases to 22",
+				"I am always under the effect of a ≥1 min Ration of my choice and can change it during a rest"]),
+			scores : [0,0,2,0,0,0],
+			scoresMaximum : [0,0,22,0,0,0],
+			savetxt : { immune : ["poisoned"] }
+		}
+	}
+})
+
+// Swordsage
+AddSubClass("fighter(laserllama)", "swordsage", {
+	regExpSearch : /swordsage/i,
+	subname : "Swordsage",
+	fullname : "Swordsage",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 2,
+	features : {
+		"subclassfeature3" : GetSubclassExploits("Swordsage", ["lightstep", "mighty leap","whirlwind strike","zephyr slash","gale slash"]),
+		"subclassfeature3.1" : {
+			name : "Student of the Blade",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I am proficient in Acrobatics and Performance. I can make Dexterity (Performance) checks",
+				"When I make Dex (Acrobatics) or Dex (Performance) checks with a sword, I add my Exploit Die"]),
+			skills : ["Acrobatics","Performance"],
+			addMod : { type : "skill", field : "Performance", mod : "max(Dex-Cha|0)", text : "I can replace Charisma (Performance) checks with Dexterity (Performance)" },
+		},
+		"subclassfeature3.2" : {
+			name : "Battle Trance",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				ac_bonus = n < 7 ? "+1" : "+2";
+
+				return desc(["As a bonus action, I can enter a battle trance for 1 minute which lets me:",
+				"\u2022 Take the Dash action as a bonus action",
+				"\u2022 Add "+ac_bonus+" to my AC",
+				"\u2022 Have advantage on Dexterity (Acrobatics) checks",
+				"\u2022 Once per turn, use a d4 for swordsage exploits without expending Exploit Die",
+				"It ends early if I am incapacitated, don a shield or heavy armor",
+				"If I have no uses left, I can expend an Exploit Die to use it again"])
+			}),
+			action : [["bonus action", " (start)"], ["bonus action", "Dash (in Battle Trance)"]],
+			recovery : "short rest",
+			usages : 1,
+			altResource : "ED"
+		},
+		"subclassfeature7" : {
+			name : "Heightened Reflexes",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["I gain proficiency in Dexterity saves, and I add my proficiency bonus to initiative rolls"]),
+			saves : ["Dex"],
+			addMod : { type : "skill", field : "Init", mod : "Prof", text : "I add my proficiency bonus to initiative rolls" }
+		},
+		"subclassfeature10" : {
+			name : "Trance of the Master",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["When I roll initiative, if I am not surprised nor incapacitated, I can enter a Battle Trance without expending any resources"])
+		},
+		"subclassfeature15" : {
+			name : "Storm of Steel",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : levels.map(function (n) {
+				stormsteel_die = n < 18 ? "d6" : "d8";
+
+				return desc(["Once per turn while I am in a Battle Trance, I can use any Exploit that I know, rolling a "+stormsteel_die+" in place of expending one of my Exploit Dice"])
+			})
+		},
+		"subclassfeature18" : {
+			name : "Legendary Swordsage",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["When a creature I can see damages me with an attack, I can use my reaction to expend one Exploit Die, roll it, and reduce the damage I would take by twice the amount rolled"]),
+			action : [["reaction", " (when hit)"]]
+		}
+	}
+})
+
+// Tinker Knight
+AddSubClass("fighter(laserllama)", "tinker knight", {
+	regExpSearch : /tinker knight/i,
+	subname : "Tinker Knight",
+	fullname : "Tinker Knight",
+	source : [["GMB:LL", 0]],
+	abilitySave : 1,
+	abilitySaveAlt : 4,
+	features : {
+		"subclassfeature3" : {
+			name : "Analytical Mind",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I learn the mechanical insight exploit, it doesn't count against my total and can't be switched",
+				"I gain proficiency with tinker's tools and smith's tools (or any other tool if already proficient)"]),
+			eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
+                if (!CurrentSpells["martial exploits"]) {
+					// Defining the Fighter spell sheet - also known as Martial exploits
+					CurrentSpells["martial exploits"] = {
+						name : "Martial Exploits",
+						shortname : "Martial Exploits",
+						ability: 1,
+						bonus : {},
+						typeSp:"known",
+						refType:"feat"
+					}
+				}
+            },
+            spellcastingBonusElsewhere : {
+                addTo : "martial exploits",
+                spellcastingBonus : {
+                    name : "Tinker Knight Exploits",
+                    spellcastingAbility : 1,
+                    spells : ["mechanical insight"],
+                    selection : ["mechanical insight"]
+                }
+            },
+            toNotesPage : [{ // What is added to the notes page
+				name : "Mechanical insight Exploit [1st degree]",
+				note : desc(SpellsList["mechanical insight"].descriptionFull),
+				amendTo : "Martial Exploits"
+			}],
+			toolProfs : ["Tinker's tools","Smith's tools"]
+		},
+		"subclassfeature3.1" : {
+			name : "Inventive Arsenal",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["During a long rest, I can modify weapons or armor using my tools to apply schematics",
+				"Each schematic can only be applied once, and each item can only have one schematic",
+				"If any schematic requires a saving throw, the DC is 8 + prof bonus + Int mod",
+				"To calculate the effect, add it to the name of the weapon, e.g. \"Rebounding Longsword\""]),
+			additional : levels.map(function (n) {
+				return (n < 3 ? 0 : n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6) + " schematics known";
+			}),
+			extraname : "Schematics known",
+			extrachoices : ["Featherweight Schematic (Heavy Armor)", "Featherweight Schematic (Light Armor)", "Featherweight Schematic (Weapon)",
+				"Intuitive Schematic (Armor)", "Intuitive Schematic (Weapon)",
+				"Radiant Schematic (Armor)", "Radiant Schematic (Weapon)",
+				"Rebounding Schematic (Armor)", "Rebounding Schematic (Non-Heavy Weapon)",
+				"Empowered Schematic (Heavy Armor)", "Empowered Schematic (Light Armor)", "Empowered Schematic (Weapon)",
+				"Resilient Schematic (Armor)", "Resilient Schematic (Weapon)"],
+			extraTimes : levels.map(function (n) {
+				return n < 3 ? 0 : n < 7 ? 2 : n < 10 ? 3 : n < 15 ? 4 : n < 18 ? 5 : 6;
+			}),
+			"featherweight schematic (heavy armor)": {
+				name : "Featherweight Schematic (Heavy Armor)",
+				submenu : "Featherweight Schematic",
+				description : desc(["+10 ft walking speed, no Stealth disadvantage nor Strength requirement"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("featherweight schematic (light armor)") !== -1) return false;
+					if (schematics.indexOf("featherweight schematic (weapon)") !== -1) return false;
+
+					return true;
+				}
+			},
+			"featherweight schematic (light armor)": {
+				name : "Featherweight Schematic (Light Armor)",
+				submenu : "Featherweight Schematic",
+				description : desc(["+10 ft walking speed, can remove 100 ft when calculating fall dmg, can move horizontally while falling (2 ft per 1 ft fall)"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("featherweight schematic (heavy armor)") !== -1) return false;
+					if (schematics.indexOf("featherweight schematic (weapon)") !== -1) return false;
+
+					return true;
+				},
+			},
+			"featherweight schematic (weapon)": {
+				name : "Featherweight Schematic (Weapon)",
+				submenu : "Featherweight Schematic",
+				description : desc(["+10 ft walking speed, loses two-handed/heavy properties, any non-two-handed weapon becomes light and finesse"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("featherweight schematic (heavy armor)") !== -1) return false;
+					if (schematics.indexOf("featherweight schematic (light armor)") !== -1) return false;
+
+					return true;
+				},
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.isDC && (/\bfeatherweight\b/i).test(v.WeaponTextName)) {
+								if ((/\btwo-handed\b/i).test(fields.Description)) {
+									fields.Description = fields.Description.replace(/two-handed/gi, '').replace(/\s+/g, ' ').trim();
+								}
+
+								if ((/\bheavy\b/i).test(fields.Description)) {
+									fields.Description = fields.Description.replace(/heavy/gi, '').replace(/\s+/g, ' ').trim();
+								} else {
+									if (!(/\blight\b/i).test(fields.Description)) {
+										fields.Description = 'Light, ' + fields.Description.substr(0,1).toLowerCase() + fields.Description.substr(1);
+									}
+									if (!/finesse/i.test(fields.Description)) {
+										fields.Description = 'Finesse, ' + fields.Description.substr(0,1).toLowerCase() + fields.Description.substr(1);
+									}
+								}
+
+								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
+							}
+						},
+						"Featherweight weapon loses two-handed/heavy properties, any non-two-handed weapon becomes light and finesse",
+						650
+					]
+				}
+			},
+			"intuitive schematic (weapon)": {
+				name : "Intuitive Schematic (Weapon)",
+				submenu : "Intuitive Schematic",
+				description : desc(["Expertise in Intelligence (Investigation), roll attack and damage with Intelligence"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("intuitive schematic (armor)") !== -1) return false;
+
+					return true;
+				},
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.isDC && (/\bintuitive\b/i).test(v.WeaponTextName)) {
+								fields.Mod = 4;
+								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
+							}
+						},
+						'Intuitive weapon uses Intelligence for attack and damage rolls',
+						651
+					]
+				}
+			},
+			"intuitive schematic (armor)": {
+				name : "Intuitive Schematic (Armor)",
+				submenu : "Intuitive Schematic",
+				description : desc(["Expertise in Intelligence (Investigation), calculate AC with Intelligence"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("intuitive schematic (weapon)") !== -1) return false;
+
+					return true;
+				}
+			},
+			"radiant schematic (weapon)": {
+				name : "Radiant Schematic (Weapon)",
+				submenu : "Radiant Schematic",
+				description : desc(["As a bonus action, emit (or extinguish) 15 ft bright light and 15 dim light from this object",
+					"Once per rest, on hit, attacker Con save or blinded for 1 min (extra save/turn)"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("radiant schematic (armor)") !== -1) return false;
+
+					return true;
+				},
+				usages : 1,
+				recovery : "short rest",
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.isDC && (/\bintuitive\b/i).test(v.WeaponTextName)) {
+								fields.Description += (fields.Description ? '; ' : '') + "Can blind on hit"
+								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
+							}
+						},
+						'Intuitive weapon uses Intelligence for attack and damage rolls',
+						652
+					]
+				}
+			},
+			"radiant schematic (armor)": {
+				name : "Radiant Schematic (Armor)",
+				submenu : "Radiant Schematic",
+				description : desc(["As a bonus action, emit (or extinguish) 15 ft bright light and 15 dim light from this object",
+					"Once per rest, as a reaction when hit, attacker Con save or blinded for 1 min (extra save/turn)"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("radiant schematic (weapon)") !== -1) return false;
+
+					return true;
+				},
+				usages : 1,
+				recovery : "short rest"
+			},
+			"rebounding schematic (non-heavy weapon)": {
+				name : "Rebounding Schematic (Non-Heavy Weapon)",
+				submenu : "Rebounding Schematic",
+				description : desc(["As a reaction when hit, add my Int mod to AC for this attack",
+					"The weapon gains Thrown (20 ft) and returns to the wielder's hand after an attack"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("rebounding schematic (armor)") !== -1) return false;
+
+					return true;
+				},
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.isDC && (/\brebounding\b/i).test(v.WeaponTextName) && !(/\btwo-handed\b/i).test(fields.Description)) {
+								if (!(/\bthrown\b/i).test(fields.Description)) {
+									fields.Description = 'Thrown, ' + fields.Description.substr(0,1).toLowerCase() + fields.Description.substr(1);
+									fields.Range = "Melee, 20 ft";
+									v.isThrownWeapon = true;
+								}
+								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
+							}
+						},
+						'Rebounding weapon gains Thrown (20 ft) property',
+						653
+					]
+				}
+			},
+			"rebounding schematic (armor)": {
+				name : "Rebounding Schematic (Armor)",
+				submenu : "Rebounding Schematic",
+				description : desc(["As a reaction when hit, add my Int mod to AC for this attack",
+					"Once per rest, as a reaction when hit, reduce dmg by Exploit Die + Int mod",
+					"If the damage is reduced to 0, the attacker takes the full damage of the attack"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("rebounding schematic (non-heavy weapon)") !== -1) return false;
+
+					return true;
+				},
+				usages : 1,
+				recovery : "short rest"
+			},
+			"empowered schematic (heavy armor)": {
+				name : "Empowered Schematic (Heavy Armor)",
+				submenu : "Empowered Schematic [level 7+]",
+				description : desc(["Add my Int mod to initiative checks, replace Str checks/saves with Int"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("empowered schematic (light armor)") !== -1) return false;
+					if (schematics.indexOf("empowered schematic (weapon)") !== -1) return false;
+
+					return (classes.known["fighter(laserllama)"].level >= 7);
+				}
+			},
+			"empowered schematic (light armor)": {
+				name : "Empowered Schematic (Light Armor)",
+				submenu : "Empowered Schematic [level 7+]",
+				description : desc(["Add my Int mod to initiative checks, replace Dex checks/saves with Int"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("empowered schematic (heavy armor)") !== -1) return false;
+					if (schematics.indexOf("empowered schematic (weapon)") !== -1) return false;
+
+					return (classes.known["fighter(laserllama)"].level >= 7);
+				}
+			},
+			"empowered schematic (weapon)": {
+				name : "Empowered Schematic (Weapon)",
+				submenu : "Empowered Schematic [level 7+]",
+				description : desc(["Add my Int mod to initiative checks, reroll 1 and 2 on damage rolls"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("empowered schematic (heavy armor)") !== -1) return false;
+					if (schematics.indexOf("empowered schematic (light armor)") !== -1) return false;
+
+					return (classes.known["fighter(laserllama)"].level >= 7);
+				},
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.isDC && (/\bempowered\b/i).test(v.WeaponTextName)) {
+								fields.Description += (fields.Description ? '; ' : '') + "Re-roll 1 or 2 on damage die"
+								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
+							}
+						},
+						'Empowered weapon reroll 1 and 2 on damage rolls',
+						654
+					]
+				}
+			},
+			"resilient schematic (weapon)": {
+				name : "Resilient Schematic (Weapon)",
+				submenu : "Resilient Schematic [level 7+]",
+				description : desc(["Adv. on save vs grappled or moved against its will",
+					"On a critical hit, deal additional damage equal to my Int mod + my fighter level"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("resilient schematic (armor)") !== -1) return false;
+
+					return (classes.known["fighter(laserllama)"].level >= 7);
+				},
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (!v.isSpell && !v.isDC && (/\bresilient\b/i).test(v.WeaponTextName)) {
+								var extraDmg = Number(classes.known["fighter(laserllama)"].level) + Number(What('Int Mod'));
+								fields.Description += (fields.Description ? '; ' : '') + extraDmg + " extra on a crit"
+								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
+							}
+						},
+						'Resilient weapon deal extra damage on crits',
+						655
+					]
+				}
+			},
+			"resilient schematic (armor)": {
+				name : "Resilient Schematic (Armor)",
+				submenu : "Resilient Schematic [level 7+]",
+				description : desc(["Adv. on save vs grappled or moved against its will",
+					"Resistance to non-magical bludgeoning, piercing and slashing damage"]),
+				prereqeval : function(v) { 
+					schematics = GetFeatureChoice('classes', 'fighter(laserllama)', 'subclassfeature3.1', true);
+
+					if (schematics.indexOf("resilient schematic (weapon)") !== -1) return false;
+
+					return (classes.known["fighter(laserllama)"].level >= 7);
+				}
+			}
+		},
+		"subclassfeature7" : {
+			name : "Tinker's Expertise",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["My proficiency bonus is doubled for any check I make that uses my proficiency with tinker's or smith's tools",
+				"Items modified by my Schematics count as magical for overcoming resistances and immunities, and I can apply Schematics to magic weapons and armor"]),
+			eval : function () {
+				if ((/tinker.?s.*tools/i).test(What('Too Text')) || (/smith.?s.*tools/i).test(What('Too Text'))) {
+					Checkbox('Too Exp', true);
+				};
+			},
+			removeeval : function () {
+				if ((/tinker.?s.*tools/i).test(What('Too Text')) || (/smith.?s.*tools/i).test(What('Too Text'))) {
+					Checkbox('Too Exp', false);
+				};
+			}
+		},
+		"subclassfeature10" : {
+			name : "Mechanical Synergy",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				if (n < 15) return desc(["I can apply two Schematics to one object, so long as it meets the prereq for both Schematics"])
+				return desc("I can apply up to three Schematics to one object, so long as it has the prereq for all of them")
+			})
+		},
+		"subclassfeature15" : {
+			name : "Flexible Innovation",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["At the end of a short rest, I can transfer a Schematic from one object to another, so long as the new object meets the prerequisites. If a Schematic has a limited amount of charges, the number of expended charges remains the same."])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Inventions",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc(["Weapons and armor modified by my Schematics get a +1 for each Schematics applied to it",
+				"Regardless of its bonus before applying this bonus, the total cannot become more than +3"]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (!v.isSpell && !v.isDC && v.SchematicsApplied) {
+							fields.To_Hit_Bonus = Math.min(fields.To_Hit_Bonus + v.SchematicsApplied, 3)
+							fields.Damage_Bonus = Math.min(fields.Damage_Bonus + v.SchematicsApplied, 3)
+						}
+					},
+					'Weapons and armor modified by my Schematics get a +1 for each Schematics applied to it (but cannot be higher than +3)',
+					800
+				]
+			}
+		}
+	}
+})
+
+// Edit official sorcerer regex to avoid conflict with witchblade
+if(ClassList["sorcerer"]) {
+    ClassList["sorcerer"].regExpSearch = /sorcerer/i
+};
+
+// Create Witchblade spell list
+var WitchbladeList = ["blade ward", "booming blade", "chill touch", "green-flame blade", "infestation", "mage hand", "mind sliver", "minor illusion", "poison spray", "prestidigitation", "resistance", "sword burst", "toll the dead", "true strike", // cantrips
+					"absorb elements", "armor of agathys", "arms of hadar", "burning hands", "cause fear", "detect evil and good", "expeditious retreat", "false life", "hellish rebuke", "hex", "inflict wounds", "protection from evil and good", "searing smite", "shield", "thunderous smite", "unseen servant", "witch bolt", // 1st level
+					"cloud of daggers", "crown of madness", "darkness", "hold person", "invisibility", "mirror image", "misty step", "ray of enfeeblement", "shadow blade", "shatter", "spider climb", // 2nd level
+					"blinding smite", "counterspell", "dispel magic", "enemies abound", "fear", "hunger of hadar", "intellect fortress", "major image", "vampiric touch", // 3rd level
+					"banishment", "blight", "dimension door", "hallucinatory terrain", "phantasmal killer", "staggering smite", "shadow of moil", "sickening radiance"] // 4th level
+
+for (var i = 0; i < WitchbladeList.length; i++) {
+	SpellsList[WitchbladeList[i]].classes.push("witchblade");
+}
+
+// Witchblade
+ClassSubList["fighter(laserllama)-witchblade"] = {
+	regExpSearch : /witchblade/i,
+	subname : "Witchblade",
+	fullname : "Witchblade",
+	source : [["GMB:LL", 0]],
+	abilitySave : 6,
+	spellcastingFactor : "warlock3",
+	spellcastingList : {
+		spells : WitchbladeList
+	},
+	spellcastingTable : [
+		[0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 0
+		[0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 1
+		[0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 2
+		[1, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 3
+		[2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 4
+		[2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 5
+		[2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 6
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 7
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 8
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 9
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl10
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl11
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl12
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl13
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl14
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl15
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl16
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl17
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl18
+		[0, 0, 0, 2, 0, 0, 0, 0, 0], //lvl19
+		[0, 0, 0, 2, 0, 0, 0, 0, 0] //lvl20
+	],
+	spellcastingKnown : {
+		cantrips : [0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+		spells : [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7]
+	},
+	features : {
+		"subclassfeature3" : {
+			name : "Pact Magic",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can cast warlock cantrips/spells that I know, using Charisma as my spellcasting ability", "I can replace a spell I know with another Witchblade spell when I gain a level", "I regain these spell slots on a short rest"]),
+			additional : ["", "", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "2 cantrips \u0026 7 spells known", "2 cantrips \u0026 7 spells known", "2 cantrips \u0026 7 spells known"],
+		},
+		"subclassfeature3.1" : {
+			name : "Sanguine Offering",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["Once per turn, I can expend one of my Fighter Hit Dice as part of the attack to deal an additional 1d10 necrotic damage"])
+		},
+		"subclassfeature7" : {
+			name : "Otherworldly Step",
+			source : [["GMB:LL", 0]],
+			minlevel : 7,
+			description : desc(["When I use Second Wind, I can teleport up to 60 ft to an unoccupied space I can see",
+				"If I appear within 5 ft of a creature, I can make one weapon attack against it"])
+		},
+		"subclassfeature10" : {
+			name : "Enchanted Strikes",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["A creature hit by my weapon attack has disadv. on the save vs. the next spell I cast",
+				"This lasts until the end of my next turn"])
+		},
+		"subclassfeature15" : {
+			name : "Greater Offering",
+			source : [["GMB:LL", 0]],
+			minlevel : 15,
+			description : desc(["When I use Sanguine Offering, I gain temp HP equal to the necrotic dmg dealt to the creature",
+				"Temp HP gained from this feature last for 1 min, or until I gain temp HP again"])
+		},
+		"subclassfeature18" : {
+			name : "Legendary Witchblade",
+			source : [["GMB:LL", 0]],
+			minlevel : 18,
+			description : desc("As a reaction when a creature dies within 30 ft of me, I can regain one expended Pact Magic spell slot, or 1d4 of my expended Hit Dice"),
+			action : ["reaction", " (when a crea dies)"],
+			usages : 1,
+			recovery : "short rest"
+		}
+	}
+}
 
 // Feats
 FeatsList["alternate defensive duelist"] = {
