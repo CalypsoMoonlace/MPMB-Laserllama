@@ -105,7 +105,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
                 addTo : "martial exploits",
                 spellcastingBonus : {
                     name : subclass_name +  " Exploits",
-                    spellcastingAbility : 4,
+                    spellcastingAbility : 1,
                     spells : [NewSpellKey],
                     selection : [NewSpellKey]
                     //prepared : true // enabling this puts a star on the column, which, while it is cool, is incompatible with stuff that edits it to "at will"
@@ -670,7 +670,7 @@ ClassList["fighter(laserllama)"] = {
                         addTo : "martial exploits",
                         spellcastingBonus : {
                             name : "Martial Exploits",
-                            spellcastingAbility : 4,
+                            spellcastingAbility : 1,
                             spells : [FighterSpells[i]],
                             selection : [FighterSpells[i]]
                         }
@@ -1138,7 +1138,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
                         addTo : "martial exploits",
                         spellcastingBonus : {
                             name : "Martial Exploits",
-                            spellcastingAbility : 4,
+                            spellcastingAbility : 1,
                             spells : [FighterSpells[i]],
                             selection : [FighterSpells[i]]
                         }
@@ -1243,7 +1243,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
                         addTo : "martial exploits",
                         spellcastingBonus : {
                             name : "Master at Arms Exploits",
-                            spellcastingAbility : 4,
+                            spellcastingAbility : 1,
                             spells : [FighterSpells[i]],
                             selection : [FighterSpells[i]]
                         }
@@ -1361,7 +1361,7 @@ AddSubClass("fighter(laserllama)", "master at arms", {
                         addTo : "martial exploits",
                         spellcastingBonus : {
                             name : "Master of Forms Exploits",
-                            spellcastingAbility : 4,
+                            spellcastingAbility : 1,
                             spells : [FighterSpells[i]],
                             selection : [FighterSpells[i]]
                         }
