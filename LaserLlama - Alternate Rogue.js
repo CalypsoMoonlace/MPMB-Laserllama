@@ -11,8 +11,8 @@
 
     Effect:     This script adds the Alternate Rogue class published by Laserllama in GM Binder under the Fan Content policy.
     			Laserllama: https://www.gmbinder.com/profile/laserllama
-    			Alternate Fighter: https://www.gmbinder.com/share/-N8o6KduyOA2qhUGBQqA
-    			Alternate Fighter expanded: https://www.gmbinder.com/share/-NJ8-9uVQcpeQLxLx5RS
+    			Alternate Rogue: https://www.gmbinder.com/share/-N8o6KduyOA2qhUGBQqA
+    			Alternate Rogue expanded: https://www.gmbinder.com/share/-NJ8-9uVQcpeQLxLx5RS
 
     Sheet:      v13.0.06 and newer
  
@@ -306,6 +306,7 @@ ClassList["rogue(laserllama)"] = {
                 extraname : "Devious Exploits",
                 extraTimes : ['', 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8],
                 extrachoices : [],
+                limfeaname : "Exploit Dice",
 
                 // Exploit dice
                 usages : ['', 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5],
@@ -423,7 +424,7 @@ ClassList["rogue(laserllama)"] = {
             source : ["GMB:LL", 0],
             minlevel : 15,
             description : desc("I can add one roll of my Exploit Die to any Intelligence, Wisdom or Charisma saving throw"),
-            savetxt : { text : ["Add Expl Die to Int, Wis, and Cha saving throws"] }
+            savetxt : { text : ["Add Expl Die to Int, Wis, and Cha saves"] }
         },
         "elusive" : {
             name : "Elusive",
@@ -451,7 +452,7 @@ var Linguist_variant = {
 }
 CreateClassFeatureVariant("rogue(laserllama)","thieves cant","Secret Ciphers", Linguist_variant);
 
-// Marksman
+// Seeker
 AddSubClass("rogue(laserllama)", "seeker", {
     regExpSearch : /seeker/i,
     subname : "Seeker",

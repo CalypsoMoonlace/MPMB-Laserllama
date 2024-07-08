@@ -4,7 +4,6 @@
 
     -KEEP IN MIND-
     It is recommended to enter the code in a fresh sheet before adding any other information (i.e. before making your character with it).
-    This script requires importing the Exploits first!
 	
     -INFORMATION-
     Subject:    Alternate Monk

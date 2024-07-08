@@ -766,7 +766,7 @@ if(ClassSubList["fighter-eldritch knight"]) {
 var ArcaneKnightList = [
 	"blade ward", "booming blade", "chill touch", "control flames", "fire bolt", "green-flame blade", "gust", "light", "lightning lure", "mold earth", "prestidigitation", "resistance", "shape water", "shocking grasp", "sword burst", "true strike", // cantrips
 	"absorb elements", "burning hands", "catapult", "chromatic orb", "compelled duel", "earth tremor", "hellish rebuke", "mage armor", "magic missile", "protection from evil and good", "searing smite", "shield", "thunderous smite", "thunderwave", // 1st level
-	/*"arcane scorcher",*/ "scorching ray", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
+	/*"arcane scorcher",*/ "aganazzar's scorcher", "branding smite", "flame blade", "gust of wind", "magic weapon", "misty step", "protection from poison", "scorching ray", "shatter", "shadow blade", "warding wind", // 2nd level
 	"blinding smite", "counterspell", "dispel magic", "elemental weapon", "fireball", "lightning bolt", "magic circle", "melf's minute meteors", "protection from energy", // 3rd level
 	"banishment", "death ward", "fire shield", "freedom of movement", "ice storm", "otiluke's resilient sphere", "staggering smite", "storm sphere" // 4th level
 ]
