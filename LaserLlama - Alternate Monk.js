@@ -23,6 +23,43 @@
 var iFileName = "LaserLlama - Monk.js";
 RequiredSheetVersion("13.0.6");
 
+// Utility functions
+function GetSubclassTechniques(subclass_name, techniques_list) {
+	/* pre: subclass_name is a string
+			techniques_list is an array of length 3
+			1st technique is unlocked at lvl 3
+			2nd technique is unlocked at lvl 5
+			3rd technique is unlocked at lvl 9
+
+		post: returns the subclassfeature that contains all the subclass techniques
+	*/		
+
+	// Create subclassfeature
+	SubclassTechniques = {
+		name : subclass_name +  " Techniques",
+		source : [["GMB:LL", 0]],
+		minlevel : 3,
+		description : desc(["I learn additional Techniques who don't count against my total and can't be switched"]),
+		autoSelectExtrachoices : [{
+			extrachoice : techniques_list[0],
+			minlevel : 3
+		}, {
+			extrachoice : techniques_list[1],
+			minlevel : 5
+		}, {
+			extrachoice : techniques_list[2],
+			minlevel : 9
+		}]
+	};
+
+	// Copy techniques from the main class
+	SubclassTechniques[techniques_list[0]] = newObj(ClassList["monk(laserllama)"].features["ki"][techniques_list[0]]);
+	SubclassTechniques[techniques_list[1]] = newObj(ClassList["monk(laserllama)"].features["ki"][techniques_list[1]]);
+	SubclassTechniques[techniques_list[2]] = newObj(ClassList["monk(laserllama)"].features["ki"][techniques_list[2]]);
+
+	return SubclassTechniques;
+}
+
 // Main class
 ClassList["monk(laserllama)"] = {
     name : "Monk(Laserllama)",
@@ -75,7 +112,7 @@ ClassList["monk(laserllama)"] = {
 			source : ["GMB:LL"],
 			minlevel : 1,
 			description : desc([
-				"Monk weapons: any simple melee (not special/heavy), unarmed strike, shortsword",
+				"Monk weapons: any melee weapon (not special/heavy) or unarmed strike",
 				"With monk weapons, I can use Dex instead of Str and use the Martial Arts damage die",
 				"When taking an Attack action with these, I get one unarmed strike as a bonus action",
 				"I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks"
@@ -97,7 +134,7 @@ ClassList["monk(laserllama)"] = {
 			calcChanges : {
 				atkAdd : [
 					function (fields, v) {
-						if (classes.known["monk(laserllama)"] && classes.known["monk(laserllama)"].level && (v.theWea.monkweapon || v.baseWeaponName == "unarmed strike" || v.baseWeaponName == "shortsword" || (v.isMeleeWeapon && (/simple/i).test(v.theWea.type) && !(/heavy/i).test(fields.Description)))) {
+						if (classes.known["monk(laserllama)"] && classes.known["monk(laserllama)"].level && (v.theWea.monkweapon || v.baseWeaponName == "unarmed strike" || (v.isMeleeWeapon && (/simple|martial/i).test(v.theWea.type) && !(/heavy|special/i).test(fields.Description)))) {
 							v.theWea.monkweapon = true;
 							var aMonkDie = function (n) { return n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12; }(classes.known["monk(laserllama)"].level);
 							try {
@@ -113,7 +150,7 @@ ClassList["monk(laserllama)"] = {
 							}
 						};
 					},
-					"I can use either Strength or Dexterity and my Martial Arts damage die in place of the normal damage die for any 'Monk Weapons', which include unarmed strike, shortsword, and any simple melee weapon that is not heavy or has the 'special' property.",
+					"I can use either Strength or Dexterity and my Martial Arts damage die in place of the normal damage die for any 'Monk Weapons', which include unarmed strikes and any melee weapon that is not heavy or has the 'special' property.",
 					5
 				]
 			}
@@ -215,7 +252,7 @@ ClassList["monk(laserllama)"] = {
 								v.theWea.monkweapon = true; // The lvl 1 feature eval handles the rest
 							};
 						},
-						"I can use either Strength or Dexterity and my Martial Arts damage die in place of the normal damage die for any 'Monk Weapons', which include unarmed strike, shortsword, and any simple melee weapon that is not heavy or has the 'special' property.",
+						"I gain proficiency with improvised weapons, they count as Martial Arts attacks for me",
 						1
 					]
 				}
@@ -557,7 +594,6 @@ ClassList["monk(laserllama)"] = {
 				name : "Heavenly Step",
 				source : ["GMB:LL"],
 				description : desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move","If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
-				additional : "1 ki point",
 				submenu : "[monk level  9+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
 			},
@@ -595,7 +631,7 @@ ClassList["monk(laserllama)"] = {
 				spellChanges : {
 					"commune" : {
 						time : "10 min",
-						changes : "I can meditate for 10 min to gain the benefits of the communespell"
+						changes : "I can meditate for 10 min to gain the benefits of the commune spell"
 					}
 				}
 			},
@@ -800,12 +836,10 @@ ClassList["monk(laserllama)"] = {
 			name : "Unarmored Movement",
 			source : ["GMB:LL"],
 			minlevel : 2,
-			description : desc("Speed increases and eventually lets me traverse some surfaces without falling as I move"),
-			additional : levels.map(function (n) {
+			description : levels.map(function (n) {
 				if (n < 2) return "";
-				var spd = "+" + (n < 6 ? 10 : n < 10 ? 15 : n < 14 ? 20 : n < 18 ? 25 : 30) + " ft";
-				var xtr = n < 9 ? "" : "; Vertical surfaces and liquids";
-				return spd + xtr;
+				var spd = "My speed increases by " + (n < 6 ? 10 : n < 10 ? 15 : n < 14 ? 20 : n < 18 ? 25 : 30) + " ft";
+				return desc(spd);
 			}),
 			changeeval : function (v) {
 				var monkSpd = '+' + (v[1] < 2 ? 0 : v[1] < 6 ? 10 : v[1] < 10 ? 15 : v[1] < 14 ? 20 : v[1] < 18 ? 25 : 30);
@@ -859,14 +893,14 @@ ClassList["monk(laserllama)"] = {
 			name : "Diamond Soul",
 			source : ["GMB:LL"],
 			minlevel : 14,
-			description : desc("I can spend 1 Ki Point to instantly end either the charmed or frightened condition on myself"),
+			description : desc("On my turn, I can spend 1 Ki to end either the charmed or frightened condition on myself"),
 			additional : "1 ki point"
 		},
 		"timeless body" : {
 			name : "Timeless Body",
 			source : ["GMB:LL"],
 			minlevel : 15,
-			description : desc(["I don't require food or water; I don't suffer age penalties and can't be aged magically","For every 10 years that pass my physical body only ages 1 year"])
+			description : desc(["I don't require food or water; I don't suffer age penalties","For every 10 years that pass my physical body only ages 1 year"])
 		},
 		"perfect self" : {
 			name : "Perfect Self",
@@ -885,7 +919,8 @@ RunFunctionAtEnd(function () {
 		source : ["GMB:LL"],
 		fullname : "Wuxia",
 		features : {
-			"subclassfeature3" : {
+			"subclassfeature3" : GetSubclassTechniques("Wuxia",["patient defense","seeking strike","heavenly step"]),
+			"subclassfeature3.1" : {
 				name : "Student of Steel",
 				source : ["GMB:LL"],
 				minlevel : 3,
@@ -904,7 +939,7 @@ RunFunctionAtEnd(function () {
 				calcChanges : {
 					atkAdd : [
 						function (fields, v) {
-							var theKenseiWeapons = GetFeatureChoice("class", "monk(laserllama)", "subclassfeature3", true);
+							var theKenseiWeapons = GetFeatureChoice("class", "monk(laserllama)", "subclassfeature3.1", true);
 							if (theKenseiWeapons.indexOf(v.baseWeaponName) != -1 || ((/wuxia/i).test(v.WeaponTextName) && !v.theWea.special && (!(/heavy|special/i).test(fields.Description)))) {
 								v.theWea.monkweapon = true;
 								v.theWea.kenseiweapon = true;
@@ -915,41 +950,6 @@ RunFunctionAtEnd(function () {
 						1
 					]
 				}
-			},
-			"subclassfeature3.1" : {
-				name : "Wuxia Techniques",
-				source : [["GMB:LL", 0]],
-				minlevel : 3,
-				description : desc(["I learn additional Techniques who don't count against my total and can't be switched"]),
-				"patient defense" : {
-					name : "Patient Defense",
-					extraname : "Wuxia Technique",
-					source : ["GMB:LL"],
-					description : " [1 ki point]" + desc("As a bonus action, I can take the Dodge action"),
-					action : ["bonus action", ""]
-				},
-				"seeking strike" : {
-					name : "Seeking Strike",
-					source : ["GMB:LL"],
-					description : desc("On miss with a Martial Arts attack, I can reroll the attack roll and must use the new result"),
-					additional : "1 ki point"
-				},
-				"heavenly step" : {
-					name : "Heavenly Step",
-					extraname : "Wuxia Technique",
-					source : ["GMB:LL"],
-					description : " [1 ki point]" + desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move","If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
-				},
-				autoSelectExtrachoices : [{
-					extrachoice : "patient defense",
-					minlevel : 3
-				}, {
-					extrachoice : "seeking strike",
-					minlevel : 5
-				}, {
-					extrachoice : "heavenly step",
-					minlevel : 9
-				}]
 			},
 			"enlightened fist" : {
 				name : "Ki-Infused Weapons",
@@ -1003,7 +1003,7 @@ RunFunctionAtEnd(function () {
 		}
 	});
 
-	var itsFea = ClassSubList[theKenseiSubclassName].features.subclassfeature3;
+	var itsFea = ClassSubList[theKenseiSubclassName].features["subclassfeature3.1"];
 	for (var weapon in WeaponsList) {
 		var aWea = WeaponsList[weapon];
 		// skip attacks that are not simple or martial weapons, that have the heavy or special property, are magic weapons, or those that are spells or cantrips
