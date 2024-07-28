@@ -8,7 +8,7 @@
     -INFORMATION-
     Subject:    Alternate Monk
 
-    Effect:     This script adds the Alternate Monk class published by Laserllama in GM Binder under the Fan Content policy.
+    Effect:     This script adds the Alternate Monk class (Version 3.0.1) published by Laserllama in GM Binder under the Fan Content policy.
     			Laserllama: https://www.gmbinder.com/profile/laserllama
     			Alternate Monk: https://www.gmbinder.com/share/-MhGHvc1sNLoUrISINrV
     			Alternate Monk expanded: https://www.gmbinder.com/share/-MyVERQKKbawlJLVjpyo

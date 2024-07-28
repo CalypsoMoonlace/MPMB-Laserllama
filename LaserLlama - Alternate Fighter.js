@@ -9,7 +9,7 @@
     -INFORMATION-
     Subject:    Alternate Fighter
 
-    Effect:     This script adds the Alternate Fighter class published by Laserllama in GM Binder under the Fan Content policy.
+    Effect:     This script adds the Alternate Fighter class (Version 3.2.3) published by Laserllama in GM Binder under the Fan Content policy.
     			Laserllama: https://www.gmbinder.com/profile/laserllama
     			Alternate Fighter: https://www.gmbinder.com/share/-MSfA82gv8V69JAoqFVq
     			Alternate Fighter expanded: https://www.gmbinder.com/share/-MUkP55cdNMTFYMKlDUL

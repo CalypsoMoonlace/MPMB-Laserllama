@@ -9,7 +9,7 @@
     -INFORMATION-
     Subject:    Alternate Rogue
 
-    Effect:     This script adds the Alternate Rogue class published by Laserllama in GM Binder under the Fan Content policy.
+    Effect:     This script adds the Alternate Rogue class (Version 2.1.1) published by Laserllama in GM Binder under the Fan Content policy.
     			Laserllama: https://www.gmbinder.com/profile/laserllama
     			Alternate Rogue: https://www.gmbinder.com/share/-N8o6KduyOA2qhUGBQqA
     			Alternate Rogue expanded: https://www.gmbinder.com/share/-NJ8-9uVQcpeQLxLx5RS
@@ -37,6 +37,23 @@ if(ClassList["rogue"]) {
 };
 
 // Utility function
+function CreateDeviousSpellsheet() {
+    // This function is called by different eval attributes and is required before EACH USE OF spellcastingBonusElsewhere
+    // The reason for that is an edge case: if the player has the sheet created by picking exploits, then removes those picks, the spellsheet is entirely removed
+
+    // Defining the Rogue spell sheet - also known as Devious exploits
+    if (!CurrentSpells["devious exploits"]) {
+        CurrentSpells["devious exploits"] = {
+            name : "Devious Exploits",
+            shortname : "Devious Exploits",
+            ability: 2,
+            bonus : {},
+            typeSp:"known",
+            refType:"feat"
+        }
+    }
+}
+
 function GetSubclassExploits(subclass_name, exploit_list) {
     /* pre: subclass_name is a string
             exploit_list is an array of length 5
@@ -88,19 +105,7 @@ function GetSubclassExploits(subclass_name, exploit_list) {
             source: SpellsList[NewSpellKey].source,
             addMod: SpellsList[NewSpellKey].addMod,
             submenu: SpellsList[NewSpellKey].submenu,
-            eval: function() { // Note that this is redundant with the main class feature and all exploits, because there is an edge case where it is necessary
-                if (!CurrentSpells["devious exploits"]) {
-                    // Defining the Rogue spell sheet - also known as Devious exploits
-                    CurrentSpells["devious exploits"] = {
-                        name : "Devious Exploits",
-                        shortname : "Devious Exploits",
-                        ability: 2,
-                        bonus : {},
-                        typeSp:"known",
-                        refType:"feat"
-                    }
-                }
-            },
+            eval: CreateDeviousSpellsheet,
             spellcastingBonusElsewhere : {
                 addTo : "devious exploits",
                 spellcastingBonus : {
@@ -314,19 +319,7 @@ ClassList["rogue(laserllama)"] = {
                 recovery : "short rest",
 
                 // Eval
-                eval: function() {
-                    if (!CurrentSpells["devious exploits"]) {
-                        // Defining the Rogue spell sheet - also known as Devious exploits
-                        CurrentSpells["devious exploits"] = {
-                            name : "Devious Exploits",
-                            shortname : "Devious Exploits",
-                            ability: 2,
-                            bonus : {},
-                            typeSp:"known",
-                            refType:"feat"
-                        }
-                    }
-                }
+                eval: CreateDeviousSpellsheet
             }
 
             // Make a filtered spell list that contains only "spells" for this class
@@ -355,7 +348,7 @@ ClassList["rogue(laserllama)"] = {
                     addMod: NewSpell.addMod,
                     submenu: NewSpell.submenu,
                     prereqeval: ExploitPrereqFactory(ClassExploits[i], "rogue(laserllama)"),
-                    eval: ClassExploitFeature.eval, // in case the user removes all exploits
+                    eval: CreateDeviousSpellsheet,
                     spellcastingBonusElsewhere : {
                         addTo : "devious exploits",
                         spellcastingBonus : {
@@ -363,7 +356,6 @@ ClassList["rogue(laserllama)"] = {
                             spellcastingAbility : 4,
                             spells : [ClassExploits[i]],
                             selection : [ClassExploits[i]]
-                            //prepared : true // enable that for the subclass but not main class
                         }
                     }
                 }
@@ -448,7 +440,7 @@ ClassList["rogue(laserllama)"] = {
 var Linguist_variant = {
     name : "Secret Ciphers",
     source : [["GMB:LL", 0]],
-    description : desc("I can create written ciphers. Others can't decipher a code you create unless I teach them, they succeed on an Intelligence check (DC equal to my Intelligence score + my proficiency bonus), or they use magic to decipher it.")
+    description : desc("I can create written ciphers. Others can't decipher a code I create unless I teach them, they succeed on an Intelligence check (DC equal to my Intelligence score + my proficiency bonus), or they use magic to decipher it.")
 }
 CreateClassFeatureVariant("rogue(laserllama)","thieves cant","Secret Ciphers", Linguist_variant);
 
