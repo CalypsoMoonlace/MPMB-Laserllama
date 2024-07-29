@@ -178,7 +178,11 @@ ClassList["monk(laserllama)"] = {
 				"Empty Body", "Quivering Palm", "Awaken the Third Eye", "Word of Creation"], // prereq: lvl 18
 			limfeaname : "Ki Points",
 			usages : "Monk level + Wisdom modifier per ",
-			usagescalc : "event.value = classes.known['monk(laserllama)'].level + What('Wis Mod');",
+			// kiwarriorfeat = CurrentFeats.known.includes("ki warrior") ? 2 : 0
+			// See https://canary.discord.com/channels/533350585706217494/863810547584467004/1267406407364509737 for reference
+			usagescalc : "kiwarriorfeat = 0;"
+			+ "for (var i = 0; i < CurrentFeats.known.length; i++) { if (CurrentFeats.known[i] == 'ki warrior') kiwarriorfeat = 2 }"
+			+ "event.value = Number(classes.known['monk(laserllama)'].level) + Number(What('Wis Mod')) + Number(kiwarriorfeat);",
 			recovery : "short rest",
 			"flurry of blows" : {
 				name : "Flurry of Blows",
@@ -1066,8 +1070,10 @@ FeatsList["ki warrior"] = {
 		name : "Ki Points",
 		usages : 2,
 		recovery : "short rest",
-		addToExisting : true // Due to naming conflicts, this does not seem to work unless the official Monk is removed from the sheet
+		addToExisting : true
 	}]
+	// The addToExisting actually doesn't work for alt monk, but I'm keeping it for easier understanding of what the feat does and in case there's another ki pool
+	// See https://canary.discord.com/channels/533350585706217494/863810547584467004/1267406407364509737 for reference
 };
 
 // Source information
