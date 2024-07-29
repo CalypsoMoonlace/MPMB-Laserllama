@@ -915,7 +915,116 @@ ClassList["monk(laserllama)"] = {
 	}
 }
 
-// Way of the Wuxia
+
+// Way of the Shadow Arts
+AddSubClass("monk(laserllama)", "way of the shadow arts", {
+	regExpSearch : /shadow arts/i,
+	subname : "Way of the Shadow Arts",
+	fullname : "Shadow Arts",
+	source : [["GMB:LL", 0]],
+	features : {
+		"subclassfeature3" : GetSubclassTechniques("Shadow",["slow fall","gentling touch","heavenly step"]),
+		"subclassfeature3.1" : {
+			name : "Eyes of Night",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain 60 ft darkvision, or add 30 ft to darkvision if I already had it",
+				"I have advantage on any Dexterity (Stealth) checks I make while in dim light or darkness"]),
+			vision : [["Darkvision", "fixed 60"], ["Darkvision", "+30"]]
+		},
+		"subclassfeature3.2" : {
+			name : "Shadow Arts",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				if (n < 17) return desc(["I can cast Darkness, Darkvision, Pass Without Trace and Silence once per long rest each",
+				"If I have no uses left, I can instead spend 2 ki; I see through magical darkness I create"])
+
+				return desc(["I can cast Darkness, Darkvision, Pass Without Trace and Silence at will",
+				"I see through magical darkness I create"])
+			}),
+			spellFirstColTitle : "Ki",
+			spellcastingBonus : {
+				name : "Shadow Arts",
+				spells : ["darkness", "darkvision", "pass without trace", "silence"],
+				selection : ["darkness", "darkvision", "pass without trace", "silence"],
+				firstCol : "oncelr",
+				times : 4
+			}
+		},
+		"subclassfeature6" : {
+			name : "Shadow Step",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : levels.map(function (n) {
+				shadowstep_range = n < 17 ? "30 ft" : "60 ft";
+
+				return desc(["As a bonus action, I can teleport from and into dim light or darkness within " + shadowstep_range,
+				"After I do this, I have adv. on the next Martial Arts attack I make before the end of my turn"])
+			}),
+			action : ["bonus action", ""]
+		},
+		"subclassfeature11" : {
+			name : "Cloak of Shadows",
+			source : [["P", 80]],
+			minlevel : 11,
+			description : levels.map(function (n) {
+				cloak_actioncost = n < 17 ? "action" : "action or bonus action";
+
+				return desc(["As an "+cloak_actioncost+", I can become invisible in dim light or darkness until I attack/cast/leave darkness",
+				"If a crea enters my reach while I am invisible, I can make an opportunity attack against it",
+				"Opportunity attacks only end my invisibility if I hit"])
+			}),
+			action : ["action", ""]
+		},
+		"subclassfeature17" : {
+			name : "Master of Shadows",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["I can cast Greater Invisibility and Shadow of Moil once per long rest each",
+				"If I have no uses left, I can instead spend 4 ki; I don't need material components for those"]),
+			action : [["bonus action", "Cloak of Shadows"]],
+			spellFirstColTitle : "Ki",
+			spellcastingBonus : {
+				name : "Master of Shadows",
+				spells : ["greater invisibility", "shadow of moil"],
+				selection : ["greater invisibility", "shadow of moil"],
+				firstCol : "oncelr",
+				times : 2
+			},
+			spellChanges : {
+				"greater invisibility" : {
+					components : "V",
+					compMaterial : "",
+					changes : "Spell cast with Master of Shadows don't require material components."
+				},
+				"shadow of moil" : {
+					components : "V,S",
+					compMaterial : "",
+					changes : "Spell cast with Master of Shadows don't require material components."
+				},
+				"darkness" : {
+					firstCol : "atwill",
+					changes : "Spell cast with Shadow Arts can be used at will"
+				},
+				"darkvision" : {
+					firstCol : "atwill",
+					changes : "Spell cast with Shadow Arts can be used at will"
+				},
+				"pass without trace" : {
+					firstCol : "atwill",
+					changes : "Spell cast with Shadow Arts can be used at will"
+				},
+				"silence" : {
+					firstCol : "atwill",
+					changes : "Spell cast with Shadow Arts can be used at will"
+				}
+			}
+		}
+	}
+})
+
+// Way of the Wuxia (Kensei)
 RunFunctionAtEnd(function () {
 	var theKenseiSubclassName = AddSubClass("monk(laserllama)", "way of the wuxia", {
 		regExpSearch : /wuxia/i,
