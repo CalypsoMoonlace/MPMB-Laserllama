@@ -1024,6 +1024,134 @@ AddSubClass("monk(laserllama)", "way of the shadow arts", {
 	}
 })
 
+// Guardian of nature is on the Wu Jen's spell list, but restricted to only tree, so I'm adding a new spell to account for that restriction
+// I could theorically instead use spellChanges, but it might affect a ranger or druid multiclass
+SpellsList["guardian of nature (tree)"] = {
+	name : "Guardian of Nature (tree)",
+	classes : [],
+	source : [["X", 157]],
+	level : 4,
+	school : "Trans",
+	time : "1 bns",
+	range : "Self",
+	components : "V",
+	duration : "Conc, 1 min",
+	description : "I transform into a Great Tree (defensive bonuses); see book",
+	descriptionFull : "A nature spirit answers your call and transforms you into a powerful guardian. The transformation lasts until the spell ends." + "\n\n" + toUni("Great Tree") + ": Your skin appears barky, leaves sprout from your hair, and you gain the following benefits:" + "\n \u2022 " + "You gain 10 temporary hit points." + "\n \u2022 " + "You make Constitution saving throws with advantage." + "\n \u2022 " + "You make Dexterity- and Wisdom-based attack rolls with advantage." + "\n \u2022 " + "While you are on the ground, the ground within 15 feet of you is difficult terrain for your enemies."
+};
+
+var WuJenList = [
+	"blade ward", "control flames", "create bonfire", "druidcraft", "frostbite", "gust", "light", "magic stone", "mold earth", "produce flame", "ray of frost", "shape water", "thorn whip", "thunderclap", // cantrips
+	"absorb elements", "armor of agathys", "burning hands", "create or destroy water", "earth tremor", "ensnaring strike", "entangle", "fog cloud", "frost fingers", "hail of thorns", "hellish rebuke", "ice knife", "sanctuary", "thunderwave", "witch bolt", // 1st level
+	"barkskin", "continual flame", "dust devil", "earthbind", "maximilian's earthen grasp", "flame blade", "flaming sphere", "gust of wind", "hold person", "levitate", "misty step", "scorching ray", "shatter", "snilloc's snowball swarm", "spike growth", "warding wind", // 2nd level
+	"call lightning", "erupting earth", "fireball", "fly", "gaseous form", "lightning bolt", "meld into stone", "melf's minute meteors", "plant growth", "sleet storm", "speak with plants", "thunder step", "tidal wave", "wall of sand", "wall of water", "wind wall", // 3rd level
+	"control water", "elemental bane", "fire shield", "freedom of movement", "grasping vine", "guardian of nature (tree)", "ice storm", "otiluke's resilient sphere", "stone shape", "stoneskin", "storm sphere", "wall of fire", "watery sphere" // 4th level
+]
+
+for (var i = 0; i < WuJenList.length; i++) {
+	try { SpellsList[WuJenList[i]].classes.push("wu jen"); } catch (e) { throw new Error(WuJenList[i]);}
+}
+
+// Way of the Wu Jen (four elements)
+AddSubClass("monk(laserllama)", "way of the wu jen", {
+	regExpSearch : /wu jen/i,
+	subname : "Way of the Wu Jen",
+	fullname : "Wu Jen",
+	source : [["GMB:LL", 0]],
+	abilitySave : 5,
+	spellcastingList : {
+		spells : WuJenList
+	},
+	spellcastingFactor : "warlock3", // There's no RAW indication on the alt monk document, but it's the same table as Witchblade so it's what makes the most sense
+	spellcastingTable : [
+		[0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 0
+		[0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 1
+		[0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 2
+		[1, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 3
+		[2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 4
+		[2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 5
+		[2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 6
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 7
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 8
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 9
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl10
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl11
+		[0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl12
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl13
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl14
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl15
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl16
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl17
+		[0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl18
+		[0, 0, 0, 2, 0, 0, 0, 0, 0], //lvl19
+		[0, 0, 0, 2, 0, 0, 0, 0, 0] //lvl20
+	],
+	spellcastingKnown : {
+		cantrips : [0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3],
+		spells : [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7]
+	},
+	features : {
+		"subclassfeature3" : {
+			name : "Disciple of the Elements",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can cast Wu Jen cantrips/spells that I know, using Wisdom as my spellcasting ability", 
+				"I can replace a spell I know with another Wu Jen spell when I gain a level", 
+				"I regain these spell slots on a short rest; I don't need material components"]),
+			additional : ["", "", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known"],
+			"ki casting" : {
+				name : "Ki casting",
+				description : desc(["I can use my bonus action to regain an expended Wu Jen spell slot"]),
+				additional : levels.map(function (n) {
+					ki_casting_cost = (n < 7 ? 1 : n < 13 ? 2 : n < 19 ? 3 : 4) + 1;
+
+					return ki_casting_cost + " ki points"
+				}),
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "ki casting",
+				minlevel : 3
+			}],
+			action : ["bonus action", "Ki casting"]
+		},
+		"subclassfeature6" : {
+			name : "Fist of the Five Ways",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["When I make an unarmed strike, I can choose for it to deal bludg, cold, fire, poison, or thunder damage and increase my reach by 5 ft",
+				"Also, if I use my action to cast a Wu Jen spell, I can make an unarmed strike as a bonus action"]),
+			action : [["bonus action", "Unarmed Strike (with Wu Jen casting action)"]],
+			"spiritual flow" : {
+				name : "Spiritual Flow",
+				source : [["P", 80]],
+				minlevel : 10,
+				description : desc("I can cast a Wu Jen spell with a casting time of 1 action as a bonus action instead"),
+				additional : "2 ki points"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "spiritual flow",
+				minlevel : 10
+			}]
+		},
+		"subclassfeature17" : {
+			name : "Master of the Elements",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["As an action, I can take on an Elemental Form for up to 1 min, gaining the following benefits:",
+				"\u2022 I gain a flying speed equal to my walking speed",
+				"\u2022 I resist bludgeoning, piercing, and slashing damage",
+				"\u2022 Critical hits against me become normal hits",
+				"\u2022 Opportunity attacks against me have disadvantage",
+				"\u2022 I can gain temp HP equal to my Wis mod (min 1) at the start of each of my turns",
+				"It ends early if I end it as a bonus action or if I am incapacitated",
+				"I can use this once per long rest, I can spend 6 Ki if I have no uses left"]),
+			action : [["action", "Elemental Form (start)"], ["bonus action", "Elemental Form (end)"]],
+			usages : 1,
+			recovery : "long rest",
+			dmgres : [["Bludgeoning", "Bludgeon. (in elem. form)"], ["Piercing", "Piercing (in elem. form)"], ["Slashing", "Slashing (in elem. form)"]],
+		}
+	}
+})
 
 // Way of the Wuxia (Kensei)
 RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we take into account all weapon types for the lvl 3 feature
