@@ -964,10 +964,10 @@ AddSubClass("monk(laserllama)", "way of the shadow arts", {
 			}),
 			action : ["bonus action", ""]
 		},
-		"subclassfeature11" : {
+		"subclassfeature10" : {
 			name : "Cloak of Shadows",
 			source : [["P", 80]],
-			minlevel : 11,
+			minlevel : 10,
 			description : levels.map(function (n) {
 				cloak_actioncost = n < 17 ? "action" : "action or bonus action";
 
@@ -1024,8 +1024,9 @@ AddSubClass("monk(laserllama)", "way of the shadow arts", {
 	}
 })
 
+
 // Way of the Wuxia (Kensei)
-RunFunctionAtEnd(function () {
+RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we take into account all weapon types for the lvl 3 feature
 	var theKenseiSubclassName = AddSubClass("monk(laserllama)", "way of the wuxia", {
 		regExpSearch : /wuxia/i,
 		subname : "Way of the Wuxia",
@@ -1088,7 +1089,7 @@ RunFunctionAtEnd(function () {
 				},
 				"spirit blade" : {
 					name : "Spirit Blade",
-					extraname : "Way of the Wuxia 11",
+					extraname : "Way of the Wuxia 10",
 					source : ["GMB:LL"],
 					description : desc([
 						"As a bonus action, I can increase the crit range of my Wuxia weapon",
@@ -1102,7 +1103,7 @@ RunFunctionAtEnd(function () {
 					extrachoice : "deft strike"
 				}, {
 					extrachoice : "spirit blade",
-					minlevel : 11
+					minlevel : 10
 				}]
 			},
 			"subclassfeature17" : {
