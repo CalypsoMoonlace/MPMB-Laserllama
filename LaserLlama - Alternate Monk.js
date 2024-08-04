@@ -1098,6 +1098,18 @@ AddSubClass("monk(laserllama)", "way of the wu jen", {
 			description : desc(["I can cast Wu Jen cantrips/spells that I know, using Wisdom as my spellcasting ability", 
 				"I can replace a spell I know with another Wu Jen spell when I gain a level", 
 				"I regain these spell slots on a short rest; I don't need material components"]),
+			calcChanges : {
+				spellAdd : [
+					function (spellKey, spellObj, spName) {
+						if (spName == "monk(laserllama)") {
+							if (spellObj.compMaterial && !(/M[\u0192\u2020]/i).test(spellObj.components)) spellObj.compMaterial = "";
+							spellObj.components = spellObj.components.replace(/,?M/ig, '');
+							return true;
+						};
+					},
+					"My Wu Jen spells don't require material components."
+				]
+			},
 			additional : ["", "", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known", "3 cantrips \u0026 7 spells known"],
 			"ki casting" : {
 				name : "Ki casting",
