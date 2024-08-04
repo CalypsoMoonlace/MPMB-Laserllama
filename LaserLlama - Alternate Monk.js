@@ -179,7 +179,7 @@ ClassList["monk(laserllama)"] = {
 			limfeaname : "Ki Points",
 			usages : "Monk level + Wisdom modifier per ",
 			// kiwarriorfeat = CurrentFeats.known.includes("ki warrior") ? 2 : 0
-			// See https://canary.discord.com/channels/533350585706217494/863810547584467004/1267406407364509737 for reference
+			// See for reference: https://canary.discord.com/channels/533350585706217494/863810547584467004/1267406407364509737 
 			usagescalc : "kiwarriorfeat = 0;"
 			+ "for (var i = 0; i < CurrentFeats.known.length; i++) { if (CurrentFeats.known[i] == 'ki warrior') kiwarriorfeat = 2 }"
 			+ "event.value = Number(classes.known['monk(laserllama)'].level) + Number(What('Wis Mod')) + Number(kiwarriorfeat);",
@@ -915,6 +915,71 @@ ClassList["monk(laserllama)"] = {
 	}
 }
 
+// Way of the Open Hand
+AddSubClass("monk(laserllama)", "way of the open hand", {
+	regExpSearch : /open hand/i,
+	subname : "Way of the Open Hand",
+	fullname : "Open Hand",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki because of the lvl 17 subclass feature
+		"ki": function() {
+			var kifeature = newObj(ClassList["monk(laserllama)"].features["ki"]);
+
+			kifeature["flurry of blows"].description = levels.map(function (n) {
+				if (n < 17) return desc("After taking the Attack action, I can make 2 unarmed attacks as a bonus action");
+				return desc("After taking the Attack action, I can make 3 unarmed attacks as a bonus action")
+			});
+
+			return kifeature;
+		}(),
+
+		"subclassfeature3" : GetSubclassTechniques("Open Hand",["empowered strike","stunning strike","indomitable spirit"]),
+		// TODO: "Moreover, each time you gain a Monk level, you can replace one strike Technique you learned from this feature with another strike Technique of your choice."
+		"subclassfeature3.1" : {
+			name : "Practiced Strikes",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["Once per turn when I hit with an unarmed strike, I can use a strike Technique I know without spending a Ki Point"]),
+			usages : "Wisdom modifier per ",
+			usagescalc : "event.value = Math.max(1, What('Wis Mod'));",
+			recovery : "long rest",
+		},
+		"subclassfeature6" : {
+			name : "Ebb and Flow",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : levels.map(function (n) {
+				if (n < 17) return desc(["When a creature I can see misses me with a melee attack, I can use one of the following:",
+				"\u2022 The crea has to make a Dex save (adv if larger) or be knocked prone and have a speed of 0",
+				"\u2022 I can make one unarmed strike against the creature"])
+
+				return desc(["When a creature I can see misses me with a melee attack, I can use one of the following:",
+				"\u2022 The crea has to make a Dex save (adv if larger) or be knocked prone and have a speed of 0",
+				"\u2022 I can make two unarmed strikes against the creature"])
+			}),
+			action : ["reaction", " (after miss)"]
+		},
+		"subclassfeature10" : {
+			name : "Open Hand Strike",
+			source : [["P", 80]],
+			minlevel : 10,
+			description : desc(["When I crit with an unarmed strike, the creature has disadvantage on any save that I force it to make as part of that attack"]),
+		},
+		"subclassfeature10" : {
+			name : "Master of Many Forms",
+			source : [["P", 80]],
+			minlevel : 10,
+			description : desc(["During a long rest I can spend 10 min practicing to switch my Monk Techniques"]),
+		},
+		"subclassfeature17" : {
+			name : "Master of the Open Hand",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["When I make an opportunity attack, I can make two unarmed strikes instead"])
+		}
+	}
+})
 
 // Way of the Shadow Arts
 AddSubClass("monk(laserllama)", "way of the shadow arts", {
@@ -1323,7 +1388,7 @@ FeatsList["ki warrior"] = {
 		addToExisting : true
 	}]
 	// The addToExisting actually doesn't work for alt monk, but I'm keeping it for easier understanding of what the feat does and in case there's another ki pool
-	// See https://canary.discord.com/channels/533350585706217494/863810547584467004/1267406407364509737 for reference
+	// See for reference: https://canary.discord.com/channels/533350585706217494/863810547584467004/1267406407364509737 
 };
 
 // Source information
