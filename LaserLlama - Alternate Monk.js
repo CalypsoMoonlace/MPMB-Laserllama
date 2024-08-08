@@ -1355,6 +1355,78 @@ AddSubClass("monk(laserllama)", "way of the astral warrior", {
 	}
 })
 
+// Way of the Drunken Fist (drunken master)
+AddSubClass("monk(laserllama)", "way of the drunken fist", {
+	regExpSearch : /drunken fist/i,
+	subname : "Way of the Drunken Fist",
+	fullname : "Drunken Fist",
+	source : [["GMB:LL", 0]],
+	features : {
+		"subclassfeature3" : GetSubclassTechniques("Drunken Fist",["step of the wind","deflect missile","heavenly step"]),
+		"subclassfeature3.1" : {
+			name : "Jovial Performer",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain proficiency in Performance, brewer's supplies, and with improvised weapons", 
+				"Also, my attacks with improvised weapons count as Martial Arts attacks"]),
+			skills : ["Performance"],
+			toolProfs : ["Brewer's supplies"],
+			weaponProfs : [false, false, ["Improvised weapons"]],
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (((/improvised/i).test(v.WeaponName + v.baseWeaponName) || (/improvised weapon/i).test(v.theWea.type))) {
+							v.theWea.monkweapon = true; // The lvl 1 feature eval handles the rest
+						};
+					},
+					"I gain proficiency with improvised weapons, they count as Martial Arts attacks for me",
+					1
+				]
+			}
+		},
+		"subclassfeature3.2" : {
+			name : "Drunken Style",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["For each unique creature I hit during my turn, my speed increases by 5 ft",
+				"Creas I hit with Martial Arts have disadv. on opportunity attacks against me until my next turn"])
+		},
+		"subclassfeature6" : {
+			name : "Unpredictable Sway",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["Standing up from prone doesn't cost me any movement"]),
+			"unpredictable sway (redirect)" : {
+				name : "Unpredictable Sway",
+				extraname : "Way of the Drunken Fist 6",
+				source : ["GMB:LL"],
+				description : desc("When a creature misses me with a melee attack, I can use my reaction to force it to attack a creature of my choice within 5 ft of me, that is also within range of its attack"),
+				additional : "1 ki point",
+				action : ["reaction", " (after missed in melee)"],
+			},
+			"chaotic luck" : {
+				name : "Chaotic luck",
+				extraname : "Way of the Drunken Fist 10",
+				source : ["GMB:LL"],
+				description : desc("I can cancel the disadvantage on one d20 roll (attack, check or save)"),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "unpredictable sway (redirect)"
+			}, {
+				extrachoice : "chaotic luck",
+				minlevel : 10
+			}]
+		},
+		"subclassfeature17" : {
+			name : "Master of the Drunken Fist",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["When I take the Attack action, I can make a single Martial Arts attack against each creature I move past that is within range of my unarmed strikes, beyond my normal amount of attacks"])
+		}
+	}
+})
+
 // Way of the Wuxia (Kensei)
 RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we take into account all weapon types for the lvl 3 feature
 	var theKenseiSubclassName = AddSubClass("monk(laserllama)", "way of the wuxia", {
