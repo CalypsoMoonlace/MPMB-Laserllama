@@ -169,7 +169,7 @@ ClassList["monk(laserllama)"] = {
 			extraTimes : ['', 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10],
 			extrachoices : ["Arresting Strike","Crippling Strike","Empowered Strike","Mystic Healing", // no prereq
 				"Patient Defense","Slow Fall","Step of the Wind","Improvised Strikes", "Spiritual Armor", "Whirling Strike", // no prereq
-				"Deflect Missiles", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike", // prereq: lvl 5
+				"Deflect Missile", "Gentling Touch", "Seeking Strike", "Slowing Strike", "Stunning Strike", // prereq: lvl 5
 				"Adept Fighting Style (Archery)", "Adept Fighting Style (Blind Warrior)", "Adept Fighting Style (Defense)", "Adept Fighting Style (Dueling)", "Adept Fighting Style (Featherweight)", "Adept Fighting Style (Thrown)", "Adept Fighting Style (Wrestler)", // prereq: lvl 5 & max one from this list
 				"Crushing Strike", "Divine Light", "Unyielding Perseverance", // prereq: lvl 5
 				"Aura Sight", "Heavenly Step", "Indomitable Spirit", "Mantle of Courtesy", // prereq: lvl 9
@@ -286,8 +286,8 @@ ClassList["monk(laserllama)"] = {
 				action : ["action", ""],
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 1 } // For the Ki Warrior feat
 			},
-			"deflect missiles" : {
-				name : "Deflect Missiles",
+			"deflect missile" : {
+				name : "Deflect Missile",
 				source : ["GMB:LL"],
 				description : levels.map(function (n) {
 					if (n < 11) {
@@ -958,7 +958,7 @@ AddSubClass("monk(laserllama)", "way of the open hand", {
 				"\u2022 The crea has to make a Dex save (adv if larger) or be knocked prone and have a speed of 0",
 				"\u2022 I can make two unarmed strikes against the creature"])
 			}),
-			action : ["reaction", " (after miss)"]
+			action : ["reaction", " (after missed in melee)"]
 		},
 		"subclassfeature10" : {
 			name : "Open Hand Strike",
@@ -1226,6 +1226,131 @@ AddSubClass("monk(laserllama)", "way of the wu jen", {
 			usages : 1,
 			recovery : "long rest",
 			dmgres : [["Bludgeoning", "Bludgeon. (in elem. form)"], ["Piercing", "Piercing (in elem. form)"], ["Slashing", "Slashing (in elem. form)"]],
+		}
+	}
+})
+
+// Edit official fighter regex to avoid conflict with astral warrior
+if(ClassList["fighter"]) {
+    ClassList["fighter"].regExpSearch = /^(?!.*(feral|tribal|dark|green|fey|horned|totem|spiritual|exalted|sacred|holy|divine|nature|odin|thor|nature|natural|green|beast|animal))(?=.*(fighter|militant|warlord|phalanx|gladiator|trooper)).*$/i
+};
+
+// Way of the Astral Warrior (astral self)
+AddSubClass("monk(laserllama)", "way of the astral warrior", {
+	regExpSearch : /astral warrior/i,
+	subname : "Way of the Astral Warrior",
+	fullname : "Astral Warrior",
+	source : [["GMB:LL", 0]],
+	features : {
+		"subclassfeature3" : GetSubclassTechniques("Astral",["mystic healing","deflect missile","mantle of courtesy"]),
+		"subclassfeature3.1" : {
+			name : "Astral Self",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : ' [2 ki; see 3rd page "Notes"]' + desc([
+				"As a bonus action, I can use my ki to summon my astral self for 10 minutes"
+			]),
+			action : [["bonus action", " (summon/dismiss)"]],
+			weaponsAdd : ["Astral Arms"],
+			weaponOptions : {
+				baseWeapon : "unarmed strike",
+				regExpSearch : /^(?=.*\bastral\b)(?=.*\barms?\b).*$/i,
+				name : "Astral Arms",
+				source : [["T", 50]],
+				ability : 5,
+				range : "Melee (+5 ft)",
+				damage : [1, "", "Force"],
+				description : "+5 ft reach; Uses Str, Dex, or Wis",
+				isAstralArms : true
+			},
+			"astral arms" : {
+				name : "Astral arms",
+				extraname : "Way of the Astral Warrior 3",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					if (n < 10) { 
+						return desc([
+						"As a bonus action, I can summon my astral self as a luminescent set of armor",
+						"When I summon them, all creatures of my choice I can see in 10 ft must make a Dex save",
+						"If failed, they take twice my martial arts die in force damage",
+						"I can use use Wisdom instead of Strength for Strength checks, saves and unarmed strikes",
+						"I have +5 ft reach on attacks made with my astral self and they deal force damage",
+						"This lasts for 10 minutes or until I'm incapacitated, die, or dismiss them"])
+					} else {
+						return desc([
+						"As a bonus action, I can summon my astral self as a luminescent set of armor",
+						"When I summon them, all creatures of my choice I can see in 10 ft must make a Dex save",
+						"If failed, they take twice my martial arts die in force damage",
+						"I can use use Wisdom instead of Strength for Strength checks, saves and unarmed strikes",
+						"I have +5 ft reach on attacks made with my astral self and they deal force damage",
+						"I can see normally in both magical and mundane darkness in a 120-foot radius",
+						"This lasts for 10 minutes or until I'm incapacitated, die, or dismiss them"])
+					}
+				}),
+				additional : levels.map(function (n) {
+					return n < 3 ? "" : "2 ki point; 2d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " force damage on summon";
+				})
+			},
+			autoSelectExtrachoices : [{ extrachoice : "astral arms" }]
+		},
+		"subclassfeature6" : {
+			name : "Astral Visage",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : levels.map(function (n) {
+				return desc(["I learn the thaumaturgy cantrip and Wisdom is my spellcasting modifier for it",
+					"Whenever I make a Wis (Insight) or Cha (Intimidation) check, I add 1d"+(n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12)+" to my roll"])
+			}),
+			spellcastingBonus : [{
+				name : "Astral Visage",
+				spells : ["thaumaturgy"],
+				selection : ["thaumaturgy"],
+				firstCol : "atwill"
+			}],
+			vision : [["Astral sight (when summoned)", 120]]
+		},
+		"subclassfeature10" : {
+			name : "Mystical Defense",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["When I take acid, cold, fire, force, thunder, or lighting damage, I can use deflect missile",
+				"If I reduce the damage to 0, I can make a ranged Martial Arts attack as part of the same reaction, which deals the triggering damage type on hit",
+				"Once per turn when I hit with an unarmed strike with my Astral Self, I do additional damage"]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (v.theWea.isAstralArms && classes.known["monk(laserllama)"] && classes.known["monk(laserllama)"].level) {
+							var aMonkDie = function (n) { return (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) }(classes.known["monk(laserllama)"].level);
+							fields.Description += (fields.Description ? '; ' : '') + 'Once per turn +1d' + aMonkDie + ' damage';
+						}
+					},
+					"Once per turn when I hit a target with my astral self, I can add my martial arts die to the damage dealt."
+				]
+			}
+		},
+		"subclassfeature17" : {
+			name : "Master Astral Warrior",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["When my Astral Self is manifested, I gain resistance to all damage except force",
+				"While summoned, I can unleash a barrage of punches in an adjacent 20 ft cone as an action",
+				"Targets in that area must make a Dex save or take 4d12 force dmg (half on save)"]),
+			dmgres : [["All -Force", "All -Force (astral self)"]],
+			action : ["action", "Barrage of punches"],
+			weaponsAdd : ["Barrage of punches"],
+			weaponOptions : {
+				regExpSearch : /^(?=.*barrage)(?=.*punches).*$/i,
+				name : "Barrage of punches",
+				source : [["GMB:LL", 0]],
+				ability : 5,
+				type : "Natural",
+				damage : [4, 12, "Force"],
+				range : "20-ft cone",
+				description : "Hits all in area; Dex save for half damage",
+				abilitytodamage : false,
+				dc : true,
+				useSpellMod : "monk(laserllama)"
+			},
 		}
 	}
 })
