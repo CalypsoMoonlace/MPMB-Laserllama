@@ -1427,6 +1427,135 @@ AddSubClass("monk(laserllama)", "way of the drunken fist", {
 	}
 })
 
+// Way of Radiance (sun soul)
+AddSubClass("monk(laserllama)", "way of radiance", {
+	regExpSearch : /radiance/i,
+	subname : "Way of Radiance",
+	fullname : "Radiance",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 6 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Searing Blast without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Radiant",["step of the wind","deflect missile","indomitable spirit"]),
+		"subclassfeature3.1" : {
+			name : "Radiant Bolt",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can replace any unarmed strike by a Radiant Bolt, which is a ranged martial arts attack",
+				"I learn the light cantrip and use Wisdom as my spellcasting ability"]),
+			weaponsAdd : ["Radiant Bolt"],
+			weaponOptions : {
+				regExpSearch : /^(?=.*radiant)(?=.*bolt).*$/i,
+				name : "Radiant Bolt",
+				source : [["GMB:LL", 0]],
+				ability : 2,
+				type : "Natural",
+				damage : [1, 6, "radiant"],
+				range : "30/90 ft",
+				description : "Can be used instead of any unarmed strike",
+				monkweapon : true,
+				abilitytodamage : true
+			},
+			spellcastingBonus : {
+				name : "Radiant Bolt",
+				spells : ["light"],
+				selection : ["light"]
+			},
+
+			"searing blast" : {
+				name : "Searing Blast",
+				extraname : "Way of Radiance 6",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					return desc(["As a bonus action, I can force all creatures within an adjacent 15 ft cone to make a Dex save or take 3d"+MartArtDie+" radiant damage (half on save)"])
+				}),
+				additional : "1 ki point",
+				action : ["bonus action", ""],
+				weaponsAdd : ["Searing Blast"],
+				weaponOptions : {
+					regExpSearch : /^(?=.*searing)(?=.*blast).*$/i,
+					name : "Searing Blast",
+					source : [["GMB:LL", 0]],
+					ability : 5,
+					type : "Natural",
+					damage : [3, 8, "Radiant"],
+					range : "15-ft cone",
+					description : "Hits all in area; Dex save for half damage",
+					abilitytodamage : false,
+					dc : true,
+					useSpellMod : "monk(laserllama)",
+					isSearingBlast : true
+				},
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (v.theWea.isSearingBlast && classes.known["monk(laserllama)"] && classes.known["monk(laserllama)"].level) {
+								var aMonkDie = function (n) { return (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) }(classes.known["monk(laserllama)"].level);
+								fields.Damage_Die = "3d" + aMonkDie;
+							}
+						},
+						"My Searing Blast feature uses my Martial Arts die to calculate the damage dealt",
+						1
+					]
+				}
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "searing blast",
+				minlevel : 6
+			}]
+		},
+		"subclassfeature10" : {
+			name : "Luminous Burst",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+				return desc(["As an action, I can unleash a blast in a 5 ft wide, 100 ft long line",
+				"All creatures in range must make a Dex save or take 6d"+MartArtDie+" radiant damage (half on save)",
+				"I can empower it by spending ki, up to my Wis mod: each ki spent adds 1d"+MartArtDie+" to the damage",
+				"If I have no uses left, I can spend 3 ki to use it again"])
+			}),
+			usages : "Wisdom modifier per ",
+			usagescalc : "event.value = Math.max(1, What('Wis Mod'));",
+			recovery : "long rest",
+			action : ["action", ""]
+		},
+		"subclassfeature17" : {
+			name : "Master of Light",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["I gain a flying speed equal to my movement speed",
+				"I shed bright sunlight in a 30 ft radius and dim sunlight 30 ft beyond that (can enable/disable as bonus action)",
+				"My Radiant Bolt, Searing Blast, and Luminous Burst features all count as true sunlight",
+				"I gain resistance to necrotic damage, immunity to all radiant damage and being blinded"]),
+			dmgres : ["Necrotic"],
+			savetxt : {
+				immune : ["Radiant damage", "blinded"]
+			},
+			speed : { fly : { spd : "walk", enc : "walk" } },
+			action: ["bonus action", "Shed sunlight (enable/disable)"],
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if ((v.theWea.isSearingBlast || ((/radiant bolt/i).test(v.WeaponName + v.baseWeaponName) || (/radiant bolt/i).test(v.theWea.type)))) {
+							fields.Description += (fields.Description ? '; ' : '') + "Counts as true sunlight"
+						}
+					},
+					"My Radiant Bolt, Searing Blast, and Luminous Burst features all count as true sunlight",
+					1
+				]
+			}
+		}
+	}
+})
+
 // Way of the Wuxia (Kensei)
 RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we take into account all weapon types for the lvl 3 feature
 	var theKenseiSubclassName = AddSubClass("monk(laserllama)", "way of the wuxia", {
