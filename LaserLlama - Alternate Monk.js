@@ -1556,6 +1556,73 @@ AddSubClass("monk(laserllama)", "way of radiance", {
 	}
 })
 
+// Way of the Reaper (long death)
+AddSubClass("monk(laserllama)", "way of the reaper", {
+	regExpSearch : /reaper/i,
+	subname : "Way of the Reaper",
+	fullname : "Reaper",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 3 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Frightful Touch without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Reaper",["crippling strike","slowing strike","aura sight"]),
+		"subclassfeature3.1" : {
+			name : "Necrotic Spirit",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can cause my unarmed strikes to deal necrotic damage in place of bludgeoning",
+				"I am resistant to necrotic damage and have advantage on saves vs being frightened"]),
+			dmgres : ["Necrotic"],
+			savetxt : {
+				adv_vs : ["frightened"]
+			},
+
+			"frightful touch" : {
+				name : "Frightful Touch",
+				extraname : "Way of the Reaper 3",
+				source : [["GMB:LL", 0]],
+				description : desc("When I hit a creature with a Martial Arts attack, I can force it to make a Wisdom save or be frightened of me until the start of my next turn"),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "frightful touch",
+				minlevel : 3
+			}]
+		},
+		"subclassfeature6" : {
+			name : "Sinister Vitality",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["As a bonus action, I can grant myself temp HP equal to my Wisdom modifier (min 1)",
+				"While those last, I am resistant to non-magical bludgeoning, piercing, and slashing damage"]),
+			action : ["bonus action", ""]
+		},
+		"subclassfeature10" : {
+			name : "Armor of the Grave",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["If I am reduced to 0 HP but not killed outright, I can spend 1 Ki Point to fall to 1 HP instead",
+				"Each subsequent time I use this before finishing a long rest, I must spend 1 additional Ki"]),
+			usages : "-",
+			recovery : "long rest"
+		},
+		"subclassfeature17" : {
+			name : "Master of Death",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["When taking the Attack action, I can replace one of my attacks by a special effect",
+				"I touch a crea and expend up to 10 ki; It must make a Con save (disadv if frightened of me)",
+				"It takes 2d10 necrotic damage for each ki spent (half on save)"]),
+		}
+	}
+})
+
 // Way of the Wuxia (Kensei)
 RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we take into account all weapon types for the lvl 3 feature
 	var theKenseiSubclassName = AddSubClass("monk(laserllama)", "way of the wuxia", {
