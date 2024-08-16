@@ -217,7 +217,11 @@ ClassList["monk(laserllama)"] = {
 				name : "Mystic Healing",
 				extraname : "Monk Technique",
 				source : ["GMB:LL"],
-				description : desc("As an action, I regain hit points equal to one roll of my Martial Arts die + my Wis mod"),
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc("As an action, I regain HP equal to 1d"+MartArtDie+" + my Wis mod")
+				}),
 				additional : "2 ki points",
 				action : ["action", ""],
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 1 } // For the Ki Warrior feat
@@ -565,7 +569,8 @@ ClassList["monk(laserllama)"] = {
 			"unyielding perseverance" : {
 				name : "Unyielding Perseverance",
 				source : ["GMB:LL"],
-				description : desc(["Add +1 to an ability check or saving throw for each Ki spent","I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
+				description : desc(["Add +1 to an ability check or saving throw for each Ki spent",
+					"I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
 				additional : "1 to Wis mod ki points",
 				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
@@ -575,7 +580,8 @@ ClassList["monk(laserllama)"] = {
 				source : ["GMB:LL"],
 				description : levels.map(function (n) {
 					var newRange = n < 13 ? 20 : n < 18 ? 30 : 60;
-					descr = ["I gain "+newRange+" ft blindsight and can see anything that isn't behind total cover within that range","I can see invisible creatures within range unless the creature successfully hides from me"]
+					descr = ["I gain "+newRange+" ft blindsight and can see anything that isn't behind total cover within that range",
+						"I can see invisible creatures within range unless the creature successfully hides from me"]
 					return desc(descr);
 				}),
 				submenu : "[monk level  9+]",
@@ -597,14 +603,16 @@ ClassList["monk(laserllama)"] = {
 			"heavenly step" : {
 				name : "Heavenly Step",
 				source : ["GMB:LL"],
-				description : desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move","If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
+				description : desc(["I can move along vertical surfaces, across liquids, and upside down on ceilings without falling during the move",
+					"If I end my movement on a vertical surface, liquid, or upside down on a ceiling, I can spend 1 Ki Point to remain in place without falling until the start of my next turn"]),
 				submenu : "[monk level  9+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
 			},
 			"indomitable spirit" : {
 				name : "Indomitable Spirit",
 				source : ["GMB:LL"],
-				description : desc(["Add my Wis mod (min 1) to a Strength (Athletics) or Dexterity (Athletics) check","I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
+				description : desc(["Add my Wis mod (min 1) to a Strength (Athletics) or Dexterity (Athletics) check",
+					"I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
 				additional : "1 ki point",
 				submenu : "[monk level  9+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 9; },
@@ -674,7 +682,8 @@ ClassList["monk(laserllama)"] = {
 			"armor of the ascetic" : {
 				name : "Armor of the Ascetic",
 				source : ["GMB:LL"],
-				description : desc(["At the end of a short or long rest, I gain the effects of sanctuary spell","This lasts until the start of my next short or long rest and can end early as normal"]),
+				description : desc(["At the end of a short or long rest, I gain the effects of sanctuary spell",
+					"This lasts until the start of my next short or long rest and can end early as normal"]),
 				submenu : "[monk level 13+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; },
 				recovery : "short rest",
@@ -706,7 +715,8 @@ ClassList["monk(laserllama)"] = {
 			"tongue of sun and moon" : { // '&' is an invalid character here
 				name : "Tongue of Sun and Moon",
 				source : ["GMB:LL"],
-				description : desc(["I can touch the Ki of other minds and communicate with any creature that speaks a language","Creatures that speak no languages can communicate and understand simple ideas"]),
+				description : desc(["I can touch the Ki of other minds and communicate with any creature that speaks a language",
+					"Creatures that speak no languages can communicate and understand simple ideas"]),
 				submenu : "[monk level 13+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 13; }
 			},
@@ -962,13 +972,13 @@ AddSubClass("monk(laserllama)", "way of the open hand", {
 		},
 		"subclassfeature10" : {
 			name : "Open Hand Strike",
-			source : [["P", 80]],
+			source : [["GMB:LL", 0]],
 			minlevel : 10,
 			description : desc(["When I crit with an unarmed strike, the creature has disadvantage on any save that I force it to make as part of that attack"]),
 		},
 		"subclassfeature10" : {
 			name : "Master of Many Forms",
-			source : [["P", 80]],
+			source : [["GMB:LL", 0]],
 			minlevel : 10,
 			description : desc(["During a long rest I can spend 10 min practicing to switch my Monk Techniques"]),
 		},
@@ -1732,6 +1742,100 @@ RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we 
 		}
 	}
 });
+
+// Way of Yin & Yang (mercy)
+AddSubClass("monk(laserllama)", "way of ying and yang", {
+	regExpSearch : /^(?=.*ying)(?=.*yang).*$/i,
+	subname : "Way of Ying and Yang",
+	fullname : "Ying and Yang",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 3 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, Touch of Life or Touch of Death without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Yin and Yang",["mystic healing","gentling touch","mantle of courtesy"]),
+		"subclassfeature3.1" : {
+			name : "Monastic Healer",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc("I gain proficiency with Insight, Medicine, and herbalism kit; I add 1d"+MartArtDie+" to those checks")
+			}),
+			skills : ["Insight", "Medicine"],
+			toolProfs : ["Herbalism kit"],
+
+			"touch of life" : {
+				name : "Touch of Life",
+				extraname : "Way of Ying and Yang 3",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					if (n < 6) {
+						return desc("Instead of an unarmed strike, I can heal another creature for 1d"+MartArtDie+" + my Wis mod")
+					}
+
+					if (n < 11) {
+						return desc(["Instead of an unarmed strike, I can heal another creature for 1d"+MartArtDie+" + my Wis mod",
+						"I can also end one of the following: blinded, deafened, paralyzed, poisoned, or stunned"]);
+					}
+
+					return desc(["Instead of an unarmed strike, I can heal another creature for 1d"+MartArtDie+" + my Wis mod",
+						"I can also end one of the following: blinded, deafened, paralyzed, poisoned, or stunned",
+						"If using this feature with Ki Adept, I instead grant temp HP"])
+				}),
+				additional : "1 ki point"
+			},
+			"touch of death" : {
+				name : "Touch of Death",
+				extraname : "Way of Ying and Yang 3",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					if (n < 6) return desc("When hitting a creature with an unarmed strike, deal 1d"+MartArtDie+" additional necrotic damage");
+					return desc(["When hitting a creature with an unarmed strike, deal 1d"+MartArtDie+" additional necrotic damage",
+						"I can also choose to poison the target until the beginning of my next turn"]);
+				}),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "touch of life",
+				minlevel : 3
+			}, {
+				extrachoice : "touch of death",
+				minlevel : 3
+			}]
+		},
+		"subclassfeature10" : {
+			name : "Mystical Touch",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc(["Whenever I use Touch of Life or Touch of Death, I can expend additional Ki to empower it",
+				"When I do so, I increase the healing/damage by 1d"+MartArtDie+", up to my Wis mod"])
+			})
+		},
+		"subclassfeature17" : {
+			name : "Master of Life and Death",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["As an action, I can spend 6 Ki Points and touch a creature that has died within 24h",
+				"I instantly restore it to life with a number of HP equal to my Monk level + my Wis mod",
+				"Any conditions afflicting the creature at the time of its death are also ended"]),
+			action : ["action", ""]
+		}
+	}
+})
 
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
