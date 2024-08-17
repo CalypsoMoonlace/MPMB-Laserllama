@@ -309,7 +309,7 @@ ClassList["monk(laserllama)"] = {
 				}),
 				action : ["reaction", ""],
 				additional : levels.map(function (n) {
-					return "1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " + " + n + " + Dexterity modifier; 1 ki to throw";
+					return "1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " + " + n + " + Dex mod; 1 ki to throw";
 				}),
 				submenu : "[monk level  5+]",
 				prereqeval : function(v) { return classes.known["monk(laserllama)"].level >= 5; },
@@ -1743,6 +1743,464 @@ RunFunctionAtEnd(function () { // The RunFunctionAtEnd is there to make sure we 
 	}
 });
 
+// Way of the Rising Dragon (ascendant dragon)
+AddSubClass("monk(laserllama)", "way of the rising dragon", {
+	regExpSearch : /rising dragon/i,
+	subname : "Way of the Rising Dragon",
+	fullname : "Rising Dragon",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 3 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Elemental Breath without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Rising Dragon",["step of the wind","deflect missile","indomitable spirit"]),
+		"subclassfeature3.1" : {
+			name : "Draconic Disciple",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc([
+				'Choose a Dragon Affinity using the "Choose Feature" button above; I learn Draconic',
+			]),
+			languageProfs : ["Draconic"],
+			choices: ["Black Dragon Affinity", "Blue Dragon Affinity", "Brass Dragon Affinity", "Bronze Dragon Affinity", "Copper Dragon Affinity", 
+				"Gold Dragon Affinity", "Green Dragon Affinity", "Red Dragon Affinity", "Silver Dragon Affinity", "White Dragon Affinity",
+				"Amethyst Dragon Affinity", "Crystal Dragon Affinity", "Emerald Dragon Affinity", "Sapphire Dragon Affinity", "Steel Dragon Affinity", "Topaz Dragon Affinity"],
+			"black dragon affinity" : {
+				name : "Black Dragon Affinity",
+				submenu : "Chromatic dragons",
+				description : desc([
+					"I have an affinity with black dragons, which are affiliated with acid and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal acid damage instead of bludg damage"
+				]),
+				dependentChoices : "acid"
+			},
+			"blue dragon affinity" : {
+				name : "Blue Dragon Affinity",
+				submenu : "Chromatic dragons",
+				description : desc([
+					"I have an affinity with blue dragons, which are affiliated with lightning and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal lightning damage instead of bludg damage"
+				]),
+				dependentChoices : "lightning"
+			},
+			"brass dragon affinity" : {
+				name : "Brass Dragon Affinity",
+				submenu : "Metallic dragons",
+				description : desc([
+					"I have an affinity with brass dragons, which are affiliated with fire and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal fire damage instead of bludg damage"
+				]),
+				dependentChoices : "fire"
+			},
+			"bronze dragon affinity" : {
+				name : "Bronze Dragon Affinity",
+				submenu : "Metallic dragons",
+				description : desc([
+					"I have an affinity with bronze dragons, which are affiliated with lightning and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal lightning damage instead of bludg damage"
+				]),
+				dependentChoices : "lightning"
+			},
+			"copper dragon affinity" : {
+				name : "Copper Dragon Affinity",
+				submenu : "Metallic dragons",
+				description : desc([
+					"I have an affinity with copper dragons, which are affiliated with acid and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal acid damage instead of bludg damage"
+				]),
+				dependentChoices : "acid"
+			},
+			"gold dragon affinity" : {
+				name : "Gold Dragon Affinity",
+				submenu : "Metallic dragons",
+				description : desc([
+					"I have an affinity with gold dragons, which are affiliated with fire and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal fire damage instead of bludg damage"
+				]),
+				dependentChoices : "fire"
+			},
+			"green dragon affinity" : {
+				name : "Green Dragon Affinity",
+				submenu : "Chromatic dragons",
+				description : desc([
+					"I have an affinity with green dragons, which are affiliated with poison and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal poison damage instead of bludg damage"
+				]),
+				dependentChoices : "poison"
+			},
+			"red dragon affinity" : {
+				name : "Red Dragon Affinity",
+				submenu : "Chromatic dragons",
+				description : desc([
+					"I have an affinity with red dragons, which are affiliated with fire and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal fire damage instead of bludg damage"
+				]),
+				dependentChoices : "fire"
+			},
+			"silver dragon affinity" : {
+				name : "Silver Dragon Affinity",
+				submenu : "Metallic dragons",
+				description : desc([
+					"I have an affinity with silver dragons, which are affiliated with cold and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal cold damage instead of bludg damage"
+				]),
+				dependentChoices : "cold"
+			},
+			"white dragon affinity" : {
+				name : "White Dragon Affinity",
+				submenu : "Chromatic dragons",
+				description : desc([
+					"I have an affinity with white dragons, which are affiliated with cold and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal cold damage instead of bludg damage"
+				]),
+				dependentChoices : "cold"
+			},
+			"amethyst dragon affinity" : {
+				name : "Amethyst Dragon Affinity",
+				submenu : "Gem dragons",
+				description : desc([
+					"I have an affinity with amethyst dragons, which are affiliated with force and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal force damage instead of bludg damage"
+				]),
+				dependentChoices : "force"
+			},
+			"crystal dragon affinity" : {
+				name : "Crystal Dragon Affinity",
+				submenu : "Gem dragons",
+				description : desc([
+					"I have an affinity with crystal dragons, which are affiliated with radiance and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal radiant damage instead of bludg damage"
+				]),
+				dependentChoices : "radiant"
+			},
+			"emerald dragon affinity" : {
+				name : "Emerald Dragon Affinity",
+				submenu : "Gem dragons",
+				description : desc([
+					"I have an affinity with emerald dragons, which are affiliated with psychic and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal psychic damage instead of bludg damage"
+				]),
+				dependentChoices : "psychic"
+			},
+			"sapphire dragon affinity" : {
+				name : "Sapphire Dragon Affinity",
+				submenu : "Gem dragons",
+				description : desc([
+					"I have an affinity with sapphire dragons, which are affiliated with thunder and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal thunder damage instead of bludg damage"
+				]),
+				dependentChoices : "thunder"
+			},
+			"steel dragon affinity" : {
+				name : "Steel Dragon Affinity",
+				submenu : "Metallic dragons", // Laserllama classified them under Gem dragons, but Steel dragons are Metallic dragons
+				// Source: https://forgottenrealms.fandom.com/wiki/Steel_dragon
+				description : desc([
+					"I have an affinity with sapphire dragons, which are affiliated with acid and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal acid damage instead of bludg damage"
+				]),
+				dependentChoices : "acid"
+			},
+			"topaz dragon affinity" : {
+				name : "Topaz Dragon Affinity",
+				submenu : "Gem dragons",
+				description : desc([
+					"I have an affinity with topaz dragons, which are affiliated with necrotic and I learn draconic",
+					"Whenever I hit with an unarmed strike, I can deal necrotic damage instead of bludg damage"
+				]),
+				dependentChoices : "necrotic"
+			},
+			choiceDependencies : [{
+				feature : "subclassfeature3.2", // share the choice with the one for those features
+				choiceAttribute : true // means it uses the dependentChoices attribute instead of the same choice (eg "acid" instead of "black dragon affinity")
+			}, {
+				feature : "subclassfeature10",
+				choiceAttribute : true
+			}]
+		},
+		"subclassfeature3.2" : {
+			name : "Elemental Breath",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+				var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+				return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+					"I do so either in an adjacent " + BreathRange,
+					"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" Elemental damage (half on save)",
+					"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+			}),
+
+			choices: ["acid", "cold", "fire", "lightning", "poison", 
+				"force","radiant","psychic","thunder","necrotic"],
+			choicesNotInMenu : true,
+			"acid" : {
+				name : "Acid Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" acid damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"cold" : {
+				name : "Cold Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" cold damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"fire" : {
+				name : "Fire Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" fire damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"lightning" : {
+				name : "Lightning Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" lightning damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"poison" : {
+				name : "Poison Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" poison damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"force" : {
+				name : "Force Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" force damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"radiant" : {
+				name : "Radiant Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" radiant damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"psychic" : {
+				name : "Psychic Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" psychic damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"thunder" : {
+				name : "Thunder Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" thunder damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			},
+			"necrotic" : {
+				name : "Thunder Elemental Breath",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+					var BreathRange = (n < 17 ? "20-foot cone or a 30-foot long, 5-foot wide line" : "30-foot cone or a 60-foot long, 5-foot wide line")
+
+					return desc(["When I take the Attack action, I can spend 1 Ki to replace one attack with a breath weapon",
+						"I do so either in an adjacent " + BreathRange,
+						"Creatures in the area must make a Dex save or take 2d"+MartArtDie + (n < 10 ? "" : " + my Wis mod") +" necrotic damage (half on save)",
+						"I can spend additional ki (up to my Wis mod) to add 1d"+MartArtDie+" to the damage per ki spent"])
+				})
+			}
+		},
+		"subclassfeature3.3" : {
+			name : "Additional proficiency",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc("I gain an additional proficiency (Intimidation or Persuasion) and add my Wis mod to any Charisma checks using that proficiency"),
+			choices : ["Intimidation proficiency", "Persuasion proficiency"],
+			"intimidation proficiency" : {
+				name : "Additional proficiency",
+				description : desc("I am proficient in Intimidation and add my Wis mod to any Charisma (Intimidation) checks"),
+				skills : ["Intimidation"],
+				addMod : { type : "skill", field : "Intimidation", mod : "Wis", text : "I add my Wisdom modifier to any Charisma (Intimidation) checks I make" }
+			},
+			"persuasion proficiency" : {
+				name : "Additional proficiency",
+				description : desc("I am proficient in Persuasion and add my Wis mod to any Charisma (Persuasion) checks"),
+				skills : ["Persuasion"],
+				addMod : { type : "skill", field : "Persuasion", mod : "Wis", text : "I add my Wisdom modifier to any Charisma (Persuasion) checks I make" }
+			},
+		},
+		"subclassfeature6" : {
+			name : "Ascendant Step",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["When I use step of the wind, I gain a fly speed equal to my walk spd until the end of my turn"])
+		},
+		"subclassfeature10" : {
+			name : "Draconic Mantle",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				var MantleRange = (n < 17 ? 10 : 30);
+
+				return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to my Element and adv. on save vs charmed or frightened"])
+			}),
+			savetxt : { adv_vs : ["charmed", "frightened"] },
+
+			choices: ["acid", "cold", "fire", "lightning", "poison", 
+				"force","radiant","psychic","thunder","necrotic"],
+			choicesNotInMenu : true,
+			"acid" : {
+				name : "Acid Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Acid damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Acid"]
+			},
+			"cold" : {
+				name : "Cold Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Cold damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Cold"]
+			},
+			"fire" : {
+				name : "Fire Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Fire damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Fire"]
+			},
+			"lightning" : {
+				name : "Lightning Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Lightning damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Lightning"]
+			},
+			"poison" : {
+				name : "Poison Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Poison damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Poison"]
+			},
+			"force" : {
+				name : "Force Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Force damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Force"]
+			},
+			"radiant" : {
+				name : "Radiant Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Radiant damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Radiant"]
+			},
+			"psychic" : {
+				name : "Psychic Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Psychic damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Psychic"]
+			},
+			"thunder" : {
+				name : "Thunder Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Thunder damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Thunder"]
+			},
+			"necrotic" : {
+				name : "Necrotic Draconic Mantle",
+				description : levels.map(function (n) {
+					var MantleRange = (n < 17 ? 10 : 30);
+
+					return desc(["Me and creatures of my choice within "+MantleRange+" ft of me have resistance to Necrotic damage and adv. on save vs charmed or frightened"])
+				}),
+				dmgres : ["Necrotic"]
+			},
+		},
+		"subclassfeature17" : {
+			name : "Master of Draconic Might",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["I manifest leathery draconic wings which grant me a fly speed equal to my walking speed"]),
+			speed : { fly : { spd : "walk", enc : "walk" } }
+		}
+	}
+})
+
 // Way of Yin & Yang (mercy)
 AddSubClass("monk(laserllama)", "way of ying and yang", {
 	regExpSearch : /^(?=.*ying)(?=.*yang).*$/i,
@@ -1822,7 +2280,7 @@ AddSubClass("monk(laserllama)", "way of ying and yang", {
 				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
 
 				return desc(["Whenever I use Touch of Life or Touch of Death, I can expend additional Ki to empower it",
-				"When I do so, I increase the healing/damage by 1d"+MartArtDie+", up to my Wis mod"])
+				"Doing so increases the healing/damage by 1d"+MartArtDie+" for each ki expended, up to my Wis mod"])
 			})
 		},
 		"subclassfeature17" : {
