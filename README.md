@@ -35,9 +35,10 @@ Below is the list of what I did so far, and what I have planned.
 ### In Progress
 - [ ] Alternate Barbarian
 - [ ] Alternate Rogue
-- [ ] Alternate Monk
+- [ ] Alternate Monk Expanded
 
 ### Done ✓
+- [x] Alternate Monk
 - [x] Alternate Fighter Expanded
 - [x] Alternate Fighter
 - [x] Core system for Exploits
