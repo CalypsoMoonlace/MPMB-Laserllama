@@ -2295,6 +2295,128 @@ AddSubClass("monk(laserllama)", "way of ying and yang", {
 	}
 })
 
+// Way of the Boulder
+AddSubClass("monk(laserllama)", "way of the boulder", {
+	regExpSearch : /boulder/i,
+	subname : "Way of the Boulder",
+	fullname : "Boulder",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override unarmoured defense because of Solid Body
+		"unarmored defense" : {
+			name : "Unarmored Defense",
+			source : ["GMB:LL"],
+			minlevel : 1,
+			description : levels.map(function (n) {
+				if (n < 3) return desc("Without armor and no shield, my AC is 10 + Dexterity modifier + Wisdom modifier");
+
+				return desc("Without armor and no shield, my AC is 10 + Constitution modifier + Wisdom modifier");
+			}),
+			armorOptions : [{
+				regExpSearch : /justToAddToDropDown/,
+				name : "Unarmored Defense (Wis)",
+				source : ["GMB:LL"],
+				ac : "10+Wis",
+				affectsWildShape : true
+			}],
+			armorAdd : "Unarmored Defense (Wis)"
+		},
+
+		// Override Ki adept because of Stalwart Strength
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Stalwart Strength without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Boulder",["spiritual armor","crushing strike","friend of beast and leaf"]),
+		"subclassfeature3.1" : {
+			name : "Solid Body",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can use Constitution, in place of Str or Dex for Martial Arts attack and damage rolls"]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (v.theWea.monkweapon) {
+
+							if (fields.Mod === 1 || fields.Mod === 2 || What(AbilityScores.abbreviations[v.StrDex - 1] + " Mod") <= What("Con Mod")) {
+								fields.Mod = 3;
+							}
+						};
+					},
+					"I can use either Constitution, Strength or Dexterity for Martial Arts attack and damage rolls",
+					10
+				]
+			},
+			extraAC : [{
+				name : "Solid Body",
+				mod : "max(Con-Dex|0)",
+				text : "I can use my Con to calculate my AC instead of Dex while not wearing armor or a shield",
+				stopeval : function (v) { 
+					return (v.wearingArmor || v.usingShield) // unarmoured only
+				}
+			}],
+
+			"stalwart strength" : {
+				name : "Stalwart Strength",
+				extraname : "Way of the Boulder 3",
+				source : [["GMB:LL", 0]],
+				description : desc(["When I make a Strength-based ability check or a Strength save while touching the ground, I can add my Constitution modifier to the roll"]),
+				additional : "1 ki point"
+			},
+			"rebounding defense" : {
+				name : "Rebounding Defense",
+				extraname : "Way of the Boulder 6",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["When a creature I can see hits me with a melee attack, I can reduce the damage by 1d" + (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12) + " + " + n + " + Con mod",
+					"If I reduce it to 0, I can make a melee martial arts attack against the attacker"])
+				}),
+				additional : "1 ki point",
+				action : ["reaction", ""]
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "stalwart strength",
+				minlevel : 3
+			}, {
+				extrachoice : "rebounding defense",
+				minlevel : 6
+			}]
+
+		},
+		"subclassfeature10" : {
+			name : "Ki-Infused Bulk",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["I gain resistance to one of the following damage types: bludgeoning, piercing, slashing, acid, cold, fire, lighting, or thunder",
+				"I can replace the chosen resistance through a short rest or by spending 2 ki as a bonus action"]),
+			action : ["bonus action", " (change resistance)"]
+		},
+		"subclassfeature17" : {
+			name : "Mighty Form",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["Both my Constitution score, and maximum Constitution score, increase by 2 to a max of 22"]),
+			scores : [0,0,2,0,0,0],
+			scoresMaximum : [0,0,22,0,0,0],
+		},
+		"subclassfeature17.1" : {
+			name : "Earthshaker",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["As an action, I can expend 5 Ki to crush the ground within 30 ft of me",
+				"This turns it into difficult terrain and forces creas of my choice within to make a Strength save",
+				"They take 2d12 bludg dmg and fall prone (half on save)",
+				"I can spend additional ki (up to my Wis mod) to add 1d12 to the damage per ki expended"]),
+			action : ["action", ""]
+		}
+	}
+})
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
