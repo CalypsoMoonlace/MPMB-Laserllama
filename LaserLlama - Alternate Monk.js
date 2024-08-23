@@ -2520,6 +2520,174 @@ AddSubClass("monk(laserllama)", "way of the brawler", {
 	}
 })
 
+// Way of Ferocity
+AddSubClass("monk(laserllama)", "way of ferocity", {
+	regExpSearch : /ferocity/i,
+	subname : "Way of Ferocity",
+	fullname : "Ferocity",
+	source : [["GMB:LL", 0]],
+	features : {
+		"subclassfeature3" : GetSubclassTechniques("Ferocity",["crippling strike","stunning strike","friend of beast and leaf"]),
+		"subclassfeature3.1" : {
+			name : "Natural Predator",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc("Select a discipline using \"Choose feature\". Once chosen, this cannot be changed."),
+			choices : ["Bestial Rend", "Natural Defenses", "Savage Charge"],
+
+			"bestial rend" : {
+				name : "Bestial Rend",
+				source : [["GMB:LL", 0]],
+				description : desc(["My unarmed strikes deal slashing damage and reduce the speed of my foes", 
+					"Each time you I hit a target with an unarmed strike, its movement speed is reduced by a cumulative 5 feet until the beginning of my next turn",
+					"If this reduces a target's speed to 0, it has disadv. on Dex saves until the start of my next turn"]),
+				calcChanges : {
+					atkAdd : [
+						function (fields, v) {
+							if (v.baseWeaponName == "unarmed strike") {
+								fields.Damage_Type = "Slashing";
+								fields.Description += (fields.Description ? '; ' : '') + "Reduce foe's move speed by 5 ft on hit"
+							};
+						},
+						"My unarmed strikes deal slashing damage and reduce the speed of my foes",
+						20
+					]
+				}
+			},
+			"natural defenses" : {
+				name : "Natural Defenses",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["When a creature that I can see hits me with an attack, I can use my reaction to add 1d"+MartArtDie+" to my AC against the attack, possibly turning a hit into a miss"]);
+				}),
+				action : ["reaction", " (when hit)"]
+			},
+			"savage charge" : {
+				name : "Savage Charge",
+				source : [["GMB:LL", 0]],
+				description : desc(["If I move at least 15 ft in a straight line toward a creature, I have adv. on the first Martial Arts attack against that creature before the end of my current turn"])
+			}
+
+		},
+		"subclassfeature6" : {
+			name : "Primal Intuition",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc(["I gain proficiency in two skills and add 1d"+MartArtDie+" to any skill check with those skills"]);
+			}),
+			extraname : "Primal Intuition proficiencies",
+			extrachoices : ["Athletics", "Insight", "Intimidation", "Perception", "Stealth", "Survival"],
+			extraTimes : levels.map( function(n) {
+                if (n < 6) return 0;
+                return 2;
+            }),
+            // NOTE: this levels.map function is just so the user sees how many Profs they can pick
+            // If extraTimes = constant, then it never shows the "selected x of y"
+
+			"athletics" : {
+				name : "Athletics",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["I gain proficiency in Athletics and add 1d"+MartArtDie+" to any skill check with this skill"]);
+				}),
+				skills : ["Athletics"]
+			},
+			"insight" : {
+				name : "Insight",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["I gain proficiency in Insight and add 1d"+MartArtDie+" to any skill check with this skill"]);
+				}),
+				skills : ["Insight"]
+			},
+			"intimidation" : {
+				name : "Intimidation",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["I gain proficiency in Intimidation and add 1d"+MartArtDie+" to any skill check with this skill"]);
+				}),
+				skills : ["Intimidation"]
+			},
+			"perception" : {
+				name : "Perception",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["I gain proficiency in Perception and add 1d"+MartArtDie+" to any skill check with this skill"]);
+				}),
+				skills : ["Perception"]
+			},
+			"stealth" : {
+				name : "Stealth",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["I gain proficiency in Stealth and add 1d"+MartArtDie+" to any skill check with this skill"]);
+				}),
+				skills : ["Stealth"]
+			},
+			"survival" : {
+				name : "Survival",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["I gain proficiency in Survival and add 1d"+MartArtDie+" to any skill check with this skill"]);
+				}),
+				skills : ["Survival"]
+			},
+
+			// level 10 feature
+			"power of the wild" : {
+				name : "Power of the Wild",
+				source : [["GMB:LL", 0]],
+				extraname : "Way of Ferocity 10",
+				description : desc(["When I hit a creature with an unarmed strike, I can deal an additional 2d6 damage"]),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "power of the wild",
+				minlevel : 10
+			}]
+
+		},
+		"subclassfeature17" : {
+			name : "Master of Ferocity",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc("Select a discipline using \"Choose feature\". Once chosen, this cannot be changed."),
+			choices : ["Bestial Fury", "Natural Resilience", "Savage Rush"],
+
+			"bestial fury" : {
+				name : "Bestial Fury",
+				source : [["GMB:LL", 0]],
+				description : desc(["When I score a crit against a creature with an unarmed strike, its move speed is reduced to zero, and I have adv. on any unarmed strikes that I make against that creature until the beginning of my next turn"])
+			},
+			"natural resilience" : {
+				name : "Natural Resilience",
+				source : [["GMB:LL", 0]],
+				description : desc("When a creature that I can see hits me with an attack, I can expend Ki Points (up to my Wis mod) to reduce the damage by 1d12 for each Ki Point spent"),
+				action : ["reaction", " (when hit)"]
+			},
+			"savage rush" : {
+				name : "Savage Rush",
+				source : [["GMB:LL", 0]],
+				description : desc(["As an action, I can spend 4 Ki Points and move up to my full walk speed in a straight line",
+					"Any creature I pass through must make a Dex save or take 4d12 bludg dmg and fall prone",
+					"On a success, they take half damage and do not fall prone"]),
+				action : ["action", ""]
+			},
+		}
+	}
+})
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
