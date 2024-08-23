@@ -2417,6 +2417,109 @@ AddSubClass("monk(laserllama)", "way of the boulder", {
 	}
 })
 
+// Way of the Brawler
+AddSubClass("monk(laserllama)", "way of the brawler", {
+	regExpSearch : /brawler/i,
+	subname : "Way of the Brawler",
+	fullname : "Brawler",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 3 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Infamous Reputation without spending Ki")
+		},
+
+		"subclassfeature3" : {
+			name : "Savage Exploits",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain Exploit Dice, which are used to fuel my Savage Exploits", 
+				"This feature has not been implemented yet (interested in this? shoot me a dm!)"]),
+
+			// Savage Exploits
+			extraname : "Savage Exploits",
+			extraTimes : ['', '', 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7],
+			extrachoices : [],
+			// TODO: add savage exploits
+
+			// Exploit dice
+			limfeaname : "Exploit Dice",
+			usages : ['', '', 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4],
+			additional : ['', '', "d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8"],
+			recovery : "short rest",
+		},
+		"subclassfeature3.1" : {
+			name : "Streetwise",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc("I gain proficiency in Intimidation and learn Thieves' Cant"),
+			skills : ["Intimidation"],
+			languageProfs : ["Thieves' Cant"]
+		},
+		"subclassfeature6" : {
+			name : "Spiritual Stamina",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["When I crit on a Martial Arts attack, I can use a savage exploit I know as part of the attack without expending an Exploit Die"]),
+
+			"spiritual stamina (ki)" : {
+				name : "Spiritual Stamina",
+				source : [["GMB:LL", 0]],
+				extraname : "Way of the Brawler 6",
+				description : desc(["As a bonus action, I regain one of my expended Exploit Die"]),
+				action : ["bonus action", ""],
+				additional : "2 ki points"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "spiritual stamina (ki)",
+				minlevel : 6
+			}]
+		},
+		"subclassfeature10" : {
+			name : "Infamous Reputation",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["Creatures frightened of me have disadv. on their saves vs my Savage Exploits"]),
+
+			"infamous reputation (ki)" : {
+				name : "Infamous Reputation",
+				source : [["GMB:LL", 0]],
+				extraname : "Way of the Brawler 10",
+				description : desc(["As a bonus action, I can force a creature within 30 ft that can see/hear me to make a Wis save",
+					"On a failed save, it is frightened of me until the start of my next turn"]),
+				action : ["bonus action", ""],
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "infamous reputation (ki)",
+				minlevel : 10
+			}]
+		},
+		"subclassfeature17" : {
+			name : "Underworld Master",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["My Martial Arts attack crit on a 19 or 20",
+				"When I crit with a Martial Arts attack, the target fails any save caused by an exploit I would use as part of the attack"]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (v.theWea.monkweapon && !v.CritChance) {
+							fields.Description += (fields.Description ? '; ' : '') + 'Crit on 19-20';
+							v.CritChance = 19;
+						};
+					},
+					"My martial arts attacks score a critical hit on 19-20",
+					19
+				]
+			}
+		}
+	}
+})
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
