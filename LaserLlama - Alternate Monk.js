@@ -2688,6 +2688,88 @@ AddSubClass("monk(laserllama)", "way of ferocity", {
 	}
 })
 
+// Way of the Flowing River
+AddSubClass("monk(laserllama)", "way of the flowing river", {
+	regExpSearch : /flowing river/i,
+	subname : "Way of the Flowing River",
+	fullname : "Flowing River",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 3 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Enchanting Flow without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Flowing",["patient defense","deflect missile","heavenly step"]),
+		"subclassfeature3.1" : {
+			name : "Monastic Acrobat",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc(["I am proficient in Acrobatics and Performance, I add 1d"+MartArtDie+" to any skill checks with those skills",
+					"I can make Dexterity (Performance) checks instead of Charisma (Performance)"]);
+			}),
+			skills : ["Acrobatics", "Performance"],
+			addMod : { type : "skill", field : "Performance", mod : "max(Dex-Cha|0)", text : "I can replace Charisma (Performance) checks with Dexterity (Performance)" }
+		},
+		"subclassfeature3.2" : {
+			name : "Flowing River Stance",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				if (n < 6) {
+					return desc(["As an action, I can enter a Flowing River Stance, which lasts until the start of my next turn",
+						"While in this stance, I gain an additional reaction (for a total of 2 reactions)",
+						"When a creature that I can see misses me with a melee attack while in this Stance, I can use a reaction to force it to make a Dex save",
+						"On a fail, the target is prone and its move speed is reduced to 0 until the start of my next turn"]);
+				}
+
+				if (n < 10) {
+					return desc(["As an action, I can enter a Flowing River Stance, which lasts until the start of my next turn",
+						"While in this stance, I gain two additional reactions (for a total of 3 reactions)",
+						"When a creature that I can see misses me with a melee attack while in this Stance, I can use a reaction to force it to make a Dex save",
+						"On a fail, the target is prone and its move speed is reduced to 0 until the start of my next turn"]);
+				}
+
+				if (n < 17) {
+					return desc(["As an action, I can enter a Flowing River Stance, which lasts until the start of my next turn",
+						"When doing so, I gain the benefits of patient defense without needing to spend ki",
+						"While in this stance, I gain three additional reactions (for a total of 4 reactions)",
+						"When a creature that I can see misses me with a melee attack while in this Stance, I can use a reaction to force it to make a Dex save",
+						"On a fail, the target is prone and its move speed is reduced to 0 until the start of my next turn"]);
+				}
+
+				return desc(["As an action, I can enter a Flowing River Stance, which lasts until the start of my next turn",
+						"When doing so, I gain the benefits of patient defense without needing to spend ki",
+						"While in this stance, I gain four additional reactions (for a total of 5 reactions)",
+						"When a creature that I can see misses me with a melee attack while in this Stance, I can use a reaction to force it to make a Dex save",
+						"On a fail, the target is prone and its move speed is reduced to 0 until the start of my next turn",
+						"On a fail, I can also knock it back in a straight line in addition to the other effects",
+						"Tiny: 60 ft, Small: 40 ft, Medium: 30 ft, Large: 20 ft, Huge: 15 ft, Gargantuan: 10 ft"]);
+			}),
+			action : [["action", " (start)"], ["reaction", " (when missed in melee)"]],
+
+			"enchanting flow" : {
+				name : "Enchanting Flow",
+				source : [["GMB:LL", 0]],
+				extraname : "Way of the Flowing River 6",
+				description : desc(["When I enter my Flowing River Stance, I can mystically allure my foes",
+					"Until the start of my next turn, creatures of my choice within 10 ft of me have disadv. on all attacks against targets other than me"]),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "enchanting flow",
+				minlevel : 6
+			}]
+		}
+	}
+})
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
