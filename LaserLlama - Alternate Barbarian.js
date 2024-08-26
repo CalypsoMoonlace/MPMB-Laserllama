@@ -148,14 +148,14 @@ ClassList["barbarian(laserllama)"] = {
             name : "Unarmored Defense",
             source : [["GMB:LL", 0]],
             minlevel : 1,
-            description : desc(["Without armor, my AC is 10 + Dexterity modifier + Constitution modifier + shield"]),
+            description : desc("Without armor, my AC is 10 + Dexterity modifier + Constitution modifier + shield"),
             armorOptions : [{
                 regExpSearch : /justToAddToDropDown/,
-                name : "Unarmored Defense",
+                name : "Unarmored Defense (Con)",
                 source : [["GMB:LL", 0]],
                 ac : "10+Con",
                 affectsWildShape : true
-                }],
+            }],
             armorAdd : "Unarmored Defense (Con)"
         },
         

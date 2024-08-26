@@ -627,15 +627,12 @@ ClassList["fighter(laserllama)"] = {
 				extraname : "Martial Exploits",
 				extraTimes : ['', 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 10, 10],
 				extrachoices : [],
-				limfeaname : "Exploit Dice",
 
 				// Exploit dice
+				limfeaname : "Exploit Dice",
 				usages : ['', 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 6],
 				additional : ['', "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"],
 				recovery : "short rest",
-
-				// Eval
-                eval: CreateMartialSpellsheet
 			}
 
 			// Make a filtered spell list that contains only Fighter(laserllama) "spells"
@@ -665,7 +662,7 @@ ClassList["fighter(laserllama)"] = {
 					addMod: NewSpell.addMod,
 					submenu: NewSpell.submenu,
 					prereqeval: ExploitPrereqFactory(FighterSpells[i], "fighter(laserllama)"),
-					eval: CreateMartialSpellsheet, // in case the user removes all exploits
+					eval: CreateMartialSpellsheet,
 					spellcastingBonusElsewhere : {
                         addTo : "martial exploits",
                         spellcastingBonus : {
