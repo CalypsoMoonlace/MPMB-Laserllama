@@ -95,8 +95,9 @@ ClassList["barbarian(laserllama)"] = {
                 "\n\nAlternatively, choose 2d4 x 10 gp worth of starting equipment instead of both the class' and the background's starting equipment.", 
     subclasses : ["Primal Path", []], 
     attacks : [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2], 
-    abilitySave : 1,
+    abilitySave : 1, // Alt Barbarian uses Strength or Dex for foes' saving throws
     abilitySaveAlt : 2,
+    spellcastingFactor : "warlock99", // Required for the "create a complete spell sheet" option; using the warlock option ensures it doesn't clash with multiclassing
     features : {
 
         "rage" : {
