@@ -494,3 +494,94 @@ AddSubClass("barbarian(laserllama)", "brute", {
         }
     }
 })
+
+FeatsList["alternate savage attacker"] = {
+    name : "Alternate Savage Attacker",
+    source : [["GMB:LL", 0]],
+    descriptionFull : "Your savage battle instincts let you exploit even the smallest weakness. You gain the following benefits:\nOnce per turn when you roll damage for a melee weapon attack, you can reroll the weapon's damage dice and use either total.\nWhen you score a critical hit with a melee weapon attack you roll one additional weapon damage die.",
+    description : "Once per turn, when I roll damage for a melee weapon attack, I can reroll the weapon's damage dice and use either total. When I score a critical hit with a melee weapon attack I roll one additional weapon damage die.",
+    calcChanges : {
+        atkAdd : [
+            function (fields, v) {
+                if (v.isMeleeWeapon) {
+                    var pExtraCritM = 1;
+                    var extraCritRegex = /\d+(d\d+ extra on a crit(ical)?( hit)? in melee)/i;
+                    v.extraCritM = (v.extraCritM ? v.extraCritM : 0) + pExtraCritM;
+
+                    if (extraCritRegex.test(fields.Description)) {
+                        fields.Description = fields.Description.replace(extraCritRegex, v.extraCritM + '$1');
+                    } else if ((/d\d/).test(fields.Damage_Die)) {
+                        fields.Description += (fields.Description ? '; ' : '') + v.extraCritM + fields.Damage_Die.replace(/.*(d\d+).*/, '$1') + ' extra on a crit in melee';
+                    }
+                }
+            },
+            "When I score a critical hit with a melee weapon attack I roll one additional weapon damage die.",
+            900
+        ]
+    }
+};
+
+FeatsList["intimidating leader"] = {
+    name : "Intimidating Leader",
+    source : [["GMB:LL", 0]],
+    descriptionFull : "You use fear and intimidation to rally those who follow you into battle. You gain the following benefits:\nYou can increase your Strength, Constitution, or Charisma score by 1, up to a maximum of 20.\nWhen a creature other than yourself, that can see or hear you within 30 feet, fails a saving throw to resist being charmed or frightened, you can use a reaction to make a Charisma (Intimidation) check against the save DC of the effect that caused the creature to be charmed or frightened. On a successful check, the target is no longer charmed or frightened.",
+    description : "When a creature other than me within 30 ft fails a save against charmed/frightened, I can use my reaction to make a Charisma (Intimidation) check against the DC of that save. On a success, the target is no longer charmed or frightened. " + "[+1 " + (typePF ? "Str, Con or Cha" : "Strength, Constitution or Charisma") + "]",
+    prerequisite : "Proficiency in Intimidation",
+    prereqeval : function(v) {
+        return v.skillProfs.indexOf("Intimidation") !== -1;
+    },
+    action: [["reaction", ""]],
+    scorestxt : "+1 Strength, Constitution or Charisma"
+};
+
+FeatsList["overwhelming strength"] = {
+    name : "Overwhelming Strength",
+    source : [["GMB:LL", 0]],
+    descriptionFull : "Your sheer physical might dwarfs that of nearly all other mortal creatures. You gain the following benefits: \nIncrease your Strength by 1, to a maximum of 20.\nWhenever you make a Strength-based ability check, you can treat a roll of 7 or lower on the d20 as an 8.\nYou count as one size larger for the purposes of your carrying capacity, the weight you can push, pull, lift, or drag, and for the size of creatures you can attempt to grapple.",
+    description : "When I make a Strength-based check, I can treat a roll of 7 or lower on the d20 as an 8. I count as one size larger for the purposes of carrying capacity, the weight I can push, pull, lift, or drag, and for the size of creatures I can attempt to grapple. " + "[+1 Strength]",
+    scores : [1, 0, 0, 0, 0, 0]
+};
+
+FeatsList["savage training"] = {
+    name : "Savage Training",
+    source : [["GMB:LL"]],
+    descriptionFull : "You have studied combat techniques that allow you to perform Savage Exploits. You gain the following benefits: You learn two 1st-degree Savage Exploits of your choice from those available to the Alternate Barbarian. If an Exploit you use requires the target to make a saving throw to resist the effects, the DC is equal to 8 + your proficiency bonus + your Strength or Dexterity modifier (your choice). You gain two d4 Exploit Dice to fuel your Exploits. An Exploit Die is expended when you use it. You regain all of your Exploit Dice when you finish a short or long rest. If you already have Exploit Dice from another source, you only gain one Exploit Die equal to your other Exploit Dice.",
+    description : "",
+    calculate : "event.value = 'I learn two maneuvers of my choice from those available to the Barbarian (2nd page \"Choose Feature\" button). The saving throw DC for this is ' + (8 + Number(How('Proficiency Bonus')) + Math.max(Number(What('Str Mod')), Number(What('Dex Mod')))) + ' (8 + proficiency bonus + Str/Dex mod). I gain two (only one if already have Exploit Die) Exploit dice (d4), which I regain when I finish a short rest.';",
+    bonusClassExtrachoices : [{
+        "class" : "barbarian(laserllama)",
+        "feature" : "savage exploits",
+        "bonus" : 2
+    }],
+    choices : ["Barbarian", "Not a barbarian"],
+    selfChoosing : function () { // This function does not take into account other sources of exploit die, since this sheet is only about alt Barbarian
+        if (classes.known["barbarian(laserllama)"] && classes.known["barbarian(laserllama)"].level >= 2) { 
+            return "barbarian" 
+        } else { 
+            return "not a barbarian"
+        };
+    },
+    "barbarian" : {
+        name : "Savage\u200A Training", // The special character is there to differentiate the feat versions
+        description : "",
+        calculate : "event.value = 'I learn two maneuvers of my choice from those available to the Barbarian (2nd page \"Choose Feature\" button). The saving throw DC for this is ' + (8 + Number(How('Proficiency Bonus')) + Math.max(Number(What('Str Mod')), Number(What('Dex Mod')))) + ' (8 + proficiency bonus + Str/Dex mod). I gain one more Exploit die, which I regain when I finish a short rest.';",
+        extraLimitedFeatures : [{
+            name : "Exploit Dice",
+            usages : 1,
+            recovery : "short rest",
+            addToExisting : true
+        }]
+    },
+    "not a barbarian" : {
+        name : "Savage\u200A\u200A Training",
+        description : "",
+        calculate : "event.value = 'I learn two maneuvers of my choice from those available to the Barbarian (2nd page \"Choose Feature\" button). The saving throw DC for this is ' + (8 + Number(How('Proficiency Bonus')) + Math.max(Number(What('Str Mod')), Number(What('Dex Mod')))) + ' (8 + proficiency bonus + Str/Dex mod). I gain two Exploit dice (d4), which I regain when I finish a short rest.';",
+        extraLimitedFeatures : [{
+            name : "Exploit Dice",
+            usages : 2,
+            additional : 'd4',
+            recovery : "short rest",
+            addToExisting : true
+        }]
+    },
+};
