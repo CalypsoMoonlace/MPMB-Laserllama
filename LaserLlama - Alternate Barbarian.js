@@ -571,7 +571,7 @@ AddSubClass("barbarian(laserllama)", "packleader", {
                 }],
                 features : [{
                     name : "Primal Bond",
-                    description : "I add my PB to any ability check or saving throw my Companion makes."
+                    description : "I add my PB to any ability check or saving throw my Companion makes (already included)."
                 }, {
                     name : "Keen Senses",
                     description : "The companion has advantage on Wisdom (Perception) checks that rely on sight, hearing, or smell."
@@ -614,6 +614,11 @@ AddSubClass("barbarian(laserllama)", "packleader", {
                     description: "it makes death saving throws like a player character would.",
                     joinString: " "
                 }],
+                addMod : [
+                    { type : "skill", field : "All", mod : "Prof", text : "The savage companion adds my proficiency bonus to all its ability check and saving throws." },
+                    { type : "skill", field : "Init", mod : "Prof", text : "The savage companion adds my proficiency bonus to all its ability check and saving throws." },
+                    { type : "save", field : "All", mod : "Prof", text : "The savage companion adds my proficiency bonus to all its ability check and saving throws." }
+                ],
                 calcChanges : {
                     hp : function (totalHD, HDobj, prefix) {
                         //if (!classes.known.ranger && !classes.known.rangerua) return;
