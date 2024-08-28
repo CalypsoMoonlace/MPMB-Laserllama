@@ -197,6 +197,7 @@ ClassList["barbarian(laserllama)"] = {
             recovery : "short rest",
             action : ["bonus action", ""],
             dmgres : [["Bludgeoning", "Bludgeon. (in rage)"], ["Piercing", "Piercing (in rage)"], ["Slashing", "Slashing (in rage)"]],
+            savetxt : { text : ["Adv. on Str saves in rage"] },
             calcChanges : {
                 atkAdd : [
                     function (fields, v) {
@@ -403,6 +404,7 @@ ClassList["barbarian(laserllama)"] = {
     }
 }
 
+// Path of the Brute
 AddSubClass("barbarian(laserllama)", "brute", {
     regExpSearch : /brute/i,
     subname : "Path of the Brute",
@@ -485,12 +487,164 @@ AddSubClass("barbarian(laserllama)", "brute", {
                 climb : { spd : "walk", enc : 0 }
             },
         },
-        "subclassfeature15" : {
+        "subclassfeature14" : {
             name : "Brutish Determination",
             source : [["GMB:LL", 0]],
-            minlevel : 15,
+            minlevel : 14,
             description : desc(["When I make a Strength, Dexterity, Constitution, or death save, I add a d4 to my roll",
                 "If I roll a total of ≥20 on a death save, I instantly regain consciousness and stand up with 1 HP"])
+        }
+    }
+})
+
+// Path of the Packleader
+AddSubClass("barbarian(laserllama)", "packleader", {
+    regExpSearch : /packleader/i,
+    subname : "Path of the Packleader",
+    fullname : "Packleader",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Packleader", ["cunning instinct","trampling rush","bloodthirsty critical","feral senses","pack tactics"]),
+
+        "subclassfeature3.1" : {
+            name : "Beast Whisperer",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
+                var ExplDie = ExplDieRange[n-1];
+
+                return desc(["I gain proficiency with Animal Handling and add 1"+ExplDie+" to Wisdom (Animal Handling) checks"])
+            }),
+            skills : ["Animal Handling"]
+        },
+        "subclassfeature3.2" : {
+            name : "Savage Companion",
+            source : ["GMB:LL", 0],
+            minlevel : 3,
+            description : desc([
+                "I have forged a primal bond with a wild beast",
+                'Select a "Savage Companion" on the companion page for its stats and rules',
+                "If it dies, I can spend time during a long rest to find another worthy beast"
+            ]),
+            action : [["action", " (forgo attack)"], ["bonus action", " (command)"]],
+            creaturesAdd : [["Savage Companion", true]],
+            creatureOptions : [{
+                name : "Savage Companion",
+                source : ["GMB:LL", 0],
+                size : 3,
+                type : "Beast",
+                alignment : "Unaligned",
+                ac : "13+Prof",
+                hp : 20,
+                hd : [3, 8],
+                hdLinked : ["barbarian(laserllama)", "barbarian"],
+                minlevelLinked : ["barbarian(laserllama)", "barbarian"],
+                speed : "40 ft",
+                scores : [14, 14, 15, 8, 14, 11],
+                saves : ["", "", "", "", "", ""],
+                senses : "Adv. on Wis (Perception) checks using hearing/sight/smell",
+                passivePerception : 12,
+                languages : "Understands the languages you speak",
+                challengeRating : "0",
+                proficiencyBonus : 2,
+                proficiencyBonusLinked : true,
+                attacksAction : 1,
+                attacks : [{
+                    name : "Bite",
+                    ability : 1,
+                    damage : [1, 6, "piercing"],
+                    modifiers : ["", "Prof"],
+                    range : "Melee (5 ft)",
+                    description : "On hit, Strength saving throw against Exploit save DC or target is grappled. Max one target grappled.",
+                    abilitytodamage : true
+                }, {
+                    name : "Maul",
+                    ability : 1,
+                    damage : [1, 8, "slashing"],
+                    modifiers : ["", "Prof"],
+                    range : "Melee (5 ft)",
+                    description : "",
+                    abilitytodamage : true
+                }],
+                features : [{
+                    name : "Primal Bond",
+                    description : "I add my PB to any ability check or saving throw my Companion makes."
+                }, {
+                    name : "Keen Senses",
+                    description : "The companion has advantage on Wisdom (Perception) checks that rely on sight, hearing, or smell."
+                }, /*{
+                    name : "Leader",
+                    description : "It takes its turn during that of its leader, on the same initiative count. It can move and take reactions on its own, but only takes the Dodge action on its turn unless its leader takes a bonus action to command it to take another action. Its leader can also forgo one attack during their Attack action to command the companion to take the Attack action. If its leader is incapacitated, the companion can take any action, not just Dodge. If the companion is reduced to 0 hit points, it makes death saving throws like a player character would."
+                }*/],
+                traits : [{
+                    name : "Wild Fury (Packleader 6)",
+                    minlevel : 6,
+                    description : "When I Rage, my Companion also gains resistance to bludgeoning, piercing, and slashing damage for the duration."
+                    
+                }, {
+                    name : "Leader of the Pack (Packleader 10)",
+                    minlevel : 10,
+                    description : "Both me and my Savage Companion have advantage on attack rolls against a creature if the other is within 5 feet of the target creature and not incapacitated."
+                }],
+                notes: [{
+                    name : "The companion obeys the commands of its leader",
+                    description : "and shares its proficiency bonus.",
+                    joinString: " "
+                }, {
+                    name: "It takes its turn during that of its leader,",
+                    description: "on the same initiative count.",
+                    joinString: " "
+                }, {
+                    name: "It can move and take reactions on its own,",
+                    description: "but only takes the Dodge action on its turn unless its leader takes a bonus action to command it to take another action.",
+                    joinString: " "
+                }, {
+                    name: "Its leader can also forgo one attack during their Attack action",
+                    description: "to command the companion to take the Attack action.",
+                    joinString: " "
+                }, {
+                    name: "If its leader is incapacitated,",
+                    description: "the companion can take any action, not just Dodge.",
+                    joinString: " "
+                }, {
+                    name: "If the companion is reduced to 0 hit points,",
+                    description: "it makes death saving throws like a player character would.",
+                    joinString: " "
+                }],
+                calcChanges : {
+                    hp : function (totalHD, HDobj, prefix) {
+                        //if (!classes.known.ranger && !classes.known.rangerua) return;
+                        var rngrLvl = classes.known["barbarian(laserllama)"] ? classes.known["barbarian(laserllama)"].level : classes.known.barbarian.level;
+                        var rngrLvlM = 5 * rngrLvl;
+                        HDobj.alt.push(5 + rngrLvlM);
+                        HDobj.altStr.push(" = 5 as a base\n + 5 \xD7 " + rngrLvl + " from five times its leader's barbarian level (" + rngrLvlM + ")");
+                    },
+                    setAltHp : true
+                }
+            }]
+        },
+
+        "subclassfeature6" : {
+            name : "Wild Fury",
+            description : desc(["When I Rage, my Companion also gains resistance to bludg, piercing, and slashing damage"]),
+            minlevel : 6,
+            source : [["GMB:LL", 0]]
+        },
+        "subclassfeature10" : {
+            name : "Leader of the Pack",
+            description : desc(["Both me and my Savage Companion have advantage on attack rolls against a creature if the other is within 5 feet of the target creature and not incapacitated"]),
+            minlevel : 10,
+            source : [["GMB:LL", 0]],
+        },
+        "subclassfeature14" : {
+            name : "Primal Howl",
+            description : desc(["When I Rage, me or my Savage Companion can howl and force creatures of my choice that can hear me within 30 ft to make a Wis save against my Exploit save DC. On a failed save, it is frightened of whoever howled for 1 minute.",
+                                "A creature can repeat this save at the start of each turn, ending the effect on a success. A target that succeeds on its save is immune to the effects of this howl for the next 24 hours."]),
+            minlevel : 14,
+            source : [["GMB:LL", 0]]
         }
     }
 })
