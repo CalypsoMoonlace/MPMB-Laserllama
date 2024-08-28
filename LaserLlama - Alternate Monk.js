@@ -4,6 +4,7 @@
 
     -KEEP IN MIND-
     It is recommended to enter the code in a fresh sheet before adding any other information (i.e. before making your character with it).
+    This script requires importing the Exploits first!
 	
     -INFORMATION-
     Subject:    Alternate Monk
@@ -22,6 +23,13 @@
 // Meta information
 var iFileName = "LaserLlama - Monk.js";
 RequiredSheetVersion("13.0.6");
+
+// Check that exploits are properly imported
+try {
+    var test = SpellsList["disarm"].isExploit
+} catch (error) {
+    throw new Error("Please import the 'Laserllama - Exploits.js' file before importing this file as otherwise it cannot function properly. You can get it on the github repository.");
+}
 
 // Utility functions
 function GetSubclassTechniques(subclass_name, techniques_list) {
@@ -58,6 +66,43 @@ function GetSubclassTechniques(subclass_name, techniques_list) {
 	SubclassTechniques[techniques_list[2]] = newObj(ClassList["monk(laserllama)"].features["ki"][techniques_list[2]]);
 
 	return SubclassTechniques;
+}
+
+function CreateSavageSpellsheet() {
+    // This function is called by different eval attributes and is required before EACH USE OF spellcastingBonusElsewhere
+    // The reason for that is an edge case: if the player has the sheet created by picking exploits, then removes those picks, the spellsheet is entirely removed
+
+    // Defining the Barbarian spell sheet - also known as Savage exploits
+    if (!CurrentSpells["savage exploits"]) {
+        CurrentSpells["savage exploits"] = {
+            name : "Savage Exploits",
+            shortname : "Savage Exploits",
+            ability: 1,
+            bonus : {},
+            typeSp:"known",
+            refType:"feat"
+        }
+    }
+}
+
+// IMPORTANT NOTE: This is the same function as ExploitPrereqFactory BUT DegreeToMinLevel is different because it is for the BRAWLER SUBCLASS
+function ExploitPrereqFactoryHalf(tempSpell, class_name) {
+    // pre: tempSpell is the key of an item from SpellsList, class_name is a class name (daring today aren't we) eg "monk(laserllama)"
+    // post: returns a prereqeval() function
+
+    // spell has its own prereq
+    if (SpellsList[tempSpell].prereqeval) {
+        return function(v) {
+            const DegreeToMinLevel = [0,3,7,15];
+            return (classes.known[class_name].level >= DegreeToMinLevel[SpellsList[tempSpell].level]) && SpellsList[tempSpell].prereqeval(v);
+        }
+    }
+
+    return function(v) {
+        const DegreeToMinLevel = [0,3,7,15];
+        return classes.known[class_name].level >= DegreeToMinLevel[SpellsList[tempSpell].level];
+    }
+
 }
 
 // Main class
@@ -117,6 +162,7 @@ ClassList["monk(laserllama)"] = {
 				"When taking an Attack action with these, I get one unarmed strike as a bonus action",
 				"I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks"
 			]),
+			weaponsAdd : ["Unarmed Strike"],
 			addMod : [
 				{ type : "skill", field : "Athletics", mod : "max(Dex-Str|0)", text : "I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks" }
 			],
@@ -2432,25 +2478,73 @@ AddSubClass("monk(laserllama)", "way of the brawler", {
 			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Infamous Reputation without spending Ki")
 		},
 
-		"subclassfeature3" : {
-			name : "Savage Exploits",
-			source : [["GMB:LL", 0]],
-			minlevel : 3,
-			description : desc(["I gain Exploit Dice, which are used to fuel my Savage Exploits", 
-				"This feature has not been implemented yet (interested in this? shoot me a dm!)"]),
+		"savage exploits": function(){
+            // Fixed attributes
+            SavageExploits = {
+				name : "Savage Exploits",
+				source : [["GMB:LL", 0]],
+				minlevel : 3,
+				description : desc(["I gain Exploit Dice, which are used to fuel my Savage Exploits", 
+                    "Use the \"Choose Feature\" button above to choose Savage Exploits"]),
+				toNotesPage : [{
+                    name : "Brawler Exploits",
+                    note : desc(["Below are all Brawler Exploits I know. Each 3rd level exploit can only be used per short rest."])
+                }],
 
-			// Savage Exploits
-			extraname : "Savage Exploits",
-			extraTimes : ['', '', 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7],
-			extrachoices : [],
-			// TODO: add savage exploits
+				// Savage Exploits
+				extraname : "Savage Exploits",
+				extraTimes : ['', '', 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7],
+				extrachoices : [],
 
-			// Exploit dice
-			limfeaname : "Exploit Dice",
-			usages : ['', '', 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4],
-			additional : ['', '', "d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8"],
-			recovery : "short rest",
-		},
+				// Exploit dice
+				limfeaname : "Exploit Dice",
+				usages : ['', '', 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4],
+				additional : ['', '', "d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8"],
+				recovery : "short rest",
+			}
+
+            // Make a filtered spell list that contains only barbarian(laserllama) "spells" of 1st, 2nd and 3rd degree (exclude 4th and 5th degree)
+            const BarbarianSpells = Object.keys(SpellsList).filter((key) => SpellsList[key].isExploit && SpellsList[key].level <= 3).filter((key) => {
+                for (var i = 0; i < SpellsList[key].classes.length; i++) {
+                    if (SpellsList[key].classes[i] == "barbarian(laserllama)") return true;
+                }
+                return false;
+                // NOTE: this is literally a SpellsList[key].classes.includes("barbarian(laserllama)") but for some cursed reason I can't use that function
+            });
+
+            // Iterate over all barbarian(laserllama) "spells"
+            for (var i = 0; i < BarbarianSpells.length; i++) {
+                var NewSpell = SpellsList[BarbarianSpells[i]];
+                var tempSpell = BarbarianSpells[i];
+
+                SavageExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
+
+                SavageExploits[BarbarianSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
+                    name: NewSpell.name,
+                    toNotesPage : [{ // What is added to the notes page
+                        name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
+                        note : desc(NewSpell.descriptionFull),
+                        amendTo : "Brawler Exploits"
+                    }],
+                    source: NewSpell.source,
+                    addMod: NewSpell.addMod,
+                    submenu: NewSpell.submenu,
+                    prereqeval: ExploitPrereqFactoryHalf(BarbarianSpells[i], "monk(laserllama)"), // IMPORTANT NOTE: ExploitPrereqFactory**HALF** because progression differs
+                    eval: CreateSavageSpellsheet,
+                    spellcastingBonusElsewhere : {
+                        addTo : "savage exploits",
+                        spellcastingBonus : {
+                            name : "Brawler Exploits",
+                            spellcastingAbility : 1,
+                            spells : [BarbarianSpells[i]],
+                            selection : [BarbarianSpells[i]]
+                        }
+                    }
+                }
+            }
+
+            return SavageExploits
+        }(),
 		"subclassfeature3.1" : {
 			name : "Streetwise",
 			source : [["GMB:LL", 0]],
@@ -2695,7 +2789,7 @@ AddSubClass("monk(laserllama)", "way of the flowing river", {
 	fullname : "Flowing River",
 	source : [["GMB:LL", 0]],
 	features : {
-		// Override Ki adept because of the lvl 3 subclass feature
+		// Override Ki adept because of the lvl 6 subclass feature
 		"ki adept" : {
 			name : "Ki Adept",
 			source : ["GMB:LL"],
