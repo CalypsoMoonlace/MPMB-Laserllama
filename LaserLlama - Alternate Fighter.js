@@ -995,13 +995,17 @@ AddSubClass("fighter(laserllama)", "marksman", {
 			source : [["GMB:LL", 0]],
 			minlevel : 3,
 			description : levels.map(function (n) {
-				var SpeedReduction = n < 18 ? "0 ft" : "10 ft"
-				var AdvantageCondition = n < 18 ? "Until I hit a creature with a ranged attack, I have adv. on all ranged weapon attack rolls" : "I have adv. on all ranged weapon attack rolls"
-				var FocusLength = n < 18 ? "until the end of my turn" : "for 1 minute or until I end it (no action required)"
-				return desc(["When I begin my turn and am not surprised or incapacitated, I can choose to enter a state of Focus, which imposes the following "+FocusLength+":",
-					"\u2022 My speed is reduced to " + SpeedReduction,
-					"\u2022 " + AdvantageCondition,
-					"\u2022 I can reroll 1 and 2 (but must take the new roll) on my damage rolls with a ranged weapon"])
+				if (n < 18) {
+					return desc(["When I begin my turn and am not surprised or incapacitated, I can choose to enter a state of Focus, which imposes the following until the end of my turn:",
+						"\u2022 My speed is reduced to 0 ft",
+						"\u2022 Until I hit a creature with a ranged attack, I have adv. on all ranged weapon attack rolls",
+						"\u2022 I can reroll 1 and 2 on my damage rolls with a ranged weapon (but must take the new rolls)"])
+				}
+
+				return desc(["When I begin my turn and am not surprised or incapacitated, I can choose to enter a state of Focus, which imposes the following for 1 minute or until I end it (no action required):",
+						"\u2022 My speed is reduced to 10 ft",
+						"\u2022 I have adv. on all ranged weapon attack rolls",
+						"\u2022 I can reroll 1 and 2 on my damage rolls with a ranged weapon (but must take the new rolls)"])
 			})
 		},
 		"subclassfeature3.2" : {
@@ -2074,7 +2078,7 @@ AddSubClass("fighter(laserllama)", "shadowdancer", {
 				"While I use my shade this way, it can be up to 1 mile away from me without issue",
 				"It ends early if my Shade is destroyed. or I use my bonus action to end it"
 			]),
-			action : [["action", " (start)"], ["action", " (end)"]]
+			action : [["action", " (start)"], ["bonus action", " (end)"]]
 		},
 		"subclassfeature10" : {
 			name : "Dark Sacrifice",

@@ -542,7 +542,7 @@ AddSubClass("barbarian(laserllama)", "packleader", {
                 hd : [3, 8],
                 hdLinked : ["barbarian(laserllama)", "barbarian"],
                 minlevelLinked : ["barbarian(laserllama)", "barbarian"],
-                speed : "40 ft",
+                speed : "40 ft, swim 20 ft",
                 scores : [14, 14, 15, 8, 14, 11],
                 saves : ["", "", "", "", "", ""],
                 senses : "Adv. on Wis (Perception) checks using hearing/sight/smell",
