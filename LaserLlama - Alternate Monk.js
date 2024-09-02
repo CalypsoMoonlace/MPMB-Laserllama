@@ -2864,6 +2864,120 @@ AddSubClass("monk(laserllama)", "way of the flowing river", {
 	}
 })
 
+// Way of the Hurricane
+AddSubClass("monk(laserllama)", "way of the hurricane", {
+	regExpSearch : /hurricane/i,
+	subname : "Way of the Hurricane",
+	fullname : "Hurricane",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override martial arts because of the lvl 3 subclass feature
+		"martial arts": function() {
+			var martart = newObj(ClassList["monk(laserllama)"].features["martial arts"]);
+
+			martart.description = levels.map(function (n) {
+				if (n < 3) {
+					return desc([
+						"Monk weapons: any melee weapon (not special/heavy) or unarmed strike",
+						"With monk weapons, I can use Dex instead of Str and use the Martial Arts damage die",
+						"When taking an Attack action with these, I get one unarmed strike as a bonus action",
+						"I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks"
+					]);
+				}
+
+				return desc([
+					"Monk weapons: any melee weapon (not special) or unarmed strike",
+					"With monk weapons, I can use Dex instead of Str and use the Martial Arts damage die",
+					"When taking an Attack action with these, I get one unarmed strike as a bonus action",
+					"I can replace Strength (Athletics) checks to grapple/shove with Dexterity (Athletics) checks"
+				]);
+			});
+
+			return martart;
+		}(),
+
+		// Override Ki adept because of the lvl 10 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, Empowered Whirling strike or Buffeting Winds without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Hurricane",["whirling strike","stunning strike","monastic fortitude"]),
+		"subclassfeature3.1" : {
+			name : "Heavy Warrior",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain proficiency with all melee heavy weapons and they count as Martial Arts attacks",
+				"When wielding a melee heavy weapon, I have adv. on saves to resist being grappled or moved against my will"]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (classes.known["monk(laserllama)"] && classes.known["monk(laserllama)"].level && v.isMeleeWeapon && (/simple|martial/i).test(v.theWea.type) && (/heavy/i).test(fields.Description)) {
+							v.theWea.monkweapon = true;
+							fields.Proficiency = true;
+						};
+					},
+					"I am proficient with melee heavy weapons, and those count as monk weapons for me",
+					1
+				]
+			},
+			savetxt : { 
+				text : ["With melee heavy weapon, adv. on saves vs moved against my will or grappled"]
+			},
+		},
+		"subclassfeature3.2" : {
+			name : "Tempestuous Strike",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["When wielding a melee heavy weapon I can use Whirling Strike without expending Ki",
+				"I can choose to add my Str mod, instead of my Dex mod, to the damage roll of whirling stike"]),
+		},
+		"subclassfeature6" : {
+			name : "Crushing Counter",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["When wielding a melee heavy weapon and a crea I see hits me with a melee weapon attack, I can use my reaction to make a Martial Arts attack against it",
+				"On hit, I can also reduce the creature's speed to 0 until the start of my next turn"]),
+			action : ["reaction", " (when hit)"],
+		},
+		"subclassfeature10" : {
+			name : "Empowered Whirling strike",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc(["When I use whirling strike, I can spend 1 ki to deal 1d"+MartArtDie+" of bonus thunder dmg on failed save"])
+			}),
+
+			"buffeting winds" : {
+				name : "Buffeting Winds",
+				source : [["GMB:LL", 0]],
+				extraname : "Way of the Hurricane 10",
+				description : desc(["On hit with a heavy melee weapon, the crea makes a Str save or is knocked prone or knocked back in a straight line by 5 ft times my Wis mod (my choice)"]),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "buffeting winds",
+				minlevel : 10
+			}]
+		},
+		"subclassfeature17" : {
+			name : "Master of the Hurricane",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["I can disappear and instantly make a single melee weapon attack against up to five creatures I can see within 60 feet",
+				"I then appear next to one of my targets; I must be wielding a melee heavy weapon to use this",
+				"I can do this once per short rest or spend 5 ki to do it again"]),
+			action : ["action", ""],
+			recovery : "short rest",
+        	usages : 1,
+		}
+	}
+})
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
