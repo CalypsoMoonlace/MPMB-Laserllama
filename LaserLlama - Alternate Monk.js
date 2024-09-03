@@ -1087,7 +1087,7 @@ AddSubClass("monk(laserllama)", "way of the shadow arts", {
 		},
 		"subclassfeature10" : {
 			name : "Cloak of Shadows",
-			source : [["P", 80]],
+			source : [["GMB:LL", 0]],
 			minlevel : 10,
 			description : levels.map(function (n) {
 				cloak_actioncost = n < 17 ? "action" : "action or bonus action";
@@ -2974,6 +2974,105 @@ AddSubClass("monk(laserllama)", "way of the hurricane", {
 			action : ["action", ""],
 			recovery : "short rest",
         	usages : 1,
+		}
+	}
+})
+
+// Way of the Mystic
+AddSubClass("monk(laserllama)", "way of the mystic", {
+	regExpSearch : /mystic/i,
+	subname : "Way of the Mystic",
+	fullname : "Mystic",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override unarmoured defense because of Awakened Mind
+		"unarmored defense" : {
+			name : "Unarmored Defense",
+			source : ["GMB:LL"],
+			minlevel : 1,
+			description : levels.map(function (n) {
+				if (n < 3) return desc("Without armor and no shield, my AC is 10 + Dexterity modifier + Wisdom modifier");
+
+				return desc("Without armor and no shield, my AC is 13 + Wisdom modifier");
+			}),
+			armorOptions : [{
+				regExpSearch : /justToAddToDropDown/,
+				name : "Unarmored Defense (Wis)",
+				source : ["GMB:LL"],
+				ac : "10+Wis",
+				affectsWildShape : true
+			}],
+			armorAdd : "Unarmored Defense (Wis)"
+		},
+		// Override Ki adept because of the lvl 6 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Spiritual Sundering without spending Ki")
+		},
+
+		"subclassfeature3" : {
+			name : "Mystic Talents",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I learn talents from the Psion class, using my monk level for prerequesites", 
+				"This feature has not been implemented yet (interested in this? shoot me a dm!)"])
+		},
+		"subclassfeature3.1" : {
+			name : "Awakened Mind",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I can use my Wisdom instead of Dexterity for Martial Arts attack rolls (but not damage)"]),
+			calcChanges : {
+				atkAdd : [
+					function (fields, v) {
+						if (classes.known["monk(laserllama)"] && classes.known["monk(laserllama)"].level && v.theWea.monkweapon && What(AbilityScores.abbreviations[fields.Mod - 1] + " Mod") < What("Wis Mod")) {
+							fields.To_Hit_Bonus = What("Wis Mod") - What(AbilityScores.abbreviations[fields.Mod - 1] + " Mod");
+						};
+					},
+					"I can use my Wisdom instead of Dexterity for Martial Arts attack rolls (but not damage)",
+					6
+				]
+			},
+			extraAC : [{
+				name : "Awakened Mind",
+				mod : "max(3-Dex|0)",
+				text : "Without armor and no shield, my AC is 13 + Wisdom modifier",
+				stopeval : function (v) { 
+					return (v.wearingArmor || v.usingShield) // unarmoured only
+				}
+			}],
+
+			"spiritual sundering" : {
+				name : "Spiritual Sundering",
+				source : [["GMB:LL", 0]],
+				extraname : "Way of the Mystic 6",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["One creature I can see within 15 ft makes a Cha save or takes 1d"+MartArtDie+" psychic dmg and has disadv. on the first Int, Wis or Cha save before my next turn"])
+				}),
+				additional : "1 ki point",
+				action : ["bonus action", ""]
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "spiritual sundering",
+				minlevel : 6
+			}]
+		},
+		"subclassfeature10" : {
+			name : "Warded Soul",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc("When I take necrotic, psychic, or radiant damage I can spend 1 Ki to gain resistance to that instance of damage")
+		},
+		"subclassfeature17" : {
+			name : "Master Mystic",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["When I deal psychic damage to a creature I can add my Wis mod (min 1) to the damage roll if I do not do so already",
+				"At the end of each long rest, I can replace on Mystic Talent I know with another Talent"])
 		}
 	}
 })
