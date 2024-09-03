@@ -405,6 +405,107 @@ ClassList["barbarian(laserllama)"] = {
 }
 
 // Path of the Brute
+AddSubClass("barbarian(laserllama)", "zealot", {
+    regExpSearch : /zealot/i,
+    subname : "Path of the Zealot",
+    fullname : "Zealot",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Zealous", ["feat of strength","savage rebuke","honor duel","menacing shout","mythic resilience"]),
+        "subclassfeature3.1" : {
+            name : "Warrior of the Gods",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc("Spells restoring me to life (not undeath or anything else) don't require material comp.")
+        },
+        "subclassfeature3.2" : {
+            name : "Divine Fury", 
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
+                var ExplDie = ExplDieRange[n-1];
+
+                return desc([
+                    "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
+                    "This is necrotic, thunder or radiant damage equal to 1"+ExplDie+" + my Constitution modifier",
+                    'Choose a damage type using the "Choose Feature" button above'
+                ])
+            }),
+            choices : ["Evil", "Neutral" ,"Good"],
+            "evil" : {
+                name : "Divine Fury",
+                description : levels.map(function (n) {
+                    var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
+                    var ExplDie = ExplDieRange[n-1];
+
+                    return desc([
+                        "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
+                        "This is necrotic damage equal to 1"+ExplDie+" + my Constitution modifier"
+                    ])
+                }),
+            },
+            "neutral" : {
+                name : "Divine Fury",
+                description : levels.map(function (n) {
+                    var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
+                    var ExplDie = ExplDieRange[n-1];
+
+                    return desc([
+                        "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
+                        "This is thunder damage equal to 1"+ExplDie+" + my Constitution modifier"
+                    ])
+                }),
+            },
+            "good" : {
+                name : "Divine Fury",
+                description : levels.map(function (n) {
+                    var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
+                    var ExplDie = ExplDieRange[n-1];
+
+                    return desc([
+                        "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
+                        "This is radiant damage equal to 1"+ExplDie+" + my Constitution modifier"
+                    ])
+                }),
+            }
+        },
+
+        "subclassfeature6" : {
+            name : "Fanatical Focus",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["When I fail a saving throw while raging, I can expend an Exploit Die to add it to the roll"])
+        },
+        "subclassfeature10" : {
+            name : "Zealous Presence",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc([
+                "As a bonus action, I choose up to 10 creatures within 60 ft that can hear my battle cry",
+                "These creatures gain adv. on attacks and saves until the start of my next turn"
+            ]),
+            usages : 1,
+            recovery : "long rest",
+            action : ["bonus action", ""]
+        },
+        "subclassfeature14" : {
+            name : "Rage Beyond Death",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc([
+                "While raging, having 0 hit points doesn't knock me unconscious",
+                "I still must make death saves, and I suffer the normal effects of taking damage",
+                "If I start my turn with 3 failed death saves, I must make a DC 10 Con save to maintain my rage",
+                "I only die due to failed death saves if my rage ends while I'm at 0 HP"
+            ])
+        }
+    }
+})
+
+// Path of the Brute
 AddSubClass("barbarian(laserllama)", "brute", {
     regExpSearch : /brute/i,
     subname : "Path of the Brute",
