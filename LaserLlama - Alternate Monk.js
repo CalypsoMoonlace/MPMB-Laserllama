@@ -3077,6 +3077,70 @@ AddSubClass("monk(laserllama)", "way of the mystic", {
 	}
 })
 
+// Way of the Sacred Inks
+AddSubClass("monk(laserllama)", "way of the sacred inks", {
+	regExpSearch : /sacred inks/i,
+	subname : "Way of the Sacred Inks",
+	fullname : "Sacred Inks",
+	source : [["GMB:LL", 0]],
+	features : {
+		"subclassfeature3" : GetSubclassTechniques("Sacred Ink",["spiritual armor","divine light","commune with self"]),
+		"subclassfeature3.1" : {
+			name : "Celestial Artist",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain expertise in Calligrapher's supplies and learn Celestial"]),
+			languageProfs : ["Celestial"],
+			toolProfs : ["Calligrapher's Supplies"]
+		},
+		"subclassfeature3.2" : {
+			name : "Divine Conduit",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc(["When I spend Hit Die, I can expend 1 Ki to regain the max roll",
+				"When I hit on Martial Arts attack, I can expend ki (up to my Wis mod) to deal 1d"+MartArtDie+" additional radiant damage",
+				"As an action I can touch a creature and expend 2 Ki to heal them for 1d"+MartArtDie+" + my Wis mod"])
+			}),
+			action : ["action", " (heal)"],
+		},
+		"subclassfeature6" : {
+			name : "Heavenly Protection",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["When reduced to 0 HP, I can choose to fall to 1 HP instead"]),
+            usages : 1,
+            recovery : "long rest",
+		},
+		"subclassfeature10" : {
+			name : "Light of the Heavens",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc(["As a bonus action, I can reveal my tatoos, which emit bright sunlight in a 10 ft radius for 1 min",
+				"While revealed, I add my Wis mod to HP I restore and damage I deal with Divine Conduit",
+				"This ends early if I am incapacitated or if I use a bonus action to end it"]),
+			action : ["bonus action", " (start/end)"],
+			recovery : "short rest",
+        	usages : 1,
+		},
+		"subclassfeature17" : {
+			name : "Master of the Sacred Inks",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["As an action, I take on an angelic form for 1 minute granting me:",
+				"\u2022 a flying speed equal to my walking speed and I can hover",
+				"\u2022 my unarmed strike can deal radiant damage instead of bludgeoning",
+				"\u2022 all the benefits of Light of the Heavens",
+				"If I have no uses left, I can spend 5 ki to use this feature again"]),
+			action : ["action", ""],
+			recovery : "long rest",
+        	usages : 1,
+		}
+	}
+})
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
