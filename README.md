@@ -1,17 +1,20 @@
 This repository is where I store scripts which add [LaserLlama](https://www.gmbinder.com/profile/laserllama)'s content to [MorePurpleMoreBetter](https://www.flapkan.com/download#charactersheets)'s scripted player sheets.
 
 # How to import
-To import any of my scripts to your own sheet, you have two options:
-1. Import the master file that includes everything I've transcribed (WIP)
-2. Import the `Exploits and Spells.js` file and the file of the class you want
+To import any of my scripts to your own sheet, you have to do the following:
+1. Import the [all_WotC](https://github.com/safety-orange/Imports-for-MPMB-s-Character-Sheet/releases/latest/download/all_WotC_published.min.js) file
+1. Import the `Exploits and Spells.js` file
+2. Import the file of the class you want
 
-All of my scripts require using v13.0.6 of the sheet or higher and go from the assumption you already have the [all_WotC](https://github.com/safety-orange/Imports-for-MPMB-s-Character-Sheet/releases/latest/download/all_WotC_published.min.js ) file imported.
+All of my scripts require using v13.0.6 of the sheet or higher.
+
+While I do my best to make my scripts not clash with each other, there is a possibility that importing all of them at once leads to conflicts.
 
 # About Exploits
-Many of Laserllama's classes have exploits, and they are handled in a unique way with MPMB's sheets.
+Many of Laserllama's (sub)classes have exploits, and they are handled in a unique way with MPMB's sheets:
 1. Pick them through the "Choose feature" on the top of the second page
 2. All chosen exploits will be added to the notes, in a dedicated section. Exploits gained from a subclass also have their own dedicated section.
-3. If you want to, you can also create a spell sheet which will contain all chosen Exploits (with "casting" time, duration, save, etc.)
+3. If you want to, you can also create a spell sheet which will contain all chosen Exploits (with short description, duration, save, etc.)
 
 Similarly, you can also create a spell sheet with *all* exploits if you want a short summary before picking, by clicking on "Make a complete spell sheet" > "With all ... spells"
 
