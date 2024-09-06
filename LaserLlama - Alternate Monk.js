@@ -3141,6 +3141,134 @@ AddSubClass("monk(laserllama)", "way of the sacred inks", {
 	}
 })
 
+// Way of the Vigilante
+AddSubClass("monk(laserllama)", "way of the vigilante", {
+	regExpSearch : /vigilante/i,
+	subname : "Way of the Vigilante",
+	fullname : "Vigilante",
+	source : [["GMB:LL", 0]],
+	features : {
+		"subclassfeature3" : GetSubclassTechniques("Vigilante",["slow fall","crushing strike","heavenly step"]),
+		"subclassfeature3.1" : {
+			name : "Combat Ready",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : desc(["I gain proficiency in light armor, medium armor and shields",
+				"When wearing armor/shield I still gain the benefits of Martial Arts and Unarmored Movement"]),
+			armorProfs : [true, true, false, true], // light, medium and shield
+
+			removeeval : function() {
+				AddString('Extra.Notes', 'Monk features:\n\u25C6 If I wear armor/shield, I lose Unarmored Defense, Martial Arts, and Unarmored Movement');
+				show3rdPageNotes();
+			},
+			eval : function() {
+				RemoveString('Extra.Notes', 'Monk features:\n\u25C6 If I wear armor/shield, I lose Unarmored Defense, Martial Arts, and Unarmored Movement');
+			},
+			// eval and removeeval from martial arts but reversed 
+		},
+		"subclassfeature3.2" : {
+			name : "Heroic Persona",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				if (n < 17) {
+					return desc(["As a bonus action, so long as I can't be seen, I can don my Heroic Persona for 1 h:",
+						"\u2022 This also makes me don/doff an armor and a shield if my persona has it",
+						"\u2022 I get "+n+" temp HP and can use my bonus action to gain temp HP equal to my Wis mod",
+						"\u2022 On hit with Martial Arts attack, I can spend 1 Ki to add 1d10 to the damage",
+						"\u2022 I can use Wisdom, instead of Dexterity, when calculating my AC in light/medium armor",
+						"Ability checks and divination spells that would discern my true identity automatically fail",
+						"If I have no uses left, I can spend 3 ki to use this feature again"])
+				}
+
+				return desc(["As a bonus action, so long as I can't be seen, I can don my Heroic Persona until I doff it:",
+					"\u2022 This also makes me don/doff an armor and a shield if my persona has it",
+					"\u2022 I get "+n+" temp HP and can use my bonus action to gain temp HP equal to my Wis mod",
+					"\u2022 On hit with Martial Arts attack, I can spend 1 Ki to add 1d10 to the damage",
+					"\u2022 I can use Wisdom, instead of Dexterity, when calculating my AC in light/medium armor",
+					"Ability checks and divination spells that would discern my true identity automatically fail",
+					"If I have no uses left, I can spend 3 ki to use this feature again"])
+			}),
+			action : ["bonus action", " (don/doff)"],
+			recovery : "short rest",
+        	usages : 1
+		},
+		"subclassfeature3.3" : {
+			name : "Additional proficiency",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+				return desc("I gain an additional proficiency (Intimidation or Performance) and add 1d"+MartArtDie+" to any checks using that proficiency")
+			}),
+			choices : ["Intimidation proficiency", "Performance proficiency"],
+			"intimidation proficiency" : {
+				name : "Additional proficiency",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc("I am proficient in Intimidation and add 1d"+MartArtDie+" to any checks using that proficiency")
+				}),
+				skills : ["Intimidation"]
+			},
+			"performance proficiency" : {
+				name : "Additional proficiency",
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc("I am proficient in Performance and add 1d"+MartArtDie+" to any checks using that proficiency")
+				}),
+				skills : ["Performance"]
+			},
+		},
+		"subclassfeature6" : {
+			name : "Valiant Action",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["I gain proficiency in either Acrobatics or Athletics",
+				"I gain the indomitable spirit Technique and it doesn't count against my total",
+				"While my Persona is active, I can use indomitable spirit once per turn without spending Ki"]),
+			skillstxt : "Choose one from Acrobatics and Athletics",
+
+
+			"indomitable spirit" : {
+				name : "Indomitable Spirit",
+				source : ["GMB:LL"],
+				description : desc(["Add my Wis mod (min 1) to a Strength (Athletics) or Dexterity (Athletics) check",
+					"I can use this Technique after I roll, but before I know if my roll succeeds or fails"]),
+				additional : "1 ki point",
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "indomitable spirit",
+				minlevel : 6
+			}]
+
+		},
+		"subclassfeature10" : {
+			name : "Inspiring Presence",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : levels.map(function (n) {
+				var AuraSize = (n < 17 ? 15 : 30);
+
+				return desc(["While my Heroic Persona is active, creatures of my choice within "+AuraSize+" ft have adv. on saves vs charmed or frightened"])
+			}),
+		},
+		"subclassfeature17" : {
+			name : "Master Vigilante",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["When I use crushing strike, the target must succeed on a Strength save or it is knocked back 10 ft in a straight line per Ki Point I spent"])
+		}
+	}
+})
+
+// Variant Rule: Heroic Personality
+// A Vigilante Monk is meant to evoke the archetypal superhero. 
+// For the mechanics to match the heroic fantasy, talk to your DM about using your Charisma, in place of Wisdom, for your Monk class features.
+// Want this feature? Shoot me a dm!
+
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
 	source : [["GMB:LL"]],
