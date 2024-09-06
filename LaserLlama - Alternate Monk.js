@@ -3189,6 +3189,7 @@ AddSubClass("monk(laserllama)", "way of the vigilante", {
 					"Ability checks and divination spells that would discern my true identity automatically fail",
 					"If I have no uses left, I can spend 3 ki to use this feature again"])
 			}),
+			// NOTE: AC calculation not included as it depends on whether heroic persona is enabled or not
 			action : ["bonus action", " (don/doff)"],
 			recovery : "short rest",
         	usages : 1
@@ -3268,6 +3269,93 @@ AddSubClass("monk(laserllama)", "way of the vigilante", {
 // A Vigilante Monk is meant to evoke the archetypal superhero. 
 // For the mechanics to match the heroic fantasy, talk to your DM about using your Charisma, in place of Wisdom, for your Monk class features.
 // Want this feature? Shoot me a dm!
+
+// Way of the Void
+AddSubClass("monk(laserllama)", "way of the void", {
+	regExpSearch : /void/i,
+	subname : "Way of the Void",
+	fullname : "Void",
+	source : [["GMB:LL", 0]],
+	features : {
+		// Override Ki adept because of the lvl 3 subclass feature
+		"ki adept" : {
+			name : "Ki Adept",
+			source : ["GMB:LL"],
+			minlevel : 11,
+			description : desc("Once on my turn, I can use a Technique I know that costs 1 Ki Point, Flurry of Blows, or Void Strike without spending Ki")
+		},
+
+		"subclassfeature3" : GetSubclassTechniques("Entropic",["step of the wind","slowing strike","aura sight"]),
+		"subclassfeature3.1" : {
+			name : "Entropic Touch",
+			source : [["GMB:LL", 0]],
+			minlevel : 3,
+			description : levels.map(function (n) {
+				var SizeLimit = (n < 5 ? "Tiny" : n < 11 ? "Medium or smaller" : n < 17 ? "Large or smaller" : "Huge or smaller");
+
+				return desc(["As an action, I can spend 2 ki points and touch a "+SizeLimit+" non-magical object to instantly reduce it to a pile of dust"])
+			}),
+			action : ["action", ""],
+
+			"void strike" : {
+				name : "Void Strike",
+				extraname : "Way of the Void 3",
+				source : [["GMB:LL", 0]],
+				description : levels.map(function (n) {
+					var MartArtDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+					return desc(["When hitting a creature with an unarmed strike, deal 1d"+MartArtDie+" additional force damage",
+						"If the creature is concentrating, it has disadv. on the concentration saving throw"]);
+				}),
+				additional : "1 ki point"
+			},
+			autoSelectExtrachoices : [{
+				extrachoice : "void strike",
+				minlevel : 3
+			}]
+		},
+		"subclassfeature6" : {
+			name : "Vorpal Step",
+			source : [["GMB:LL", 0]],
+			minlevel : 6,
+			description : desc(["When I use Step of the Wind, until the end of my current turn, I can move through solid nonmag objects and crea as if they were difficult terrain", 
+				"If I end my movement inside an object or creature, I am instantly shunted to the nearest unoccupied space, taking 1d10 force damage for every 5 feet I am forced to move"])
+		},
+		"subclassfeature10" : {
+			name : "Dispelling Touch",
+			source : [["GMB:LL", 0]],
+			minlevel : 10,
+			description : desc("I can spend 3 ki to cast counterspell or dispel magic using Wisdom as my spellcasting ability"),
+			spellFirstColTitle : "Ki",
+			spellcastingBonus : {
+				name : "Dispelling Touch",
+				spells : ["counterspell", "dispel magic"],
+				selection : ["counterspell", "dispel magic"],
+				firstCol : "3",
+				times : 2
+			}
+		},
+		"subclassfeature17" : {
+			name : "Master of Entropy",
+			source : [["GMB:LL", 0]],
+			minlevel : 17,
+			description : desc(["As an action, touch a creature who must make a Con save",
+				"On a failed save, it suffers the effects of the disintegrate spell",
+				"If I have no uses left, I can spend 6 Ki to use it again"]),
+			action : ["action", ""],
+			recovery : "long rest",
+        	usages : 1,
+        	spellFirstColTitle : "Ki",
+			spellcastingBonus : {
+				name : "Master of Entropy",
+				spells : ["disintegrate"],
+				selection : ["disintegrate"],
+				firstCol : "oncelr",
+				times : 1
+			}
+		}
+	}
+})
 
 FeatsList["martial arts initiate"] = {
 	name : "Martial Arts Initiate",
