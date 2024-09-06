@@ -990,8 +990,43 @@ AddSubClass("monk(laserllama)", "way of the open hand", {
 			return kifeature;
 		}(),
 
-		"subclassfeature3" : GetSubclassTechniques("Open Hand",["empowered strike","stunning strike","indomitable spirit"]),
-		// TODO: "Moreover, each time you gain a Monk level, you can replace one strike Technique you learned from this feature with another strike Technique of your choice."
+		"subclassfeature3" : function() {
+			// Fixed attributes
+			OpenHandTechniques = {
+				name : "Open Hand Techniques",
+				source : [["GMB:LL", 0]],
+				minlevel : 3,
+				description : desc(["I learn additional Techniques who don't count against my total",
+					"When I level up, I can change a strike technique from this feature for another strike technique"]),
+				extraname : "Open Hand Techniques",
+				extrachoices : ["Arresting Strike", "Crippling Strike", "Empowered Strike", "Whirling Strike", "Seeking Strike", "Slowing Strike", 
+					"Stunning Strike", "Crushing Strike", "Banishing Strike"],
+				extraTimes : levels.map( function(n) {
+	                if (n < 3) return 0;
+	                if (n < 5) return 1;
+	                return 2;
+	            }),
+	            autoSelectExtrachoices : [{
+					extrachoice : "empowered strike",
+					minlevel : 3
+				}, {
+					extrachoice : "stunning strike",
+					minlevel : 5
+				}, {
+					extrachoice : "indomitable spirit",
+					minlevel : 9
+				}]
+			}
+
+			// Copy strike techniques
+			StrikeTechniques = ["arresting strike", "crippling strike", "empowered strike", "whirling strike", "seeking strike", "slowing strike", "stunning strike", 
+				"crushing strike", "banishing strike", "indomitable spirit"]; // Indomitable spirit is not a strike technique but still needed for lvl 9
+			for (var i = 0; i < StrikeTechniques.length; i++) {
+				OpenHandTechniques[StrikeTechniques[i]] = newObj(ClassList["monk(laserllama)"].features["ki"][StrikeTechniques[i]]);
+			}
+
+			return OpenHandTechniques;
+		}(),
 		"subclassfeature3.1" : {
 			name : "Practiced Strikes",
 			source : [["GMB:LL", 0]],
