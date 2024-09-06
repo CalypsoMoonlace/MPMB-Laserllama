@@ -5,7 +5,7 @@ To import any of my scripts to your own sheet, you have two options:
 1. Import the master file that includes everything I've transcribed (WIP)
 2. Import the `Exploits and Spells.js` file and the file of the class you want
 
-All of my scripts require using v13.0.6 of the sheet or higher.
+All of my scripts require using v13.0.6 of the sheet or higher and go from the assumption you already have the [all_WotC](https://github.com/safety-orange/Imports-for-MPMB-s-Character-Sheet/releases/latest/download/all_WotC_published.min.js ) file imported.
 
 # About Exploits
 Many of Laserllama's classes have exploits, and they are handled in a unique way with MPMB's sheets.
