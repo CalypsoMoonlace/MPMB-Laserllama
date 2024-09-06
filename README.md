@@ -2,9 +2,9 @@ This repository is where I store scripts which add [LaserLlama](https://www.gmbi
 
 # How to import
 To import any of my scripts to your own sheet, you have to do the following:
-1. Import the [all_WotC](https://github.com/safety-orange/Imports-for-MPMB-s-Character-Sheet/releases/latest/download/all_WotC_published.min.js) file
-1. Import the `Exploits and Spells.js` file
-2. Import the file of the class you want
+1. Import the [all_WotC](https://github.com/safety-orange/Imports-for-MPMB-s-Character-Sheet/releases/latest/download/all_WotC_published.min.js) file (not made by me)
+2. Import the `Exploits and Spells.js` file
+3. Import the file of the class you want
 
 All of my scripts require using v13.0.6 of the sheet or higher.
 
@@ -23,6 +23,7 @@ There are some content that is not possible to add through, or that I chose to a
 - Alternate versions of spells are currently not included, but new spells are included
 - Pugilist's Iron physique feature on medium armor is not included (only light armor & unarmored) as the sheet can't handle the math required behind it
 - Tinker knight's schematics do not go from the assumption the player will be the one to use the schematics so some calculations are not done automatically
+- Way of the Vigilante has an optional rule of replacing class features using Wisdom with Charisma, which would require to rewrite the whole class so it is currently not added
 - Some subclasses overflow the "class features" box at level 20 because they are too complex to be shortened, if you reach that point feel free to move the text around as desired
 
 # Current content and WIP
