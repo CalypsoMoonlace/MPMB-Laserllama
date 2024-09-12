@@ -425,12 +425,11 @@ AddSubClass("barbarian(laserllama)", "zealot", {
             source : [["GMB:LL", 0]],
             minlevel : 3,
             description : levels.map(function (n) {
-                var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
-                var ExplDie = ExplDieRange[n-1];
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
 
                 return desc([
                     "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
-                    "This is necrotic, thunder or radiant damage equal to 1"+ExplDie+" + my Constitution modifier",
+                    "This is necrotic, thunder or radiant damage equal to 1d"+ExplDie+" + my Constitution modifier",
                     'Choose a damage type using the "Choose Feature" button above'
                 ])
             }),
@@ -438,36 +437,33 @@ AddSubClass("barbarian(laserllama)", "zealot", {
             "evil" : {
                 name : "Divine Fury",
                 description : levels.map(function (n) {
-                    var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
-                    var ExplDie = ExplDieRange[n-1];
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
 
                     return desc([
                         "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
-                        "This is necrotic damage equal to 1"+ExplDie+" + my Constitution modifier"
+                        "This is necrotic damage equal to 1d"+ExplDie+" + my Constitution modifier"
                     ])
                 }),
             },
             "neutral" : {
                 name : "Divine Fury",
                 description : levels.map(function (n) {
-                    var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
-                    var ExplDie = ExplDieRange[n-1];
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
 
                     return desc([
                         "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
-                        "This is thunder damage equal to 1"+ExplDie+" + my Constitution modifier"
+                        "This is thunder damage equal to 1d"+ExplDie+" + my Constitution modifier"
                     ])
                 }),
             },
             "good" : {
                 name : "Divine Fury",
                 description : levels.map(function (n) {
-                    var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
-                    var ExplDie = ExplDieRange[n-1];
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
 
                     return desc([
                         "While raging, the first creature I hit with a weapon attack in my turn takes extra damage",
-                        "This is radiant damage equal to 1"+ExplDie+" + my Constitution modifier"
+                        "This is radiant damage equal to 1d"+ExplDie+" + my Constitution modifier"
                     ])
                 }),
             }
@@ -526,10 +522,9 @@ AddSubClass("barbarian(laserllama)", "brute", {
             source : [["GMB:LL", 0]],
             minlevel : 3,
             description : levels.map(function (n) {
-                var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
-                var ExplDie = ExplDieRange[n-1];
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
 
-                return desc(["My unarmed strikes deal 1"+ExplDie+" bludgeoning damage",
+                return desc(["My unarmed strikes deal 1d"+ExplDie+" bludgeoning damage",
                     "When raging, if I use my action to only make unarmed attacks/shove/grapple, I can make another as bonus action"])
             }),
             weaponsAdd : ["Unarmed Strike"],
@@ -614,10 +609,9 @@ AddSubClass("barbarian(laserllama)", "packleader", {
             source : [["GMB:LL", 0]],
             minlevel : 3,
             description : levels.map(function (n) {
-                var ExplDieRange = ["d4", "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"];
-                var ExplDie = ExplDieRange[n-1];
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
 
-                return desc(["I gain proficiency with Animal Handling and add 1"+ExplDie+" to Wisdom (Animal Handling) checks"])
+                return desc(["I gain proficiency with Animal Handling and add 1d"+ExplDie+" to Wisdom (Animal Handling) checks"])
             }),
             skills : ["Animal Handling"]
         },
