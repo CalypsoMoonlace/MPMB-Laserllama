@@ -581,13 +581,19 @@ AddSubClass("rogue(laserllama)", "seeker", {
             name : "Expert Archaeologist",
             source : [["GMB:LL", 0]],
             minlevel : 7,
-            description : desc(["I have adv. on any saving throw on traps; I can use modify device at will, if I have the tools", "I have adv. on thieves' tools or tinker's tools checks I make to investigate or disarm a trap"]),
+            description : desc(["I have adv. on any saving throw on traps; I can use modify device at will, if I have the tools", 
+                "I have adv. on thieves' tools or tinker's tools checks I make to investigate or disarm a trap"]),
             savetxt : { adv_vs : ["traps"] },
-            spellChanges : {
-                "modify device" : {
-                    firstCol : "atwill",
-                    changes : "I can use the Modify Device exploit at will without expending an Exploit Die" // required
-                }
+            calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "modify device") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "I can use the Modify Device exploit at will without expending an Exploit Die"
+                ]
             }
         },
         "subclassfeature13" : {
@@ -603,7 +609,8 @@ AddSubClass("rogue(laserllama)", "seeker", {
                     "I add my Intelligence modifier to any damaging cantrip I cast with a Relic"
                 ]
             },
-            choices: ["Greater Lore: 3 Elder Relics", "Greater Lore: 2 Elder Relics + 2 Relics","Greater Lore: 1 Elder Relic + 4 Relics","Greater Lore: 0 Elder Relic + 6 Relics"],
+            choices: ["Greater Lore: 3 Elder Relics", "Greater Lore: 2 Elder Relics + 2 Relics","Greater Lore: 1 Elder Relic + 4 Relics",
+                "Greater Lore: 0 Elder Relic + 6 Relics"],
             "greater lore: 3 elder relics": {
                 name: "Greater Lore: 3 Elder Relics",
                 description: desc(["I gain three additional Elder Relics of my choice","I add my Intelligence modifier to any damaging cantrip I cast with a Relic"]),
@@ -643,7 +650,8 @@ AddSubClass("rogue(laserllama)", "seeker", {
             name : "Ancient Lore",
             source : [["GMB:LL", 0]],
             minlevel : 17,
-            description : desc(["I have adv. on saving throws I make to resist the effects of spells", "I can change one of my Relic and Elder Relic by performing a 1h ritual (can be part of a rest)"]),
+            description : desc(["I have adv. on saving throws I make to resist the effects of spells", 
+                "I can change one of my Relic and Elder Relic by performing a 1h ritual (can be part of a rest)"]),
             savetxt : { adv_vs : ["spells"] }
         }
     }

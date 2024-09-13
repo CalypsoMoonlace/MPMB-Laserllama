@@ -1274,12 +1274,12 @@ AddSubClass("fighter(laserllama)", "master at arms", {
 
 					if (n >= 10 && n < 15) {
 						var result = ["I learn two additional Fighting Styles but can only benefit from two at a time",
-							"I can change one active Fighting Styles I know with another as a bonus action"]
+							"I can change one active Fighting Style I know with another as a bonus action"]
 					}
 
 					if (n >= 15) {
 						var result = ["I learn three additional Fighting Styles but can only benefit from two at a time",
-							"I can change one active Fighting Styles I know with another as a bonus action"]
+							"I can change one active Fighting Style I know with another as a bonus action"]
 					}
 
 					return desc(result)
@@ -1659,12 +1659,17 @@ AddSubClass("fighter(laserllama)", "knight errant", {
 			description : desc(["Creatures provoke opportunity attacks when moving 5 ft or more while within my reach",
 				"If I hit an opportunity attack, the target's speed is reduced to 0 until the end of the turn",
 				"I can use the Skilled Rider exploit at will without expending an Exploit Die"]),
-			spellChanges : {
-				"skilled rider" : {
-					firstCol : "atwill",
-					changes : "I can use the Skilled Rider exploit at will without expending an Exploit Die" // required
-				}
-			}
+			calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "skilled rider") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "I can use the Skilled Rider exploit at will without expending an Exploit Die"
+                ]
+            },
 		},
 		"subclassfeature15" : {
 			name : "Perilous Charge",
@@ -3296,6 +3301,10 @@ AddSubClass("fighter(laserllama)", "tinker knight", {
 									if (!/finesse/i.test(fields.Description)) {
 										fields.Description = 'Finesse, ' + fields.Description.substr(0,1).toLowerCase() + fields.Description.substr(1);
 									}
+								}
+
+								if (fields.Description.length <= 2) { // remove leftovers
+									fields.Description = "";
 								}
 
 								v.SchematicsApplied ? v.SchematicsApplied += 1 : v.SchematicsApplied = 1
