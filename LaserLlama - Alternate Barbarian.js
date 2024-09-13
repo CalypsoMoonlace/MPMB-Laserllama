@@ -462,6 +462,98 @@ AddSubClass("barbarian(laserllama)", "berserker", {
     }
 })
 
+// Path of the Brute
+AddSubClass("barbarian(laserllama)", "brute", {
+    regExpSearch : /brute/i,
+    subname : "Path of the Brute",
+    fullname : "Brute",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Brutish", ["commanding presence","crushing grip","concussive blow","greater hurl","confounding critical"]),
+        "subclassfeature3.1" : {
+            name : "The Wrong Crowd",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc("When I spend a night carousing in a settlement of any size, I have adv. on all checks to gather info on that settlement, its culture, factions, and any important, infamous, or influential figures"),
+        },
+        "subclassfeature3.2" : {
+            name : "Unarmed & Dangerous", 
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc(["My unarmed strikes deal 1d"+ExplDie+" bludgeoning damage",
+                    "When raging, if I use my action to only make unarmed attacks/shove/grapple, I can make another as bonus action"])
+            }),
+            weaponsAdd : ["Unarmed Strike"],
+            action : ["bonus action", ""],
+            calcChanges : {
+                atkAdd : [
+                    function (fields, v) {
+                        if (v.baseWeaponName == "unarmed strike" && classes.known["barbarian(laserllama)"] && classes.known["barbarian(laserllama)"].level) {
+                            try {
+                                var curDie = eval_ish(fields.Damage_Die.replace('d', '*'));
+                            } catch (e) {
+                                var curDie = 'x';
+                            };
+
+                            var aBruteDie = function (n) {return  (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);}(classes.known["barbarian(laserllama)"].level)
+                        
+                            if (isNaN(curDie) || curDie < aBruteDie) {
+                                fields.Damage_Die = '1d' + aBruteDie;
+                            };
+                        }
+                    },
+                    "My unarmed strikes deal bludgeoning damage equal to one roll of your Exploit Die",
+                    6 // Evaluated after Monk's martial arts atkAdd
+                ]
+            }
+        },
+
+        "subclassfeature6" : {
+            name : "Brutal Strikes",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["While Raging, my unarmed strikes count as magical for overcoming resistances & immunities",
+                "On hit with an unarmed strike, I can use concussive blow without expending an Exploit Die"]),
+            calcChanges : {
+                atkAdd : [
+                    function (fields, v) {
+                        if (v.baseWeaponName == "unarmed strike" && !v.thisWeapon[1] && !v.theWea.isMagicWeapon && !(/counts as( a)? magical/i).test(fields.Description)) {
+                            fields.Description += (fields.Description ? '; ' : '') + 'Counts as magical in rage';
+                        };
+                    },
+                    "My unarmed strikes count as magical for overcoming resistances and immunities, but only during my rage."
+                ]
+            },
+            limfeaname : "Concussive blows",
+            usages : "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            recovery : "long rest",
+        },
+        "subclassfeature10" : {
+            name : "Iron Grip",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc(["While Raging, I can grapple creatures up to two sizes larger than me and my walk speed is no longer halved when dragging a grappled creature",
+                "I also gain a climb speed equal to my walking speed"]),
+            speed : {
+                climb : { spd : "walk", enc : 0 }
+            },
+        },
+        "subclassfeature14" : {
+            name : "Brutish Determination",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["When I make a Strength, Dexterity, Constitution, or death save, I add a d4 to my roll",
+                "If I roll a total of ≥20 on a death save, I instantly regain consciousness and stand up with 1 HP"])
+        }
+    }
+})
+
 // Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
     regExpSearch : /zealot/i,
@@ -555,98 +647,6 @@ AddSubClass("barbarian(laserllama)", "zealot", {
                 "If I start my turn with 3 failed death saves, I must make a DC 10 Con save to maintain my rage",
                 "I only die due to failed death saves if my rage ends while I'm at 0 HP"
             ])
-        }
-    }
-})
-
-// Path of the Brute
-AddSubClass("barbarian(laserllama)", "brute", {
-    regExpSearch : /brute/i,
-    subname : "Path of the Brute",
-    fullname : "Brute",
-    source : [["GMB:LL", 0]],
-    abilitySave : 1,
-    abilitySaveAlt : 2,
-    features : {
-        "subclassfeature3" : GetSubclassExploits("Brutish", ["commanding presence","crushing grip","concussive blow","greater hurl","confounding critical"]),
-        "subclassfeature3.1" : {
-            name : "The Wrong Crowd",
-            source : [["GMB:LL", 0]],
-            minlevel : 3,
-            description : desc("When I spend a night carousing in a settlement of any size, I have adv. on all checks to gather info on that settlement, its culture, factions, and any important, infamous, or influential figures"),
-        },
-        "subclassfeature3.2" : {
-            name : "Unarmed & Dangerous", 
-            source : [["GMB:LL", 0]],
-            minlevel : 3,
-            description : levels.map(function (n) {
-                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
-
-                return desc(["My unarmed strikes deal 1d"+ExplDie+" bludgeoning damage",
-                    "When raging, if I use my action to only make unarmed attacks/shove/grapple, I can make another as bonus action"])
-            }),
-            weaponsAdd : ["Unarmed Strike"],
-            action : ["bonus action", ""],
-            calcChanges : {
-                atkAdd : [
-                    function (fields, v) {
-                        if (v.baseWeaponName == "unarmed strike" && classes.known["barbarian(laserllama)"] && classes.known["barbarian(laserllama)"].level) {
-                            try {
-                                var curDie = eval_ish(fields.Damage_Die.replace('d', '*'));
-                            } catch (e) {
-                                var curDie = 'x';
-                            };
-
-                            var aBruteDie = function (n) {return  (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);}(classes.known["barbarian(laserllama)"].level)
-                        
-                            if (isNaN(curDie) || curDie < aBruteDie) {
-                                fields.Damage_Die = '1d' + aBruteDie;
-                            };
-                        }
-                    },
-                    "My unarmed strikes deal bludgeoning damage equal to one roll of your Exploit Die",
-                    6 // Evaluated after Monk's martial arts atkAdd
-                ]
-            }
-        },
-
-        "subclassfeature6" : {
-            name : "Brutal Strikes",
-            source : [["GMB:LL", 0]],
-            minlevel : 6,
-            description : desc(["While Raging, my unarmed strikes count as magical for overcoming resistances & immunities",
-                "On hit with an unarmed strike, I can use concussive blow without expending an Exploit Die"]),
-            calcChanges : {
-                atkAdd : [
-                    function (fields, v) {
-                        if (v.baseWeaponName == "unarmed strike" && !v.thisWeapon[1] && !v.theWea.isMagicWeapon && !(/counts as( a)? magical/i).test(fields.Description)) {
-                            fields.Description += (fields.Description ? '; ' : '') + 'Counts as magical in rage';
-                        };
-                    },
-                    "My unarmed strikes count as magical for overcoming resistances and immunities, but only during my rage."
-                ]
-            },
-            limfeaname : "Concussive blows",
-            usages : "Con mod per ",
-            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
-            recovery : "long rest",
-        },
-        "subclassfeature10" : {
-            name : "Iron Grip",
-            source : [["GMB:LL", 0]],
-            minlevel : 10,
-            description : desc(["While Raging, I can grapple creatures up to two sizes larger than me and my walk speed is no longer halved when dragging a grappled creature",
-                "I also gain a climb speed equal to my walking speed"]),
-            speed : {
-                climb : { spd : "walk", enc : 0 }
-            },
-        },
-        "subclassfeature14" : {
-            name : "Brutish Determination",
-            source : [["GMB:LL", 0]],
-            minlevel : 14,
-            description : desc(["When I make a Strength, Dexterity, Constitution, or death save, I add a d4 to my roll",
-                "If I roll a total of ≥20 on a death save, I instantly regain consciousness and stand up with 1 HP"])
         }
     }
 })
