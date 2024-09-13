@@ -404,7 +404,65 @@ ClassList["barbarian(laserllama)"] = {
     }
 }
 
-// Path of the Brute
+// Path of the Berserker
+AddSubClass("barbarian(laserllama)", "berserker", {
+    regExpSearch : /berserker/i,
+    subname : "Path of the Berserker",
+    fullname : "Berserker",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Berserker", ["cunning instinct","savage rebuke","bloodthirsty critical","menacing shout","roar of triumph"]),
+        "subclassfeature3.1" : {
+            name : "Frenzy",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc(["The first time I hit with a Strength-based weapon attack on my turn, I deal bonus damage equal to two rolls of my Exploit Die",
+                "While Raging, my walking speed increases by 10 feet"]),
+        },
+
+        "subclassfeature6" : {
+            name : "Mindless Rage",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["While raging, I can't be charmed or frightened, and such effects are suspended",
+                "Also, while raging I can ignore the effects of the first five levels of exhaustion"]),
+            savetxt : { text : ["Immune to being charmed/frightened and exhaustion in rage"] }
+        },
+        "subclassfeature10" : {
+            name : "Intimidating Presence",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc(["I can use menacing shout without expending an Exploit Die",
+                "Also, when I use menacing shout after hitting with a melee weapon attack, the crea has disadv. on the save"]),
+            
+            limfeaname : "Menacing Shout",
+            usages : "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            recovery : "long rest",
+        },
+        "subclassfeature14" : {
+            name : "Unrivaled Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["I can use savage rebuke at will, without expending an Exploit Die"]),
+            calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "savage rebuke") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "I can use the Savage Rebuke exploit at will without expending an Exploit Die"
+                ]
+            },
+        }
+    }
+})
+
+// Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
     regExpSearch : /zealot/i,
     subname : "Path of the Zealot",
