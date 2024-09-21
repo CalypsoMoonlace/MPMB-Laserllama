@@ -554,6 +554,136 @@ AddSubClass("barbarian(laserllama)", "brute", {
     }
 })
 
+// Path of the Champion
+AddSubClass("barbarian(laserllama)", "champion", {
+    regExpSearch : /champion/i,
+    subname : "Path of the Champion",
+    fullname : "Champion", // same name as fighter subclass... let me know if that becomes an issue
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        // Overriding savage exploits because of Martial Training subclass feature
+        "savage exploits": function(){
+            // Fixed attributes
+            SavageExploits = {
+                name : "Savage Exploits",
+                minlevel : 2,
+                source : [["GMB:LL", 0]],
+                description : desc(["I gain Exploit Dice, which are used to fuel my Savage Exploits", 
+                    "Use the \"Choose Feature\" button above to choose Savage Exploits"]),
+                toNotesPage : [{
+                    name : "Savage Exploits",
+                    note : desc(["Below are all Savage Exploits I know. Each 3rd and 4th degree exploits can only be used once per short rest. Each 5th degree exploit can only be used once per long rest."])
+                }],
+            
+                // Savage Exploits
+                extraname : "Savage Exploits",
+                extrachoices : [],
+                extraTimes : ['', 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8],
+
+                // Exploit dice
+                limfeaname : "Exploit Dice",
+                usages : ['', 2, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6],
+                additional : ['', "d4", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"],
+                recovery : "short rest",
+            };
+
+            // Make a filtered spell list that contains only barbarian(laserllama) "spells"
+            const BarbarianSpells = Object.keys(SpellsList).filter((key) => SpellsList[key].isExploit).filter((key) => {
+                for (var i = 0; i < SpellsList[key].classes.length; i++) {
+                    if (SpellsList[key].classes[i] == "barbarian(laserllama)") return true;
+                }
+                return false;
+                // NOTE: this is literally a SpellsList[key].classes.includes("barbarian(laserllama)") but for some cursed reason I can't use that function
+            });
+
+            // Iterate over all barbarian(laserllama) "spells"
+            for (var i = 0; i < BarbarianSpells.length; i++) {
+                var NewSpell = SpellsList[BarbarianSpells[i]];
+                var tempSpell = BarbarianSpells[i];
+
+                SavageExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
+
+                SavageExploits[BarbarianSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
+                    name: NewSpell.name,
+                    toNotesPage : [{ // What is added to the notes page
+                        name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
+                        note : desc(NewSpell.descriptionFull),
+                        amendTo : "Savage Exploits"
+                    }],
+                    source: NewSpell.source,
+                    addMod: NewSpell.addMod,
+                    submenu: NewSpell.submenu,
+                    prereqeval: ExploitPrereqFactory(BarbarianSpells[i], "barbarian(laserllama)"),
+                    eval: CreateSavageSpellsheet, // in case the user removes all exploits
+                    spellcastingBonusElsewhere : {
+                        addTo : "savage exploits",
+                        spellcastingBonus : {
+                            name : "Savage Exploits",
+                            spellcastingAbility : 1,
+                            spells : [BarbarianSpells[i]],
+                            selection : [BarbarianSpells[i]]
+                        }
+                    }
+                }
+            }
+
+            return SavageExploits
+        }(),
+
+        "subclassfeature3" : GetSubclassExploits("Champion", ["feat of strength","mighty leap","honor duel","thunderous blow","mythic resilience"]),
+        "subclassfeature3.1" : {
+            name : "Fighting Style",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc('Choose a Fighting Style for your character using the "Choose Feature" button above'),
+            choices : ["Dual Wielding", "Great Weapon Fighting", "Improvised Fighting", "Strongbow", "Thrown Weapon Fighting", "Versatile Fighting"],
+            "dual wielding" : FightingStylesLL.dual_wielding,
+            "great weapon fighting" : FightingStylesLL.great_weapon,
+            "improvised fighting" : FightingStylesLL.improvised,
+            "strongbow" : FightingStylesLL.strongbow,
+            "thrown weapon fighting" : FightingStylesLL.thrown,
+            "versatile fighting" : FightingStylesLL.versatile
+        },
+        "subclassfeature6" : {
+            name : "Mighty Blow",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["While raging, I can choose to end my rage after hitting with a Strength-based weapon attack to turn the hit into a crit"]),
+            usages : 1,
+            recovery : "short rest"
+        },
+        "subclassfeature6.1" : {
+            name : "Peak Athlete",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["I gain a climbing and swimming speed equal to my walking speed", 
+                "When I enter my Rage, I gain the benefits of the Dash action"]),
+            speed : {
+                swim : { spd : "walk", enc : 0 },
+                climb : { spd : "walk", enc : 0 }
+            }
+        },
+        "subclassfeature10" : {
+            name : "Invigorating Critical",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 6 : n < 11 ? 8 : n < 17 ? 10 : 12);
+
+                return desc(["When I crit with a Strength-based weapon attack, I regain HP equal to 1d"+ExplDie+" + my Con mod (min 1)"])
+            })
+        },
+        "subclassfeature14" : {
+            name : "Survivor",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["At the start of my turn, if I'm not at 0 HP I gain temp HP equal to my Con mod"])
+        }
+    }
+})
+
 // Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
     regExpSearch : /zealot/i,
