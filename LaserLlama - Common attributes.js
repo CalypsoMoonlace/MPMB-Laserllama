@@ -6,10 +6,12 @@
     It is recommended to enter the code in a fresh sheet before adding any other information (i.e. before making your character with it).
 	
     -INFORMATION-
-    Subject:    Compilation of all LaserLlama's exploits and Spell compendium 
+    Subject:    Compilation of attributes shared across several of Laserllama's classes which are required to make the other imports work
+    			Currently, this includes: Exploits, Spells and Fighting styles
 
     Effect:     This script adds Laserllama's Exploits as spells (with both regular spell attributes, and some unique attributes, see doc below)
     			It also adds some modified or new spells from LL's spell compendium
+    			It also defines a global variable (FightingStylesLL) containing Fighting styles
 
     			Those exploits were published by Laserllama in GM Binder under the Fan Content policy.
     			Laserllama: https://www.gmbinder.com/profile/laserllama

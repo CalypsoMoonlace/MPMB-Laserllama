@@ -558,12 +558,14 @@ AddSubClass("barbarian(laserllama)", "brute", {
 AddSubClass("barbarian(laserllama)", "champion", {
     regExpSearch : /champion/i,
     subname : "Path of the Champion",
-    fullname : "Champion", // same name as fighter subclass... let me know if that becomes an issue
+    fullname : "Champion", // same name as fighter subclass; it will break the regex (only one of those two can work at the same time) // let me know if this is something you want to be fixed
     source : [["GMB:LL", 0]],
     abilitySave : 1,
     abilitySaveAlt : 2,
     features : {
-        // Overriding savage exploits because of Martial Training subclass feature
+        // Override martial exploits because size of die increases
+        // NOTE: This has been copy pasted from the main class. IT WON'T WORK IF YOU TRY TO USE newObj ! (it will cause a crash because of some variable's scope)
+        // I do not know how to fix that scoping bug, so I went for the more brute force approach. If it works, it aint stupid ;)
         "savage exploits": function(){
             // Fixed attributes
             SavageExploits = {
