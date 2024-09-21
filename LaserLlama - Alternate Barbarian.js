@@ -4,7 +4,7 @@
 
     -KEEP IN MIND-
     It is recommended to enter the code in a fresh sheet before adding any other information (i.e. before making your character with it).
-    This script requires importing the Exploits first!
+    This script requires importing the Common attributes first!
 	
     -INFORMATION-
     Subject:    Alternate Barbarian
@@ -27,7 +27,7 @@ RequiredSheetVersion("13.0.6");
 try {
     var test = SpellsList["disarm"].isExploit
 } catch (error) {
-    throw new Error("Please import the 'Laserllama - Exploits.js' file before importing this file as otherwise it cannot function properly. You can get it on the github repository.");
+    throw new Error("Please import the 'Laserllama - Common attributes.js' file before importing this file as otherwise it cannot function properly. You can get it on the github repository.");
 }
 
 // Utility functions

@@ -3,7 +3,7 @@ This repository is where I store scripts which add [LaserLlama](https://www.gmbi
 # How to import
 To import any of my scripts to your own sheet, you have to do the following:
 1. Import the [all_WotC](https://github.com/safety-orange/Imports-for-MPMB-s-Character-Sheet/releases/latest/download/all_WotC_published.min.js) file (not made by me)
-2. Import the `Exploits and Spells.js` file
+2. Import the `Common attributes.js` file
 3. Import the file of the class you want
 
 All of my scripts require using v13.0.6 of the sheet or higher.

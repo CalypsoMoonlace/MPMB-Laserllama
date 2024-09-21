@@ -97,7 +97,7 @@
 */
 
 // Meta information
-var iFileName = "LaserLlama - Exploits and Spells.js";
+var iFileName = "LaserLlama - Common attributes.js";
 RequiredSheetVersion("13.0.6");
 
 // Source information
