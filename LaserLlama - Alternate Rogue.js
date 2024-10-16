@@ -444,6 +444,112 @@ var Linguist_variant = {
 }
 CreateClassFeatureVariant("rogue(laserllama)","thieves cant","Secret Ciphers", Linguist_variant);
 
+
+// Inquisitive
+AddSubClass("rogue(laserllama)", "inquisitive", {
+    regExpSearch : /inquisitive/i,
+    subname : "Inquisitive",
+    fullname : "Inquisitive",
+    source : [["GMB:LL", 0]],
+    abilitySaveAlt : 4,
+    features : { 
+        "subclassfeature3" : GetSubclassExploits("Inquisitive", ["inquisitive eye", "precision strike", "exposing strike", "survey dungeon", "survey settlement"]),
+        "subclassfeature3.1" : {
+            name : "Eye for Detail",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc(["I can make Insight and Perception checks using Intelligence instead of Wisdom",
+                "When I take the Search action, I gain information as if I had spent 10 minutes searching",
+                "I can take the Search action as a bonus action"]),
+            addMod : [
+                { type : "skill", field : "Insight", mod : "max(Int-Wis|0)", text : "I can replace Wisdom (Insight) checks with Intelligence (Insight)" },
+                { type : "skill", field : "Perception", mod : "max(Int-Wis|0)", text : "I can replace Wisdom (Perception) checks with Intelligence (Perception)" }
+            ],
+            action : [["bonus action", "Search"]]
+        },
+        "subclassfeature3.2" : {
+            name : "Predictive Fighting",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                if (n < 17) {
+                    return desc([
+                        "As a bonus action, I can observe the tactics of another within 30 ft",
+                        "I have to make a Wisdom (Insight) check vs. the target's Charisma (Deception) check",
+                        "If I succeed, I can use my sneak attack on it even if I don't have adv. (but not if disadv.)",
+                        "This benefit lasts for 1 minute or until I successfully use Insightful Fighting again"
+                    ])
+                }
+
+                return desc([
+                    "As a bonus action, I can observe the tactics of another within 30 ft",
+                    "I have to make a Wisdom (Insight) check vs. the target's Charisma (Deception) check",
+                    "If I succeed, I can use my sneak attack on it even if I don't have adv. (but not if disadv.)",
+                    "Additionally, I roll d8s instead of d6s for my Sneak Attack on this target",
+                    "This benefit lasts for 1 minute or until I successfully use Insightful Fighting again"
+                ])
+            }),
+            action : ["bonus action", ""]
+        },
+        "subclassfeature7" : {
+            name : "Insightful Strike",
+            source : [["GMB:LL", 0]],
+            minlevel : 7,
+            description : desc(["I can use Cunning Strike to reduce my Sneak attack damage by 2d6", 
+                "When I do so, the DM tells me one of: its highest ability score, its lowest ability score, Armor Class, one of its movement speeds, or one of its special senses."])
+        },
+        "subclassfeature13" : {
+            name : "Adept Investigator",
+            source : [["GMB:LL", 0]],
+            minlevel : 13,
+            description : desc(["I can use Survey Dungeon and Survey Settlement a certain amount of times without expending an Exploit Die",
+                "Also, it takes me less time to use those and I learn more information equal to my Int mod"]),
+            usages : "Int mod per ",
+            usagescalc : "event.value = Math.max(1, What('Int Mod'));",
+            recovery : "long rest",
+            calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "survey dungeon") {
+                            spellObj.time = "1 min";
+                            return true;
+                        };
+
+                        if (spellKey == "survey settlement") {
+                            spellObj.time = "10 min";
+                            return true;
+                        };
+                    },
+                    "It only takes you 1 minute to use survey dungeon and 10 minutes to use survey settlement, and whenever you use these Exploits you learn a number of additional pieces of information equal to your Intelligence modifier (minimum of 1)."
+                ]
+            },
+        },
+        "subclassfeature13.1" : {
+            name : "Unerring Sight",
+            source : [["GMB:LL", 0]],
+            minlevel : 13,
+            description : levels.map(function (n) {
+                var UnerringSightRange = (n < 14 ? 10 : n < 20 ? 20 : 30);
+
+                return desc(["I gain "+UnerringSightRange+" ft Truesight and have adv. on Insight and Investigation checks within that radius"])
+            }),
+            changeeval : function(lvl, chc) {
+                var srcNm = "Unerring Sight";
+                var curRange = CurrentProfs.vision.truesight && CurrentProfs.vision.truesight.ranges[srcNm];
+                var newRange = (lvl[1] < 13 ? 0 : lvl[1] < 14 ? 10 : lvl[1] < 20 ? 20 : 30);
+
+                // Only do something if the range changed
+                if (curRange !== newRange) {
+                    // First remove the old range, if any
+                    if (curRange) SetProf('vision', false, "Truesight", srcNm, curRange);
+                    // Then set the new range, unless the feature is removed (i.e. lvl[1] === 0)
+                    if (newRange) SetProf('vision', true,  "Truesight", srcNm, newRange);
+                }
+            }
+        }
+    }
+})
+
 // Seeker
 AddSubClass("rogue(laserllama)", "seeker", {
     regExpSearch : /seeker/i,
