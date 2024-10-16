@@ -323,7 +323,7 @@ SpellsList["first aid"] = {
 	time : "1 a",
 	range : "Touch",
 	duration : "Instantaneous",
-	description : "Touch a creature with at least 1 hp, expend any Exploit Die up to Prof Bonus to heal total roll + its Con",
+	description : "Touch a creature with at least 1 HP, expend any Exploit Die up to Prof Bonus to heal total roll + its Con",
 	descriptionFull : "As an action, you can touch a creature that has at least 1 hit point and expend Exploit Dice (up to your proficiency bonus), roll those dice, and that creature regains a number of hit points equal to the total roll + its Constitution modifier."
 };
 
@@ -902,7 +902,7 @@ SpellsList["eloquent speech"] = {
 	time : "Check",
 	range : "Self",
 	duration : "Instantaneous",
-	description : "Add Exploit Die to Pers and Decep checks; Can make Int (Persuasion) & Int (Persuasion) checks (passive)",
+	description : "Add Exploit Die to Pers and Decep checks; Can make Int (Deception) & Int (Persuasion) checks (passive)",
 	descriptionFull : "Whenever you would normally make a Charisma (Deception) or Charisma (Persuasion) check, you can choose to use your Intelligence in place of Charisma for that ability check.\n\nAlso, whenever you make an Intelligence (Deception) or Intelligence (Persuasion) check you can expend one Exploit Die, roll it, and add the result to your check. You can do so after you roll the d20, but before you know if you succeed."
 };
 
@@ -971,7 +971,7 @@ SpellsList["reposition"] = {
 	time : "1 bns",
 	range : "5 ft",
 	duration : "Instantaneous",
-	description : "Switch place with a conscious and willing creature, either me or target gains Exploit Die of temp hp",
+	description : "Switch place with a conscious and willing creature, either me or target gains Exploit Die of temp HP",
 	descriptionFull : "As a bonus action, you can expend one Exploit Die to switch places with a conscious and willing creature within 5 feet of you. This movement does not provoke opportunity attacks. Either you or the creature you switched places with gains temporary hit points equal to one roll of your Exploit Die."
 };
 
@@ -2865,9 +2865,9 @@ FightingStylesLL = {
 		calcChanges : {
 			atkCalc : [
 				function (fields, v, output) {
-					if ((/\blight\b/i).test(fields.Description)) output.extraDmg += 1;
+					if (v.baseWeaponName == "unarmed strike" || (/\blight\b/i).test(fields.Description)) output.extraDmg += 1;
 				},
-				"When I'm wielding light weapons and not wearing medium or heavy armor nor a shield, I do +1 damage with light weapons."
+				"When I'm wielding light weapons and not wearing medium or heavy armor nor a shield, I do +1 damage with light weapons and unarmed strikes."
 			]
 		},
 		speed : {
@@ -3096,10 +3096,8 @@ FightingStylesLL = {
 
 	shieldwarrior : {
 		name : "Shield Warrior Fighting Style",
-		description : desc([
-							"+1 bonus to AC when I'm wielding a shield and nothing else",
-							"I gain prof. with shields as martial melee weapon, 2d4 bludg. on hit"
-						]),
+		description : desc(["I gain proficiency with shields as martial melee weapon, which deal 2d4 bludg. damage on hit",
+						"When I'm wielding a shield and nothing else, +1 to AC and attack rolls with that shield"]),
 		extraAC : {
 			name : "Shield Warrior Fighting Style",
 			mod : 1,
@@ -3108,7 +3106,7 @@ FightingStylesLL = {
 		},
 		weaponOptions : {
 			regExpSearch : /(shield|bash)/i,
-			name : "Shield melee attack",
+			name : "Shield Melee Attack",
 			ability : 1,
 			type : "shield melee attack",
 			damage : [2, 4, "bludgeoning"],
@@ -3116,10 +3114,23 @@ FightingStylesLL = {
 			list: "melee",
 			abilitytodamage : true
 		},
-		weaponsAdd : ["Shield melee attack"],
-		weaponProfs : [false, false, ["shield melee attack"]]
-	},
+		weaponsAdd : ["Shield Melee Attack"],
+		weaponProfs : [false, false, ["shield melee attack"]],
+		calcChanges : {
+			atkCalc : [
+				function (fields, v, output) {
+					for (var i = 1; i <= FieldNumbers.actions; i++) {
+						if ((/off.hand.attack/i).test(What('Bonus Action ' + i))) return;
+					}
 
+					if ((/shield melee attack/i).test(v.baseWeaponName)) {
+						output.extraHit += 1;
+					}
+				},
+				"When wielding a shield and nothing else, my shield attacks get a +1 bonus on the To Hit. This condition will always be false if the bonus action 'Off-hand Attack' exists."
+			]
+		}
+	},
 
 	standardbearer : {
 		name : "Standard Bearer Fighting Style",
