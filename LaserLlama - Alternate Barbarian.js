@@ -686,6 +686,148 @@ AddSubClass("barbarian(laserllama)", "champion", {
     }
 })
 
+// Path of the Totem Warrior
+AddSubClass("barbarian(laserllama)", "totem warrior", { 
+    regExpSearch : /^(?=.*totem)(?=.*warrior).*$/i,
+    subname : "Path of the Totem Warrior",
+    source : ["GMB:LL", 0],
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Totemic", ["mighty leap", "rustic intuition","arresting critical", "greater hurl","savage defiance"]),
+        "subclassfeature3.1" : {
+            name : "Spirit Guide",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc(["I can cast Beast Sense and Speak with Animals as rituals"]),
+            spellcastingBonus : {
+                name : "Spirit Guide",
+                spells : ["beast sense", "speak with animals"],
+                selection : ["beast sense", "speak with animals"],
+                firstCol : "(R)",
+                times : 2
+            },
+            spellChanges : {
+                "beast sense" : {
+                    time : "10 min",
+                    changes : "I can cast this spell only as a ritual, thus its casting time is 10 minutes longer."
+                },
+                "speak with animals" : {
+                    time : "10 min",
+                    changes : "I can cast this spell only as a ritual, thus its casting time is 10 minutes longer."
+                }
+            }
+        },
+
+        "subclassfeature3.2" : {
+            name : "Totemic Spirit",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc(['Choose Bear, Eagle, Elk, Wolf, or Tiger Spirit using the "Choose Feature" button above']),
+            choices : ["Bear", "Eagle", "Elk", "Tiger", "Wolf"],
+            "bear" : {
+                name : "Bear Spirit",
+                description : "\n   " + "While raging, I have resistance to all damage types except psychic and force",
+                dmgres : [["All -Psy/For", "All -Psy/For (rage)"]], // have to keep this as short as possible
+                eval : function() {
+                    processResistance(false, 'Barbarian(LaserLlama): Rage', ClassList["barbarian(laserllama)"].features.rage.dmgres);
+                },
+                removeeval : function() {
+                    processResistance(true, 'Barbarian(LaserLlama): Rage', ClassList["barbarian(laserllama)"].features.rage.dmgres);
+                }
+            },
+            "eagle" : {
+                name : "Eagle Spirit",
+                description : desc(["While Raging, I can use a bonus action to gain the benefits of the Dash and Disengage action, including the bonus action that I use to enter a Rage"]),
+                action : ["bonus action", " (Dash & Disengage)"]
+            },
+            "elk" : {
+                name : "Elk Spirit",
+                description : desc(["While Raging, my walking speed increases by 15 ft"])
+            },
+            "tiger" : {
+                name : "Tiger Spirit",
+                description : desc(["Once per turn while Raging, I can use mighty leap at its lowest level without expending an Exploit Die"])
+            },
+            "wolf" : {
+                name : "Wolf Spirit",
+                description : desc(["While raging, friends have advantage on melee attacks vs. hostiles creatures within 10 ft of me"])
+            }
+        },
+        "subclassfeature6" : {
+            name : "Totemic Aspect",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc('Choose Elephant, Owl or Panther using the "Choose Feature" button above'),
+            choices : ["Elephant", "Owl", "Panther"],
+            "elephant" : {
+                name : "Aspect of the Elephant",
+                description : desc("I add my Con mod to Strength (Athletics) and Wisdom (Insight) checks"),
+                addMod : [
+                    { type : "skill", field : "Athletics", mod : "max(Con|0)", text : "I add my Con mod to Strength (Athletics) and Wisdom (Insight) checks" },
+                    { type : "skill", field : "Insight", mod : "max(Con|0)", text : "I add my Con mod to Strength (Athletics) and Wisdom (Insight) checks" }
+                ],
+            },
+            "owl" : {
+                name : "Aspect of the Owl",
+                description : desc("I add my Con mod to Intelligence (Investigation) and Wisdom (Perception) checks"),
+                addMod : [
+                    { type : "skill", field : "Investigation", mod : "max(Con|0)", text : "I add my Con mod to Intelligence (Investigation) and Wisdom (Perception) checks" },
+                    { type : "skill", field : "Perception", mod : "max(Con|0)", text : "I add my Con mod to Intelligence (Investigation) and Wisdom (Perception) checks" }
+                ],
+            },
+            "panther" : {
+                name : "Aspect of the Panther",
+                description : desc("I add my Con mod to Dexterity (Stealth) and Wisdom (Survival) checks"),
+                addMod : [
+                    { type : "skill", field : "Stealth", mod : "max(Con|0)", text : "I add my Con mod to Dexterity (Stealth) and Wisdom (Survival) checks" },
+                    { type : "skill", field : "Survival", mod : "max(Con|0)", text : "I add my Con mod to Dexterity (Stealth) and Wisdom (Survival) checks" }
+                ],
+            }
+        },
+        "subclassfeature10" : {
+            name : "Spirit Walker",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc(["I can cast Commune with Nature as a ritual",
+                "Once per long rest I can cast it to change one of my totems with another of the same level"]),
+            spellcastingBonus : {
+                name : "Spirit Walker",
+                spells : ["commune with nature"],
+                selection : ["commune with nature"],
+                firstCol : "(R)"
+            },
+            spellChanges : {
+                "commune with nature" : {
+                    time : "11 min",
+                    changes : "I can cast this spell only as a ritual, thus its casting time is 10 minutes longer."
+                }
+            },
+            additional: "change totem",
+            usages : 1,
+            recovery : "long rest"
+        },
+
+        "subclassfeature14" : {
+            name : "Totemic Attunement",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(['Choose Lion, Falcon or Rhino using the "Choose Feature" button']),
+            choices : ["Lion", "Falcon", "Rhino"],
+            "lion" : {
+                name : "Lion Attunement",
+                description : desc(["While raging, any hostile creatures within 5 feet of me has disadv. on attacks vs. others"])
+            },
+            "falcon" : {
+                name : "Falcon Attunement",
+                description : desc(["While raging, I gain a flying speed equal to my walk speed"])
+            },
+            "rhino" : {
+                name : "Rhino Attunement",
+                description : desc(["While Raging, if I hit a creature that is one size larger than me or smaller with a Strength melee weapon attack, it must succeed on a Strength save or be knocked prone"])
+            }
+        }
+    }
+});
+
 // Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
     regExpSearch : /zealot/i,
