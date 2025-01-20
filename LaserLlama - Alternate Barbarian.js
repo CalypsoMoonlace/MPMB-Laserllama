@@ -507,7 +507,7 @@ AddSubClass("barbarian(laserllama)", "brute", {
                             };
                         }
                     },
-                    "My unarmed strikes deal bludgeoning damage equal to one roll of your Exploit Die",
+                    "My unarmed strikes deal bludgeoning damage equal to one roll of my Exploit Die",
                     6 // Evaluated after Monk's martial arts atkAdd
                 ]
             }
@@ -690,6 +690,7 @@ AddSubClass("barbarian(laserllama)", "champion", {
 AddSubClass("barbarian(laserllama)", "totem warrior", { 
     regExpSearch : /^(?=.*totem)(?=.*warrior).*$/i,
     subname : "Path of the Totem Warrior",
+    fullname : "Totem Warrior",
     source : ["GMB:LL", 0],
     features : {
         "subclassfeature3" : GetSubclassExploits("Totemic", ["mighty leap", "rustic intuition","arresting critical", "greater hurl","savage defiance"]),
@@ -827,6 +828,124 @@ AddSubClass("barbarian(laserllama)", "totem warrior", {
         }
     }
 });
+
+// Path of Blood & Iron
+AddSubClass("barbarian(laserllama)", "blood and iron", {
+    regExpSearch : /blood and iron/i,
+    subname : "Path of Blood and Iron",
+    fullname : "Blood and Iron",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Blood & Iron", ["crushing grip","mighty leap","aggressive sprint","bloodthirsty critical","savage defiance"]),
+        "subclassfeature3.1" : {
+            name : "Savage Smith",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                "I gain proficiency with smith's tools and heavy armor; I can rage in heavy armor"
+            ]),
+            armorProfs : [false, false, true, false],
+            toolProfs : ["Smith's tools"],
+            armorOptions : {
+                regExpSearch : /^(?!.*(dragon|draconic|beast))(?=.*spike(d|s))(?=.*armou?r).*$/i,
+                name : "Spiked armor",
+                source : [["S", 121]],
+                type : "medium",
+                ac : 14,
+                stealthdis : true,
+                weight : 45
+            }
+        },
+        "subclassfeature3.2" : {
+            name : "Spiked Armor",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+                var ArmorLimit = (n < 6 ? "a set of non-magical armor" : "any set of armor")
+
+                return desc([
+                    "I can spend 1 h (can be during a rest) to use smith's tools and affix spikes to "+ArmorLimit+", turning it into Spiked Armor. It gains those properties when I wear it:",
+                    "\u2022 It is a martial melee weapon with 5 ft reach and deals 1d"+ExplDie+" + Str mod on hit",
+                    "\u2022 While Raging, I can use a bonus action on my turn to make a single Spiked Armor attack",
+                    "\u2022 If I successfully grapple a creature, it takes 1d"+ExplDie+" piercing damage"
+                ])
+            }),
+            action : ["bonus action", "Armor Spikes attack (in rage)"],
+            weaponOptions : {
+                regExpSearch : /^(?=.*armou?r)(?=.*spike).*$/i,
+                name : "Armor spikes",
+                source : [["S", 121]],
+                ability : 1,
+                type : "armor spikes",
+                damage : [1, 4, "piercing"],
+                range : "Melee",
+                description : "Does an exploit die of piercing damage if I successfully grapple a creature",
+                abilitytodamage : true
+            },
+            weaponProfs : [false, false, ["armor spikes"]],
+            weaponsAdd : ['Armor Spikes'],
+            calcChanges : {
+                atkAdd : [
+                    function (fields, v) {
+                        if ((/armor spikes/i).test(v.WeaponName + v.baseWeaponName) && classes.known["barbarian(laserllama)"] && classes.known["barbarian(laserllama)"].level) {
+                            try {
+                                var curDie = eval_ish(fields.Damage_Die.replace('d', '*'));
+                            } catch (e) {
+                                var curDie = 'x';
+                            };
+
+                            var aExplDie = function (n) {return  (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);}(classes.known["barbarian(laserllama)"].level)
+                        
+                            if (isNaN(curDie) || curDie < aExplDie) {
+                                fields.Damage_Die = '1d' + aExplDie;
+                            };
+                        }
+                    },
+                    "My armor spikes deal piercing damage equal to one roll of my Exploit Die",
+                    6 // Evaluated after Monk's martial arts atkAdd
+                ]
+            }
+        },
+        "subclassfeature6" : {
+            name : "Reckless Abandon",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["While Raging, once per turn, the first time I attack Recklessly I gain temporary hit points equal to my Con mod. These temporary hit points vanish when my Rage ends."])
+        },
+        "subclassfeature10" : {
+            name : "Wild Charge",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc([
+                "While Raging, I can use aggressive sprint without expending an Exploit Die",
+                "However, the attack that I make as part of this Exploit must be a Spiked Armor attack"
+            ]),
+            calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "aggressive sprint") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "While raging, I can use the Aggressive Sprint exploit at will without expending an Exploit Die. However, the attack that I make as part of this Exploit must be a Spiked Armor attack."
+                ]
+            }
+        },
+        "subclassfeature14" : {
+            name : "Spiked Retribution",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["While Raging and wearing Spiked Armor:", 
+            "When I'm hit with a melee attack, the attacker takes piercing damage equal to my Str mod",
+            "If conscious, I can use my reaction to replace the dmg with my spiked armor attack dmg"]),
+            action : ["reaction",""]
+        }
+    }
+})
 
 // Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
