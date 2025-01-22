@@ -947,6 +947,101 @@ AddSubClass("barbarian(laserllama)", "blood and iron", {
     }
 })
 
+// Path of the Conduit
+AddSubClass("barbarian(laserllama)", "conduit", {
+    regExpSearch : /conduit/i,
+    subname : "Path of the Conduit",
+    fullname : "Conduit",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Conduit", ["heroic fortitude","rustic intuition","arresting critical","thunderous blow","mythic resilience"]),
+        "subclassfeature3.1" : {
+            name : "Conduit of Spirits",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                "As a bonus action, I can expend a use of Rage to enter into a state of spiritual ecstasy",
+                "For the next 10 minutes, I add my Con mod (min +1) to all Intelligence and Wisdom checks",
+                "This ends early if I end it as a bonus action, start to rage or fall unconscious"
+            ]),
+            action : ["bonus action", "Spiritual ecstasy (start/end)"],
+        },
+        "subclassfeature3.2" : {
+            name : "Spectral Warriors",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+                var EndsEarlyIf = (n < 6 ? "if the creature is dead or my rage ends" : "if the creature is dead, my rage ends or I use Spiritual Ward")
+
+                return desc([
+                "While Raging, once per turn after hitting with a melee weapon attacks, I can harry a creature",
+                "Until the start of my next turn, it has disadv. on attacks vs other targets than me",
+                "If that creature attacks someone else, the target has resistance",
+                "The effect ends early " + EndsEarlyIf])
+            }),
+        },
+        "subclassfeature6" : {
+            name : "Spiritual Ward",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                if (n < 14) {
+                    return desc([
+                        "As a reaction while Raging, when an ally I see within 30 ft is damaged, I can reduce it",
+                        "My guardian spirits reduce the damage by 3d"+ExplDie + "; If I harried a creature, the effect ends early",
+                    ])
+                } else {
+                    return desc([
+                        "As a reaction while Raging, when an ally I see within 30 ft is damaged, I can reduce it",
+                        "My guardian spirits reduce the damage by 3d"+ExplDie + "; If I harried a creature, the effect ends early",
+                        "The attacker takes an amount of force damage equal to the damage reduction"
+                    ])
+                }
+            }),
+            action : ["reaction", ""]
+        },
+        "subclassfeature10" : {
+            name : "Greater Conduit",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc([
+                "I can cast either Clairvoyance or Commune, without a spell slot or material components",
+                "I can only do that while in a state of ecstasy, and doing so ends it earlier",
+                "Commune consults ancestral spirits; Clairvoyance summons an invisible ancestral spirit",
+                "Wisdom is my spellcasting ability for these spells" // not included in LL's document, but is included as such in the official version
+            ]),
+            spellcastingAbility : 5,
+            spellcastingBonus : [{
+                name : "Greater Conduit",
+                spells : ["commune", "clairvoyance"],
+                selection : ["commune", "clairvoyance"],
+                firstCol : 'R',
+                times : 2
+            }],
+            spellChanges : {
+                "commune" : {
+                    components : "V,S",
+                    compMaterial : "",
+                    description : "Ask up to three yes/no questions to my ancestral spirits", // removing component price from short description
+                    changes : "My casting of Augury is a practice of consulting my ancestral spirits, thus requiring no material components."
+                },
+                "clairvoyance" : {
+                    components : "V,S",
+                    compMaterial : "",
+                    description : "See or hear a familiar place; 1 a to switch between seeing and hearing",
+                    changes : "My casting of Clairvoyance is a practice of consulting an ancestral spirit of mine, thus requiring no material components."
+                }
+            }
+        }
+        // Level 14 feature is added by scaling the lvl 3 feature
+    }
+})
+
 // Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
     regExpSearch : /zealot/i,
