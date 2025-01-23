@@ -771,15 +771,15 @@ SpellsList["trampling rush"] = {
 	source : ["GMB:LL", 0],
 	level : 1,
 	school : "Combat",
-	time : "1 rea",
-	timeFull : "1 reaction, which you take when someone you can see hits you with a melee attack",
+	time : "Hit",
+	timeFull : "No action required, when you hit a creature with a melee weapon attack after moving at least 20 ft towards",
 	components : "W", // W = weapon
 	compMaterial : "Melee weapon attack",
 	range : "Melee",
 	save : "Str",
 	duration : "Instantaneous",
 	description : "On hit after moving 20 ft toward, crea must make a save or take Exploit Die of damage and fall prone",
-	descriptionFull : "When you move at least 20 feet toward a creature and hit it with a melee weapon attack, you can expend an Exploit Die and attempt to trample the creature. It must succeed on a Strength saving throw, or it takes additional damage equal  to one roll of your Exploit Die and is knocked prone."
+	descriptionFull : "When you move at least 20 feet toward a creature and hit it with a melee weapon attack, you can expend an Exploit Die and attempt to trample the creature. It must succeed on a Strength saving throw, or it takes additional damage equal to one roll of your Exploit Die and is knocked prone."
 };
 
 SpellsList["smoke bomb"] = {
