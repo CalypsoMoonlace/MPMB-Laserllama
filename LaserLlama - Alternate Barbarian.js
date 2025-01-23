@@ -829,7 +829,7 @@ AddSubClass("barbarian(laserllama)", "totem warrior", {
     }
 });
 
-// Path of Blood & Iron
+// Path of Blood & Iron (battlerager)
 AddSubClass("barbarian(laserllama)", "blood and iron", {
     regExpSearch : /blood and iron/i,
     subname : "Path of Blood and Iron",
@@ -947,7 +947,7 @@ AddSubClass("barbarian(laserllama)", "blood and iron", {
     }
 })
 
-// Path of the Conduit
+// Path of the Conduit (ancestral guardian)
 AddSubClass("barbarian(laserllama)", "conduit", {
     regExpSearch : /conduit/i,
     subname : "Path of the Conduit",
@@ -1039,6 +1039,156 @@ AddSubClass("barbarian(laserllama)", "conduit", {
             }
         }
         // Level 14 feature is added by scaling the lvl 3 feature
+    }
+})
+
+// Path of the Lycan (beast)
+AddSubClass("barbarian(laserllama)", "lycan", {
+    regExpSearch : /lycan/i,
+    subname : "Path of the Lycan",
+    fullname : "Lycan",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Lycan", ["cunning instinct","mighty leap","aggressive sprint","bloodthirsty critical","roar of triumph"]),
+        "subclassfeature3.1" : {
+            name : "Bestial Rage",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc([
+                    "When I enter my rage, I can transform to gain a bite, tail, or claws attack for that rage",
+                    "On a hit with the bite attack once on each of my turns, I can gain Con mod of temp HP",
+                    "With the claws I can make one extra attack when I attack with it in my Attack action",
+                    "As a reaction with the tail when I'm hit, I can add 1d"+ExplDie+" to my AC for that attack",
+                    "This only works if the hit is from an attack roll made a creature I can see within 10 ft"
+                ])
+            }),
+            weaponOptions : [{
+                regExpSearch : /^(?=.*(bestial|beast))(?=.*bite).*$/i,
+                name : "Bestial Bite",
+                source : [["T", 24]],
+                ability : 1,
+                type : "Natural",
+                damage : [1, 8, "piercing"],
+                range : "Melee",
+                description : "Only in rage; On a hit once on my turn, gain Con mod temp HP",
+                abilitytodamage : true,
+                bestialNaturalWeapon : true
+            }, {
+                regExpSearch : /^(?=.*(bestial|beast))(?=.*claws?).*$/i,
+                name : "Bestial Claws",
+                source : [["T", 24]],
+                ability : 1,
+                type : "Natural",
+                damage : [1, 6, "slashing"],
+                range : "Melee",
+                description : "Only in rage; Extra attack if used as part of Attack action",
+                abilitytodamage : true,
+                bestialNaturalWeapon : true
+            }, {
+                regExpSearch : /^(?=.*(bestial|beast))(?=.*tail).*$/i,
+                name : "Bestial Tail",
+                source : [["T", 25]],
+                ability : 1,
+                type : "Natural",
+                damage : [1, 8, "piercing"],
+                range : "Melee",
+                description : "Reach; Only in rage",
+                abilitytodamage : true,
+                bestialNaturalWeapon : true
+            }],
+            weaponsAdd : ["Bestial Bite", "Bestial Claws", "Bestial Tail"],
+            additional : levels.map(function(n) {
+                return n < 6 ? "" : "chosen weapon counts as magical";
+            }),
+            action : [["reaction", "Bestial Tail"]],
+
+            // Putting Animal Form on the third page because it's a wall of text; the subclass is already overflowing
+            "animal form.wild shape" : {
+                name : "Animal Form",
+                source : [["SRD", 20], ["P", 66], ["GMB:LL", 0]],
+                minlevel : 3,
+                description : desc([
+                    "I must make the permanent choice of a beast of CR 1 or lower to represent the animal that my curse is based on. I can expend a use of my Rage to transform into this Animal Form:",
+                    " \u2022 I gain all its game statistics except Intelligence, Wisdom, or Charisma",
+                    " \u2022 I get its skill/saving throw prof. while keeping my own, using whichever is higher",
+                    " \u2022 I assume the beast's HP and HD; I get mine back when I revert back",
+                    " \u2022 I can't cast spells in beast form, but transforming doesn't break concentration",
+                    " \u2022 I retain features from class, race, etc., but I don't retain special senses",
+                    " \u2022 I can choose whether equipment falls to the ground, merges, or stays worn",
+                    " \u2022 I revert if out of time or unconscious; if KOd by damage, excess damage carries over",
+                    "This transformation lasts for max 1 h, I can extend it as a bonus action by expending a Rage"
+                ]),
+                action : [["action", " (start/end)"], ["bonus action", " (extend)"]],
+                additional : levels.map(function (n) {
+                    if (n < 3) return "";
+                    var cr = 1
+                    var hr = 1;
+                    var restr = "";
+                    return "CR " + cr + restr + "; " + hr + (restr.length ? " h" : " hour");
+                }),
+            },
+            autoSelectExtrachoices : [{ extrachoice : "animal form.wild shape" }]
+        },
+        "subclassfeature6" : {
+            name : "Savage Prowess",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["I gain a climbing speed equal to my walking speed",
+                "I can use cunning instinct and mighty leap at will without expending an Exploit Die (as if I spent 1 Die)",
+                "My natural weapons count as magical for overcoming resistances and immunities"]),
+            speed : {
+                climb : { spd : "walk", enc : 0 }
+            },
+            calcChanges : {
+                atkAdd : [
+                    function (fields, v) {
+                        if (v.theWea.bestialNaturalWeapon && !v.thisWeapon[1] && !v.theWea.isMagicWeapon && !(/counts as( a)? magical/i).test(fields.Description)) {
+                            fields.Description += (fields.Description ? '; ' : '') + 'Counts as magical';
+                        };
+                    },
+                    "The natural melee weapon that I gain from Form of the Beast count as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage."
+                ],
+
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "cunning instinct" || spellKey == "mighty leap") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "I can use cunning instinct and mighty leap at will without expending an Exploit Die (as if I spent 1 Die)"
+                ]
+            }
+        },
+        "subclassfeature10" : {
+            name : "Infectious Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc([
+                "In rage, when I hit a creature with my natural weapon, I can have it make a Wis save.",
+                "If it fails it suffers one effect of my choice:",
+                "\u2022 It uses its reaction to make a melee attack against one creature I can see of my choice -or-",
+                "\u2022 It takes 2d12 psychic damage.",
+                "If I'm out of uses of this feature, I can expend an Exploit Die to use it."
+            ]),
+            usages : "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            recovery : "long rest"
+        },
+        "subclassfeature14" : {
+            name : "Primal Roar",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc([
+                "The limit of once per short rest does not apply to roar of triumph for me",
+                "While a creature has the temp HP from this exploit, it also has adv. on the first attack on each of its turns"
+            ])
+        }
     }
 })
 
