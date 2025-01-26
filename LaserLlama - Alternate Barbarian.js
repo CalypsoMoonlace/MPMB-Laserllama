@@ -1192,6 +1192,145 @@ AddSubClass("barbarian(laserllama)", "lycan", {
     }
 })
 
+// Path of the Storm (storm herald)
+AddSubClass("barbarian(laserllama)", "storm", {
+    regExpSearch : /storm/i,
+    subname : "Path of the Storm",
+    source : [["GMB:LL", 0]],
+    fullname : "Storm",
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Storm", ["hurl","destructive strike","shattering slam","thunderous blow","destructive slam"]),
+        "subclassfeature3.1" : {
+            name : "Storm Aura",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                "While raging, I emanate a 10-ft radius aura, but not through total cover",
+                'Use the "Choose Feature" button above to select the type of aura'
+            ]),
+            choices : ["Blizzard", "Drought", "Hurricane"],
+            "blizzard" : {
+                name : "Storm Aura: Blizzard",
+                description : desc([
+                    "While raging, I emanate a 10-ft radius aura, but not through total cover",
+                    "Any creature of my choice that starts its turn within range has its speed halved until start of its next turn"
+                ])
+            },
+            "drought" : {
+                name : "Storm Aura: Drought",
+                description : desc([
+                    "While raging, I emanate a 10-ft radius aura, but not through total cover",
+                    "At the end of each of my turns, creatures of my choice within range take fire damage equal to my Con mod (min 1)."
+                ])
+            },
+            "hurricane" : {
+                name : "Storm Aura: Hurricane",
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "While raging, I emanate a 10-ft radius aura, but not through total cover",
+                        "At the end of each of my turns I can force one creature within range to make a Dex save against my Exploit DC; It takes 2d"+ExplDie+" lightning damage (half on save)"
+                    ])
+                }),
+                additional : levels.map(function (n) { return n < 3 ? "" : "2d" + (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10) + " lightning damage"; })
+            },
+            choiceDependencies : [{
+                feature : "subclassfeature6"
+            }, {
+                feature : "subclassfeature14"
+            }]
+        },
+        "subclassfeature6" : {
+            name : "Elemental Body",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc('Use the "Choose Feature" button above to select the effect'),
+            choices : ["blizzard", "drought", "hurricane"],
+            choicesNotInMenu : true,
+            "blizzard" : {
+                name : "Elemental Body: Blizzard",
+                description : desc([
+                    "I have resistance to cold damage",
+                    "When I deal damage with a Savage Exploit, I can change the damage type to cold",
+                ]),
+                dmgres : ["Cold"]
+            },
+            "drought" : {
+                name : "Elemental Body: Drought",
+                description : desc([
+                    "I have resistance to fire damage; I learn the produce flame cantrip",
+                    "Constitution is my spellcasting mod for it, and I can cast it even while Raging"
+                ]),
+                dmgres : ["Fire"],
+                spellcastingBonus : {
+                    name : "Elemental Body: Drought",
+                    spells : ["produce flame"],
+                    selection : ["produce flame"],
+                    firstCol : "atwill",
+                    spellcastingAbility : 3
+                }
+            },
+            "hurricane" : {
+                name : "Elemental Body: Hurricane",
+                description : desc([
+                    "I can breathe underwater and I have a swim speed equal to my walking speed",
+                    "In addition, I have resistance to lightning and thunder damage"
+                ]),
+                dmgres : ["Lightning","Thunder"],
+                speed : { swim : { spd : "walk", enc : 0 } }
+            }
+        },
+        "subclassfeature10" : {
+            name : "Storm Ward",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc("While Raging, creatures of my choice within my Storm Aura gain the benefits of my Elemental Body feature")
+            // not limited to resistance but I don't see the use in copying the content of elemental body here again
+        },
+        "subclassfeature14" : {
+            name : "Primal Destruction",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc('Use the "Choose Feature" button above to select the effect'),
+            choices : ["blizzard", "drought", "hurricane"],
+            choicesNotInMenu : true,
+            "blizzard" : {
+                name : "Raging Storm: Blizzard",
+                description : desc([
+                    "When a creature begins begins its turn within my Storm Aura, I can use my reaction to force it to make a Strength save against my Exploit DC",
+                    "On a failed save, the creature's speed is reduced to 0 until the beginning of its next turn"
+                ]),
+                action : ["reaction", ""]
+            },
+            "drought" : {
+                name : "Raging Storm: Drought",
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "As a reaction when hit by a creature in my Storm Aura, I can have it make a Dex save",
+                        "The DC for this save is my Exploit DC; On a failed save, the attacker takes 2d"+ExplDie+" fire damage",
+                    ])
+                }),
+                action : ["reaction", " (if hit)"],
+                additional : levels.map(function (n) { return n < 14 ? "" : "2d" + (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10) + " fire damage"; })
+            },
+            "hurricane" : {
+                name : "Raging Storm: Hurricane",
+                description : desc([
+                    "As a reaction when hit by a creature in my Storm Aura, I can have it make a Str save",
+                    "The DC for this save is my Exploit DC",
+                    "On a failed save, it is knocked back from me 10 feet in a straight line and falls prone"
+                ]),
+                action : ["reaction", " (if hit)"],
+            }
+        }
+    }
+});
+
 // Path of the Zealot
 AddSubClass("barbarian(laserllama)", "zealot", {
     regExpSearch : /zealot/i,
