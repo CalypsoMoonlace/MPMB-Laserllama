@@ -17,6 +17,7 @@
     Sheet:      v13.0.06 and newer
  
     Code by:    Original script by CalypsoMoonlace
+                With contributions from Mastersskull
 */
 
 // Meta information
@@ -1327,6 +1328,101 @@ AddSubClass("barbarian(laserllama)", "storm", {
                 ]),
                 action : ["reaction", " (if hit)"],
             }
+        }
+    }
+});
+
+// Path of Wild Sorcery (wild magic)
+AddSubClass("barbarian(laserllama)", "wild sorcery", {
+    regExpSearch : /^(?=.*wild)(?=.*sorcery).*$/i,
+    subname : "Path of Wild Sorcery",
+    source : [["GMB:LL", 0]],
+    fullname : "Wild Sorcery",
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Sorcerous", ["heroic fortitude","mighty leap","immovable stance","thunderous blow","savage defiance"]),
+        "subclassfeature3.1" : {
+            name : "Magic Awareness",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc(["As an action, until my next turn I can detect magic items or spells within 60 feet that aren't behind total cover. When I sense a spell, I learn its school of magic.",
+                "I can use this feature once per short rest; I can use it again by expending an Exploit Die"]),
+            action : [["action", ""]],
+            usages : 1,
+            recovery : "short rest",
+            altResource : "ED"
+        },
+
+        "subclassfeature3.2" : {
+            name : "Wild Sorcery",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description :  desc(["When I rage, I roll on this class' Wild Magic Table (d20, see notes)",
+            "If the rolled effect requires a saving throw, it uses my Exploit Die DC."]),
+            toNotesPage : [{
+                name : "Wild Magic Table",
+                source : [["GMB:LL", ]],
+                note : ["If an effect calls for a saving throw, the DC is my Exploit DC.",
+            "d20\tEFFECT",
+            "1\tCreatures of your choice that you can see within 30 feet of you must succeed on a Constitution saving throw or take necrotic damage equal to two rolls of your Exploit Die. You then gain temporary hit points equal to two rolls of your Exploit Die + your level",
+            "2\tYou teleport up to 30 feet to an unoccupied space you can see. Until the end of your current Rage, you can use this effect again on each of your turns as a bonus action.",
+            "3\tAn orb of wild magic explodes at a point that you can see within 30 feet. Creatures within 5 feet must succeed on a Dexterity saving throw or take force damage equal to your Exploit Die. Until the end of your current Rage, you can use a bonus action to cause this effect to happen again.",
+            "4\tMagic infuses one weapon of your choice that you are holding. Until your current Rage, the weapon's damage type changes to force, and it gains the light and thrown properties, with a normal range of 20 feet and a long range of 60 feet. If the magic weapon leaves your hand, it appears in your hand at the end of your turn.",
+            "5\tWhenever a creature hits you with an attack roll before the end of your current Rage, it takes force damage equal to your Exploit Die, as magic lashes out in retribution.",
+            "6\tUntil the end of your current Rage, you are surrounded by multicolored, protective lights; you, and allied creatures within 10 feet of you, all gain a +1 bonus to your Armor Class.",
+            "7\tFlowers and vines temporarily grow around you; until the end of your current Rage, the ground within 15 feet of you is considered difficult terrain for creatures of your choice.",
+            "8\tRoll another d20. On an even roll, your size grows by one category as if by the enlarge part of the enlarge/reduce spell. On an odd roll, your size is reduced by one category as if by the reduce part of the enlarge/reduce spell.",
+            "9\tYou can't speak for duration of your current Rage. Whenever you try, a small bird flies out of your mouth and flies toward the sun.",
+            "10\tYou are transported to the Astral Plane until the end of your next turn, after which time you return to the space you previously occupied or the nearest unoccupied space.",
+            "11\tFor the duration of your current Rage, you gain resistance to the last instance of damage you took, until you take another instance of damage. For example, if you take fire damage from a red dragon's fire breath, you are resistant to fire damage until you take another type of damage.",
+            "12\tFor the duration of your current Rage, every hair on your body grows by one foot at the end of each of your turns. When your current Rage ends, all of your hair falls out.",
+            "13\tA bolt of radiant light shoots from your chest. A creature of your choice that you can see within 30 feet must succeed on a Constitution saving throw or take radiant damage equal to your Exploit Die and be blinded until the start of your next turn. Until the end of your current Rage, you can use this effect again on each of your turns as a bonus action.",
+            "14\tFor the duration of your current Rage, you can walk through solid objects and creatures as if they were difficult terrain. If you end your movement inside a creature or object, you are instantly shunted to the nearest unoccupied space, taking 1d10 force damage for each 5 feet that you were forced to travel.",
+            "15\tRoll a d10. Your age changes by a number of years equal to the roll. If the roll is odd, you get younger (minimum 1 year old). If the roll is even, you get older.",
+            "16\tFor the duration of your current Rage, any flammable object you touch that isn't being worn or carried, instantly bursts into flame.",
+            "17\tYour limbs grow strangely long. For the duration of your current Rage, the reach of your melee attacks increases by 5 feet.",
+            "18\tYour muscles are engorged with wild magic. For the duration of your current Rage, all creatures have disadvantage on any saving throws to resist the effects of your Exploits.",
+            "19\tFor the duration of your current Rage, the distance of your long and high jumps is tripled, even if this extra distance would exceed your remaining movement.",
+            "20\tYou instantly regain all expended uses of your Rage."],
+            }]
+        },
+        "subclassfeature6" : {
+            name : "Sorcerous Infusion",
+            source : [["T", 26]],
+            minlevel : 6,
+            description : levels.map(function (n) { 
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc(["As an action, I can touch a creature or myself and confer one of the following benefits:",
+                "\u2022 For 10 min, they can add 1d"+ExplDie+" to ability checks and saving throws of a stat I choose",
+                "\u2022 They gain "+n+"+1d"+ExplDie+" temp HP. While those temp HP last, they are immune to my Wild Magic",
+                "\u2022 The target regains a spell slot whose level equals my Exploit Die expended for this",
+                "I can use this feature a number of times equal to my Con mod"])
+            }),
+            usages: "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            recovery: "long rest",
+            action : [["action", ""]]
+        },
+        "subclassfeature10" : {
+            name : "Unstable Sorcery",
+            source : [["T", 26]],
+            minlevel : 10,
+            description : desc([
+                "As a reaction in rage when taking damage or failing a save, I can lash out with magic",
+                "I roll on the Wild Magic table and immediately apply the roll, replacing my current effect" // unsure if it does replace the old effect 
+            ]),
+            action : [["reaction", " (in rage on damage/save fail)"]]
+        },
+
+        "subclassfeature14" : {
+            name : "Controlled Surge",
+            source : [["T", 26]],
+            minlevel : 14,
+            description : desc([
+                "Whenever I roll on the Wild Magic table, I can roll two dice and choose which to use"
+            ])
         }
     }
 });
