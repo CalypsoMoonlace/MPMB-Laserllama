@@ -37,10 +37,11 @@ Below is the list of what I did so far, and what I have planned.
 - [ ] Alternate version of spells
 
 ### In Progress
-- [ ] Alternate Barbarian
+- [ ] Alternate Barbarian Expanded
 - [ ] Alternate Rogue
 
 ### Done ✓
+- [x] Alternate Barbarian
 - [x] Alternate Monk Expanded
 - [x] Alternate Monk
 - [x] Alternate Fighter Expanded
