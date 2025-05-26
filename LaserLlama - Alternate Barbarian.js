@@ -1524,6 +1524,92 @@ AddSubClass("barbarian(laserllama)", "zealot", {
     }
 })
 
+// Path of the Deep
+AddSubClass("barbarian(laserllama)", "deep", {
+    regExpSearch : /deep/i,
+    subname : "Path of the Deep",
+    fullname : "Deep",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Deep", ["crushing grip", "cunning instinct","immovable stance", "rending strike","primal terror"]),
+        "subclassfeature3.1" : {
+            name : "Gift of the Depths",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc("I gain a swim speed equal to my walk speed and can breathe both air and water"),
+            speed : {
+                swim : { spd : "walk", enc : 0 }
+            }
+        },
+        "subclassfeature3.2" : {
+            name : "Otherworldly Grasp", 
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                if (n < 10) {
+                    return desc([
+                        "While raging, I manifest an extra eldritch appendage (can be attacked as part of me)",
+                        "As a bonus action, I can force one crea within 15 ft to make a Str save (adv. if larger than me) or be pulled 15 ft towards me",
+                    ])
+                }
+                var OtherwordlyRange = (n < 14 ? 15 : 20);
+
+                return desc([
+                    "While raging, I manifest two extra eldritch appendages (can be attacked as part of me)",
+                    "As a bonus action, I can control both appendages at once, each of which can do either:",
+                    "\u2022 Force one crea within "+OtherwordlyRange+" ft to make a Str save (adv. if larger than me) or be pulled 15 ft towards me",
+                    "\u2022 Grapple one crea within "+OtherwordlyRange+" ft",
+                    "If they target the same creature, the target makes only one save/check with disadvantage" // clarified by LL here: https://discord.com/channels/946069855763845190/984467565738872893/1330746639262158868
+                ])
+            }),
+            action : ["bonus action", ""]
+        },
+
+        "subclassfeature6" : {
+            name : "Reality Warp",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+                if (n < 14) {
+                    return desc([
+                        "As an action, I can teleport (with any equipment I are wearing/carrying), to an unoccupied space within 30 ft",
+                        "Immediately before, or after, I can make one attack as part of the same action",
+                        "If I have no uses left, I can expend an Exploit Die to use it again",
+                    ])
+                }
+
+                return desc([
+                    "As an action, I can teleport (with any equipment I are wearing/carrying), to an unoccupied space within 30 ft",
+                    "Immediately before, or after, I can make one attack as part of the same action",
+                    "I can use this as part of the bonus action to enter my rage",
+                    "If I have no uses left, I can expend an Exploit Die to use it again",
+                ])
+            }),
+            usages : "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            altResource : "ED",
+            recovery : "long rest",
+            action : ["action", ""]
+        },
+        "subclassfeature14" : {
+            name : "The Horrors Below",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc([
+                    "When I use Reality Warp, I can force crea within 10 ft of the destination to make a Wis save or take 2d" + ExplDie + 
+                    " psychic damage (half on save) and be frightened of me until the start of my next turn",
+                    "Creatures immune to fear automatically succeed and take no damage"
+                ])
+            }),
+        }
+    }
+})
+
 // Path of the Packleader
 AddSubClass("barbarian(laserllama)", "packleader", {
     regExpSearch : /packleader/i,
