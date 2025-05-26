@@ -145,7 +145,7 @@ ClassList["fighter(laserllama)"] = {
 	primaryAbility : "Strength or Dexterity",
 	prereqs : "Strength 13 or Dexterity 13",
 	die : 10,
-	improvements : [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5],
+	improvements : [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 6],
 	saves : ["Str", "Con"],
 	skillstxt : {
 		primary : "Choose two from Acrobatics, Athletics, History, Intimidation, Perception, Stealth and Survival."

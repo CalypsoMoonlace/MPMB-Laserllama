@@ -455,7 +455,7 @@ SpellsList["mighty thrust"] = {
 	timeFull : "In place of an attack",
 	range : "Touch",
 	duration : "Instantaneous",
-	save : "Dex",
+	save : "Str",
 	description : "One crea makes Str save (larger crea have adv.) or knocked back in line by 5 ft times my Str mod",
 	descriptionFull : "In place of an attack, you can expend an Exploit Die to force one target you touch to make a Strength saving throw. On a failed save, it is knocked back in a line number of feet equal to 5 times your Strength modifier. A target that is more than one size larger than you has advantage on its saving throw."
 };
@@ -1463,7 +1463,7 @@ SpellsList["hold the line"] = {
 	time : "1 bns",
 	range : "S:10ft rad",
 	duration : "Until move",
-	description : "All allied crea with a weapon/shield within range gain half cover (see book)",
+	description : "Me and all allied creatures with a weapon/shield within range gain half cover (see book)",
 	descriptionFull : "As a bonus action, you can expend an Exploit Die to form your allies into a defensive position. You and allied creatures within 10 feet that are wielding a weapon or shield gain the benefits of half cover, which also apply to ability checks and saving throws made to avoid being moved against your will.\n\nThe benefits of this Exploit instantly end if you leave your space, and they have no effect on incapacitated creatures."
 };
 
