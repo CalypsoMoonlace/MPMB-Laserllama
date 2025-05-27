@@ -1610,6 +1610,110 @@ AddSubClass("barbarian(laserllama)", "deep", {
     }
 })
 
+// Path of the Favored
+AddSubClass("barbarian(laserllama)", "favored", {
+    regExpSearch : /favored/i,
+    subname : "Path of the Favored",
+    fullname : "Favored",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Favored", ["feat of strength", "heroic fortitude","ringing critical", "thunderous blow", "mythic athleticism"]),
+        "subclassfeature3.1" : {
+            name : "Favored Presence",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                    "When I meet a creature for the first time, its starting attitude is one level higher than normal (hostile -> indifferent -> friendly). This feature has no effect on those I travel with."
+                ])
+        },
+        "subclassfeature3.2" : {
+            name : "Touched by Fate", 
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 I can reroll a roll of 1 on any Exploit Die (but must keep the new result)",
+                    "\u2022 When hit by an attack, I can expend an Exploit Die to add it to my AC against that attack",
+                    "\u2022 When I miss a Str-based attack, I can expend an Exploit Die to add it to the roll"
+                ])
+        },
+        "subclassfeature6" : {
+            name : "Glorious Cause",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc([
+                    "When I Rage, me and a number of creatures of my choice within 30 ft, up to my Con mod (minimum of 1 creature) gain 1d"+ExplDie+"+1 temporary HP"
+                ])
+            }),
+        },
+        "subclassfeature6.1" : {
+            name : "Tireless Hero",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+                var TirelessDie = (n < 14 ? 4 : 6);
+
+                return desc([
+                    "When I use Feat of Strength, I can use a d"+4+" instead of expending an Exploit Die"
+                ])
+            }),
+            calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "feat of strength") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "I can use the Feat of Strength exploit using a d4 (or d6 if level >14) instead of expending an Exploit Die"
+                ]
+            },
+        },
+        "subclassfeature10" : {
+            name : "Wondrous Success",
+            source : ["GMB:LL"],
+            minlevel : 10,
+            description : desc(["Once per short rest, I can use my barbarian level instead of rolling the d20",
+                "I can use this after rolling, but before knowing if the check, attack, or save succeeds or fails"]),
+            recovery : "short rest",
+            usages : 1
+        },
+        "subclassfeature14" : {
+            name : "Strength Overwhelming",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["I learn Strength of the Colossus, but it doesn't count against my total",
+                "When I use Strength of the Colossus, I calculate the base amount of weight I can push, drag, pull, or lift as if I had spent one additional Exploit Die (maximum of 6)"]),
+            spellcastingBonusElsewhere : {
+                addTo : "savage exploits",
+                spellcastingBonus : {
+                    name : "Strength Overwhelming",
+                    spellcastingAbility : 1,
+                    spells : ["strength of the colossus"],
+                    selection : ["strength of the colossus"],
+                    prepared : true
+                }
+            },
+            toNotesPage : [{ // What is added to the notes page
+                name : "Strength of the Colossus [4th degree]",
+                note : desc(SpellsList["strength of the colossus"].descriptionFull),
+                amendTo : "Favored"
+            }],
+            spellChanges : {
+                "strength of the colossus" : {
+                    description : "My push/drag/lift capacity increases greatly; when it ends, DC17 Con save or exhaustion (see book)",
+                    changes : "When I use Strength of the Colossus, I calculate the base amount of weight I can push, drag, pull, or lift as if I had spent one additional Exploit Die (maximum of 6)"
+                }
+            }
+        }
+    }
+})
+
 // Path of the Packleader
 AddSubClass("barbarian(laserllama)", "packleader", {
     regExpSearch : /packleader/i,
