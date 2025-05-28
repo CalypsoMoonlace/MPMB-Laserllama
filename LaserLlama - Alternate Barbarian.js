@@ -1714,6 +1714,76 @@ AddSubClass("barbarian(laserllama)", "favored", {
     }
 })
 
+// Path of the Inferno
+AddSubClass("barbarian(laserllama)", "inferno", {
+    regExpSearch : /inferno/i,
+    subname : "Path of the Inferno",
+    fullname : "Inferno",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Infernal", ["commanding presence", "trampling rush","bloodthirsty critical", "menacing shout", "primal terror"]),
+        "subclassfeature3.1" : {
+            name : "Abyssal Hide",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                    "When I am Raging I gain the following benefits:",
+                    "\u2022 As a bonus action, I can move up to my full speed toward a hostile creature that I can see",
+                    "\u2022 When a creature hits me with an opportunity attack, I can reduce the damage by my Con mod"
+                ]),
+            action : ["bonus action", " (move in rage)"]
+        },
+        "subclassfeature3.2" : {
+            name : "Hellish Presence", 
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc("I learn Abyssal and when I use Commanding Presence, I can use a d6 instead of expending an Exploit Die"),
+            languageProfs : ["Draconic"],
+            calcChanges : {
+                spellAdd : [
+                    function (spellKey, spellObj, spName) {
+                        if (spellKey == "commanding presence") {
+                            spellObj.firstCol = "atwill";
+                            return true;
+                        };
+                    },
+                    "I can use the Commanding Presence exploit using a d6 instead of expending an Exploit Die"
+                ]
+            },
+        },
+        "subclassfeature6" : {
+            name : "Unbridled Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc("The first time I make a Reckless attack on my turn while Raging, I gain temp HP equal to my Con mod. These temp HP vanish when my Rage ends."),
+        },
+        "subclassfeature10" : {
+            name : "Corrupt Resilience",
+            source : ["GMB:LL"],
+            minlevel : 10,
+            description : desc(["I gain resistance to both fire and poison damage",
+                "When I make a save vs charm or fear, I can add a roll of my Exploit Die"]),
+            savetxt : { text : ["Add Expl Die to saves vs charm and fear"] },
+            dmgres : ["Fire", "Poison"],
+        },
+        "subclassfeature14" : {
+            name : "Chaos Overwhelming",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc([
+                    "When I Rage, I gain one of the abilities below for the duration of that Rage:",
+                    "\u2022 My walk speed increases by 10 feet, I can take the Dash action as a bonus action, and the reach of my melee attacks and grapples increases by 5 ft",
+                    "\u2022 I gain immunity to all bludgeoning, piercing, and slashing damage from weapons that are non-magical and not silvered",
+                    "\u2022 I grow by one size category as if by an enlarge/reduce spell. While enlarged in this way, I add my Con mod to Str checks",
+                    "\u2022 I gain a flying speed equal to my walking speed",
+                    "As a bonus action while Raging, I can expend an Exploit Die to switch feature"
+                ])
+        }
+    }
+})
+
 // Path of the Packleader
 AddSubClass("barbarian(laserllama)", "packleader", {
     regExpSearch : /packleader/i,
