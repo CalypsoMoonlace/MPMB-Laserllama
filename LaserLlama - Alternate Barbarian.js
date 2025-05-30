@@ -1784,6 +1784,587 @@ AddSubClass("barbarian(laserllama)", "inferno", {
     }
 })
 
+// Path of the Mutant
+AddSubClass("barbarian(laserllama)", "mutant", {
+    regExpSearch : /mutant/i,
+    subname : "Path of the Mutant",
+    fullname : "Mutant",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    spellcastingAbility : 3, // for the Acidic Bile mutation
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Mutagenic", ["crushing grip", "feat of strength","rending strike", "whirlwind strike", "confounding critical"]),
+        "subclassfeature3.1" : {
+            name : "Aberrant Alchemy",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                    "I gain proficiency in Nature and with alchemist's supplies; I learn mutations",
+                    "With a long rest, I can use my alchemist's supplies to replace a mutation I know",
+                    "During my rage, I manifest a number of Mutations equal to my Con mod"
+                ]),
+            toolProfs : ["Alchemist's supplies"],
+            skills : ["Nature"],
+            extraname : "Mutations Known",
+            extraTimes : ['', '', 3, 3, 3, 5, 5, 5, 5, 7, 7, 7, 7, 9, 9, 9, 9, 9, 9, 9],
+            extrachoices : ["Aberrant Sight", 
+                "Alchemical Resistance (Acid)", "Alchemical Resistance (Cold)", "Alchemical Resistance (Fire)", "Alchemical Resistance (Poison)", "Alchemical Resistance (Lightning)",
+                "Aquatic Adaptation", "Deviant Glide", "Enhanced Movement", "Oozing Form", "Synthetic Carapace", "Unnatural Physicality",
+                "Corrosive Secretions", "Inoculated Vigor", "Toxic Vitality", "Viscous Grip",
+                "Acidic Bile", "Grappling Appendages", "Perverted Flight"
+            ],
+            "aberrant sight" : {
+                name : "Aberrant Sight",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain 60 ft darkvision. If I already have darkvision, its range increases by 60 ft.",
+                    "I have advantage on Wisdom (Perception) checks that rely on sight"
+                ])
+            },
+            // acid, cold, fire, poison, or lightning
+            "alchemical resistance (acid)" : {
+                name : "Alchemical Resistance (Acid)",
+                source : ["GMB:LL"],
+                description : desc(["I gain resistance to Acid damage"]),
+                submenu : "Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (cold)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (fire)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (poison)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (lightning)") !== -1) return false;
+
+                    return true;
+                },
+            },
+            "alchemical resistance (cold)" : {
+                name : "Alchemical Resistance (Cold)",
+                source : ["GMB:LL"],
+                description : desc(["I gain resistance to Cold damage"]),
+                submenu : "Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (acid)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (fire)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (poison)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (lightning)") !== -1) return false;
+
+                    return true;
+                },
+            },
+            "alchemical resistance (fire)" : {
+                name : "Alchemical Resistance (Fire)",
+                source : ["GMB:LL"],
+                description : desc(["I gain resistance to Fire damage"]),
+                submenu : "Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (acid)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (cold)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (fire)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (poison)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (lightning)") !== -1) return false;
+
+                    return true;
+                },
+            },
+            "alchemical resistance (poison)" : {
+                name : "Alchemical Resistance (Poison)",
+                source : ["GMB:LL"],
+                description : desc(["I gain resistance to Poison damage"]),
+                submenu : "Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (acid)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (cold)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (fire)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (lightning)") !== -1) return false;
+
+                    return true;
+                },
+            },
+            "alchemical resistance (lightning)" : {
+                name : "Alchemical Resistance (Lightning)",
+                source : ["GMB:LL"],
+                description : desc(["I gain resistance to Lightning damage"]),
+                submenu : "Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (acid)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (cold)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (fire)") !== -1) return false;
+                    if (techniques.indexOf("alchemical resistance (poison)") !== -1) return false;
+
+                    return true;
+                },
+            },
+            "aquatic adaptation" : {
+                name : "Aquatic Adaptation",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain a swim speed equal to my walk speed, and can breathe both air and water"
+                ])
+            },
+            "deviant glide" : {
+                name : "Deviant Glide",
+                source : ["GMB:LL"],
+                description : desc([
+                    "When I fall and am not incapacitated, I can subtract up to 100 ft from the fall when calculating fall damage, and I can move horizontally 2 ft for every 1 ft I fall"
+                ])
+            },
+            "enhanced movement" : {
+                name : "Enhanced Movement",
+                source : ["GMB:LL"],
+                description : desc([
+                    "My walk speed increases by 5 ft times my Con mod (min 5)",
+                    "I add my Con mod (min 1) to the distance of any long jump or high jump I make"
+                ])
+            },
+            "oozing form" : {
+                name : "Oozing Form",
+                source : ["GMB:LL"],
+                description : desc([
+                    "As a bonus action, I can automatically escape a grapple or nonmagical restraints",
+                    "My body, along with any equipment I am wearing/carrying, can squeeze through spaces as narrow as 1 inch"
+                ]),
+                action : [["bonus action", " (escape restraints)"]],
+            },
+            "synthetic carapace" : {
+                name : "Synthetic Carapace",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain a bonus to my AC equal to half my Con mod (rounded down)"
+                ]),
+                extraAC : [{
+                    name : "Synthetic Carapace (if manifested)",
+                    mod : "max(Con|0)/2",
+                    text : "I gain a bonus to my AC equal to half my Con mod (rounded down)"
+                }] 
+            },
+            "unnatural physicality" : {
+                name : "Unnatural Physicality",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain a bonus to any Strength (Athletics) and Dexterity (Acrobatics) checks equal to one roll of my Exploit Die"
+                ])
+            },
+            "corrosive secretions" : {
+                name : "Corrosive Secretions",
+                source : ["GMB:LL"],
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "When hit by an attack and the attacker is within 30 ft, I can use my reaction to deal acid damage to the attacker equal to 1d"+ExplDie+" + my Con mod"
+                    ])
+                }),
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 6; },
+                action : [["reaction", " (when hit)"]],
+            },
+            "inoculated vigor" : {
+                name : "Inoculated Vigor",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain resistance to acid and poison damage, and I have advantage on saves vs poisoned"
+                ]),
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 6; },
+            },
+            "toxic vitality" : {
+                name : "Toxic Vitality",
+                source : ["GMB:LL"],
+                description : desc([
+                    "At the start of my turn while Raging, I gain temp HP equal to my Con mod (min 1 THP)"
+                ]),
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 6; },
+            },
+            "viscous grip" : {
+                name : "Viscous Grip",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain a climb speed equal to my walk speed, and can climb difficult surfaces without making a check"
+                ]),
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 6; },
+            },
+            "acidic bile" : {
+                name : "Acidic Bile",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I learn the acid splash cantrip, using Constitution as my spellcasting modifier. I can cast this cantrip while Raging, and when so, it deals additional damage equal to my Con mod (min of +1)."
+                ]),
+                spellcastingBonus : {
+                    name : "Acidic Bile",
+                    spells : ["acid splash"],
+                    selection : ["acid splash"],
+                    firstCol : "R",
+                    times : 1
+                },
+                spellChanges : {
+                    "acid splash" : {     
+                        description : "1 crea or 2 crea within 5 ft of each other save or 1d6 Acid dmg; +1d6 at CL 5, 11, and 17",
+                        descriptionCantripDie : "1 crea or 2 crea within 5 ft of each other save or `CD`d6 Acid dmg; Can cast in rage, add Con mod to dmg",
+                        changes : "If the Acidic Bile mutation is manifested: I can cast this cantrip while Raging, and when so, it deals additional damage equal to my Con mod (min of +1)."
+                    }
+                },
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 10; },
+            },
+            "grappling appendages" : {
+                name : "Grappling Appendages",
+                source : ["GMB:LL"],
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "I grow two appendages alongside my arms that resemble tentacles",
+                        "They are natural weapons, which deal 1d"+ExplDie+" bludgeoning damage on hit.",
+                        "If I hit a creature with a melee attack, I can attempt to grapple it with these appendages as a bonus action.",
+                        "These appendages are not dexterous enough to use weapons or specialized tools."
+                    ])
+                }),
+                weaponOptions : [{
+                    regExpSearch : /^(?=.*(grappling))(?=.*appendages?).*$/i,
+                    name : "Grappling Appendages",
+                    source : ["GMB:LL"],
+                    ability : 1,
+                    type : "Natural",
+                    damage : [1, 8, "slashing"],
+                    range : "Melee",
+                    description : "Only when manifested",
+                    abilitytodamage : true,
+                    grapplingAppendage : true
+                }],
+                weaponsAdd : ["Grappling Appendages"],
+                calcChanges : {
+                    atkAdd : [
+                        function (fields, v) {
+                            if (v.theWea.grapplingAppendage) {
+                                var aExplDie = function (n) { return n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10; }(classes.known["barbarian(laserllama)"].level);
+                                fields.Damage_Die = '1d' + aExplDie;
+                            };
+                        },
+                        "My Grappling Appendages are natural weapons which deal bludgeoning damage equal to my Exploit Die on hit"
+                    ]
+                },
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 10; },
+            },
+            "perverted flight" : {
+                name : "Perverted Flight",
+                source : ["GMB:LL"],
+                description : desc([
+                    "I gain a fly speed equal to my walk speed"
+                ]),
+                prereqeval : function(v) { return classes.known["barbarian(laserllama)"].level >= 14; },
+            },
+        },
+        "subclassfeature6" : {
+            name : "Enduring Mutation",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc(["At the end of a long rest, I can choose one of my mutations to benefit from outside of my Rage, though it still counts against my total of manifested mutations",
+                'Choose which one should be applied using the "Choose Feature" button above']),
+            choices : ["Enduring Mutation: Aberrant Sight", 
+                "Enduring Mutation: Alchemical Resistance (Acid)", "Enduring Mutation: Alchemical Resistance (Cold)", "Enduring Mutation: Alchemical Resistance (Fire)", "Enduring Mutation: Alchemical Resistance (Poison)", "Enduring Mutation: Alchemical Resistance (Lightning)",
+                "Enduring Mutation: Aquatic Adaptation", "Enduring Mutation: Deviant Glide", "Enduring Mutation: Enhanced Movement", "Enduring Mutation: Oozing Form", "Enduring Mutation: Synthetic Carapace", "Enduring Mutation: Unnatural Physicality",
+                "Enduring Mutation: Corrosive Secretions", "Enduring Mutation: Inoculated Vigor", "Enduring Mutation: Toxic Vitality", "Enduring Mutation: Viscous Grip",
+                "Enduring Mutation: Acidic Bile", "Enduring Mutation: Grappling Appendages", "Enduring Mutation: Perverted Flight"
+            ],
+            "enduring mutation: aberrant sight" : {
+                name : "Enduring Mutation: Aberrant Sight",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Abberant Sight even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    // Must first select it as a known mutation before selecting it as an endured mutation
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("aberrant sight") == -1) return false;
+
+                    return true;
+                },
+                advantages : [["Perception", true]],
+                vision : [["Darkvision", "fixed 60"], ["Darkvision", "+60"], ["Adv. on Perception checks relying on sight", 0]]
+            },
+            // acid, cold, fire, poison, or lightning
+            "enduring mutation: alchemical resistance (acid)" : {
+                name : "Enduring Mutation: Alchemical Resistance (Acid)",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Alchemical Resistance even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                submenu : "Enduring Mutation: Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (acid)") == -1) return false;
+
+                    return true;
+                },
+                dmgres : ["Acid"],
+            },
+            "enduring mutation: alchemical resistance (cold)" : {
+                name : "Enduring Mutation: Alchemical Resistance (Cold)",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Alchemical Resistance even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                submenu : "Enduring Mutation: Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (cold)") == -1) return false;
+
+                    return true;
+                },
+                dmgres : ["Cold"],
+            },
+            "enduring mutation: alchemical resistance (fire)" : {
+                name : "Enduring Mutation: Alchemical Resistance (Fire)",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Alchemical Resistance even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                submenu : "Enduring Mutation: Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (fire)") == -1) return false;
+
+                    return true;
+                },
+                dmgres : ["Fire"],
+            },
+            "enduring mutation: alchemical resistance (poison)" : {
+                name : "Enduring Mutation: Alchemical Resistance (Poison)",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Alchemical Resistance even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                submenu : "Enduring Mutation: Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (poison)") == -1) return false;
+
+                    return true;
+                },
+                dmgres : ["Poison"],
+            },
+            "enduring mutation: alchemical resistance (lightning)" : {
+                name : "Enduring Mutation: Alchemical Resistance (Lightning)",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Alchemical Resistance even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                submenu : "Enduring Mutation: Alchemical Resistance",
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("alchemical resistance (lightning)") == -1) return false;
+
+                    return true;
+                },
+                dmgres : ["Lightning"],
+            },
+            "enduring mutation: aquatic adaptation" : {
+                name : "Enduring Mutation: Aquatic Adaptation",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Aquatic Adaptation even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("aquatic adaptation") == -1) return false;
+
+                    return true;
+                },
+                speed : {
+                    swim : { spd : "walk", enc : 0 }
+                },
+            },
+            "enduring mutation: deviant glide" : {
+                name : "Enduring Mutation: Deviant Glide",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Deviant Glide even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("deviant glide") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: enhanced movement" : {
+                name : "Enduring Mutation: Enhanced Movement",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Enhanced Movement even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("enhanced movement") == -1) return false;
+
+                    return true;
+                },
+                changeeval : function (v) {
+                    // This will change it at every level up, but not necessarily when the con mod changes, see for reference: https://discord.com/channels/533350585706217494/1377748293945266430/1378050440284999730
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature6', false);
+
+                    var monkSpd;
+                    if (techniques == "enduring mutation: enhanced movement") {
+                        // Add speed bonus
+                        monkSpd = '+' + (What('Con Mod') * 5);
+                        SetProf('speed', monkSpd !== '+0', {walk : monkSpd}, "Enduring Mutation: Enhanced Movement");
+                    } else {
+                        // Remove speed bonus; choice was changed
+                        monkSpd = 0;
+                        SetProf('speed', monkSpd !== '+0', {walk : monkSpd}, "Enduring Mutation: Enhanced Movement");
+                    }
+                }
+            },
+            "enduring mutation: oozing form" : {
+                name : "Enduring Mutation: Oozing Form",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Oozing Form even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("oozing form") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: synthetic carapace" : {
+                name : "Enduring Mutation: Synthetic Carapace",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Synthetic Carapace even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("synthetic carapace") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: unnatural physicality" : {
+                name : "Enduring Mutation: Unnatural Physicality",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Unnatural Physicality even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("unnatural physicality") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: corrosive secretions" : {
+                name : "Enduring Mutation: Corrosive Secretions",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Corrosive Secretions even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("corrosive secretions") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: inoculated vigor" : {
+                name : "Enduring Mutation: Inoculated Vigor",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Inoculated Vigor even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("inoculated vigor") == -1) return false;
+
+                    return true;
+                },
+                dmgres : ["Acid", "Poison"],
+                savetxt : { adv_vs : ["poisoned"] }
+            },
+            "enduring mutation: toxic vitality" : {
+                name : "Enduring Mutation: Toxic Vitality",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Toxic Vitality even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("toxic vitality") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: viscous grip" : {
+                name : "Enduring Mutation: Viscous Grip",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Viscous Grip even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("viscous grip") == -1) return false;
+
+                    return true;
+                },
+                speed : {
+                    climb : { spd : "walk", enc : 0 }
+                },
+            },
+            "enduring mutation: acidic bile" : {
+                name : "Enduring Mutation: Acidic Bile",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Acidic Bile even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("acidic bile") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: grappling appendages" : {
+                name : "Enduring Mutation: Grappling Appendages",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Grappling Appendages even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("grappling appendages") == -1) return false;
+
+                    return true;
+                },
+            },
+            "enduring mutation: perverted flight" : {
+                name : "Enduring Mutation: Perverted Flight",
+                source : ["GMB:LL"],
+                description : desc(["I gain the benefits of Perverted Flight even outside of my Rage, though it still counts against my total of manifested mutations. I can change this choice at the end of a long rest."]),
+                prereqeval : function(v) { 
+                    techniques = GetFeatureChoice('classes', 'barbarian(laserllama)', 'subclassfeature3.1', true);
+
+                    if (techniques.indexOf("perverted flight") == -1) return false;
+
+                    return true;
+                },
+                speed : {
+                    fly : { spd : "walk", enc : 0 }
+                },
+            },
+        },
+        "subclassfeature10" : {
+            name : "Noxious Strike",
+            source : ["GMB:LL"],
+            minlevel : 10,
+            description : desc(["When I hit a creature with a melee attack, I can expend an Exploit Die and force it to make a Con save against my Exploit save DC",
+                "On a failed save, roll a d6, and the creature suffers the corresponding condition:",
+                "1 - blinded, 2 - charmed, 3 - deafened, 4 - frightened, 5 - paralyzed, 6 - poisoned",
+                "This effect lasts for 1 minute. The creature can repeat the save at the end of each of its turns, ending the effect on a success.",
+                "A creature that succeeds on its save is immune to this ability for the next 24h."]),
+        },
+        "subclassfeature14" : {
+            name : "Rapid Mutation",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["While Raging, I can use a bonus action to end one Mutation and replace it with another Mutation that I know"]),
+            usages : "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            recovery : "long rest",
+            action : ["bonus action", ""]
+        }
+    }
+})
+
 // Path of the Packleader
 AddSubClass("barbarian(laserllama)", "packleader", {
     regExpSearch : /packleader/i,
