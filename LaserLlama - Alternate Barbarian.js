@@ -136,6 +136,25 @@ function ExploitPrereqFactory(tempSpell, class_name) {
 
 }
 
+function ExploitPrereqFactoryReaver(tempSpell, class_name) {
+    // NOTE: Same as ExploitPrereqFactory but for the Reaver subclass with an additional check for barb lvl > 3 
+
+    // spell has its own prereq
+    if (SpellsList[tempSpell].prereqeval) {
+        return function(v) {
+            const DegreeToMinLevel = [0,0,5,9,13,17];
+            return (classes.known[class_name].level >= DegreeToMinLevel[SpellsList[tempSpell].level]  && classes.known[class_name].level >= 3) 
+                        && SpellsList[tempSpell].prereqeval(v);
+        }
+    }
+
+    return function(v) {
+        const DegreeToMinLevel = [0,0,5,9,13,17];
+        return (classes.known[class_name].level >= DegreeToMinLevel[SpellsList[tempSpell].level] && classes.known[class_name].level >= 3);
+    }
+
+}
+
 ClassList["barbarian(laserllama)"] = {
 
     name : "Barbarian(LaserLlama)",
@@ -2517,6 +2536,207 @@ AddSubClass("barbarian(laserllama)", "packleader", {
                                 "A creature can repeat this save at the start of each turn, ending the effect on a success. A target that succeeds on its save is immune to the effects of this howl for the next 24 hours."]),
             minlevel : 14,
             source : [["GMB:LL", 0]]
+        }
+    }
+})
+
+// Path of the Reaver
+AddSubClass("barbarian(laserllama)", "reaver", {
+    regExpSearch : /reaver/i,
+    subname : "Path of the Reaver",
+    fullname : "Reaver",
+    source : [["GMB:LL", 0]],
+    abilitySave : 1,
+    abilitySaveAlt : 2,
+    features : {
+        // Override martial exploits because size of die increases
+        // NOTE: This has been copy pasted from the main class. IT WON'T WORK IF YOU TRY TO USE newObj ! (it will cause a crash because of some variable's scope)
+        // I do not know how to fix that scoping bug, so I went for the more brute force approach. If it works, it aint stupid ;)
+        "savage exploits": function(){
+            // Fixed attributes
+            SavageExploits = {
+                name : "Savage Exploits",
+                minlevel : 2,
+                source : [["GMB:LL", 0]],
+                description : desc(["I gain Exploit Dice, which are used to fuel my Savage Exploits", 
+                    "Use the \"Choose Feature\" button above to choose Savage Exploits"]),
+                toNotesPage : [{
+                    name : "Savage Exploits",
+                    note : desc(["Below are all Savage Exploits I know. Each 3rd and 4th degree exploits can only be used once per short rest. Each 5th degree exploit can only be used once per long rest."])
+                }],
+            
+                // Savage Exploits
+                extraname : "Savage Exploits",
+                extrachoices : [],
+                extraTimes : ['', 2, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8],
+
+                // Exploit dice
+                limfeaname : "Exploit Dice",
+                usages : ['', 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5],
+                additional : ['', "d4", "d4", "d4", "d6", "d6", "d6", "d6", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10"],
+                recovery : "short rest",
+            };
+
+            // Make a filtered spell list that contains only barbarian(laserllama) "spells"
+            const BarbarianSpells = Object.keys(SpellsList).filter((key) => SpellsList[key].isExploit).filter((key) => {
+                for (var i = 0; i < SpellsList[key].classes.length; i++) {
+                    if (SpellsList[key].classes[i] == "barbarian(laserllama)") return true;
+                }
+                return false;
+            });
+
+            // Iterate over all barbarian(laserllama) "spells"
+            for (var i = 0; i < BarbarianSpells.length; i++) {
+                var NewSpell = SpellsList[BarbarianSpells[i]];
+                var tempSpell = BarbarianSpells[i];
+
+                SavageExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
+
+                SavageExploits[BarbarianSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
+                    name: NewSpell.name,
+                    toNotesPage : [{ // What is added to the notes page
+                        name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
+                        note : desc(NewSpell.descriptionFull),
+                        amendTo : "Savage Exploits"
+                    }],
+                    source: NewSpell.source,
+                    addMod: NewSpell.addMod,
+                    submenu: NewSpell.submenu,
+                    prereqeval: ExploitPrereqFactory(BarbarianSpells[i], "barbarian(laserllama)"),
+                    eval: CreateSavageSpellsheet, // in case the user removes all exploits
+                    spellcastingBonusElsewhere : {
+                        addTo : "savage exploits",
+                        spellcastingBonus : {
+                            name : "Savage Exploits",
+                            spellcastingAbility : 1,
+                            spells : [BarbarianSpells[i]],
+                            selection : [BarbarianSpells[i]]
+                        }
+                    }
+                }
+            }
+
+            // Make a filtered spell list that contains only fighter(laserllama) "spells" BUT that aren't also barbarian(laserllama) "spells" (since we already included them above)
+            const ReaverSpells = Object.keys(SpellsList).filter((key) => SpellsList[key].isExploit).filter((key) => {
+                for (var i = 0; i < SpellsList[key].classes.length; i++) {
+                    if (SpellsList[key].classes[i] == "barbarian(laserllama)") return false;
+                }
+                for (var i = 0; i < SpellsList[key].classes.length; i++) {
+                    if (SpellsList[key].classes[i] == "fighter(laserllama)") return true;
+                }
+                return false;
+            });
+
+            // Iterate over all fighter(laserllama) "spells"
+            for (var i = 0; i < ReaverSpells.length; i++) {
+                var NewSpell = SpellsList[ReaverSpells[i]];
+                var tempSpell = ReaverSpells[i];
+
+                SavageExploits.extrachoices.push(NewSpell.name); // Add "spell" name to menu options
+
+                SavageExploits[ReaverSpells[i]] = { // Add "spell" to the main item (when it is picked through the menu)
+                    name: NewSpell.name,
+                    toNotesPage : [{ // What is added to the notes page
+                        name : NewSpell.name + " Exploit [" + (NewSpell.level == 1 ? '1st' : NewSpell.level == 2 ? '2nd' : NewSpell.level == 3 ? '3rd': NewSpell.level + 'th') + " degree]",
+                        note : desc(NewSpell.descriptionFull),
+                        amendTo : "Savage Exploits"
+                    }],
+                    source: NewSpell.source,
+                    addMod: NewSpell.addMod,
+                    submenu: NewSpell.submenu,
+                    prereqeval: ExploitPrereqFactoryReaver(ReaverSpells[i], "barbarian(laserllama)"),
+                    eval: CreateSavageSpellsheet, // in case the user removes all exploits
+                    spellcastingBonusElsewhere : {
+                        addTo : "savage exploits",
+                        spellcastingBonus : {
+                            name : "Savage Exploits",
+                            spellcastingAbility : 1,
+                            spells : [ReaverSpells[i]],
+                            selection : [ReaverSpells[i]]
+                        }
+                    }
+                }
+            }
+
+            return SavageExploits
+        }(),
+
+        "subclassfeature3" : GetSubclassExploits("Reaver", ["lightstep", "savage rebuke","aggressive sprint","glancing blow", "adrenaline rush"]),
+        "subclassfeature3.1" : {
+            name : "Reaver Superiority",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                var ExtraExploits = (n < 10 ? "one Exploit known." : "two Exploits known.");
+
+                return desc([
+                    "When I learn an Exploit, I can learn it from the Fighter list, using my Barbarian level for the prerequisite. Also, I get one extra Exploit Die and " + ExtraExploits
+                ])
+            }),
+            bonusClassExtrachoices : [{
+                "class" : "barbarian(laserllama)",
+                "feature" : "savage exploits",
+                "bonus" : 1
+            }],
+            extraLimitedFeatures : [{
+                name : "Exploit Dice",
+                usages : 1,
+                recovery : "short rest",
+                addToExisting : true
+            }]
+        },
+        "subclassfeature3.2" : {
+            name : "Swift Strides", 
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc("When Raging, opportunity attacks against me are made at disadvantage")
+        },
+        "subclassfeature6" : {
+            name : "Unbridled Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc(["When I Rage, I gain one of the following benefits:",
+                    "\u2022 I regain one of my expended Exploit Dice",
+                    "\u2022 I gain 1d"+ExplDie+" temporary hit points",
+                    "\u2022 My walking speed is doubled for my current turn"
+                ])
+            }),
+        },
+        "subclassfeature10" : {
+            name : "Unstoppable Warrior",
+            source : ["GMB:LL"],
+            minlevel : 10,
+            description : desc(["While Raging, I am under the effects of freedom of movement (in spell list for reference)"]),
+            spellcastingBonus : {
+                name : "Unstoppable Warrior",
+                spells : ["freedom of movement"],
+                selection : ["freedom of movement"],
+                firstCol : "R",
+                times : 1
+            },
+            spellChanges : {
+                "freedom of movement" : {
+                    range : "Self",
+                    time : "-",
+                    components : "-",
+                    duration : "Rage",
+                    changes : "While Raging, I am under the effects of freedom of movement (in spell list for reference)"
+                }
+            },
+            bonusClassExtrachoices : [{
+                "class" : "barbarian(laserllama)",
+                "feature" : "savage exploits",
+                "bonus" : 1
+            }],
+        },
+        "subclassfeature14" : {
+            name : "Storm of Flesh & Steel",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["Once per turn when I use an Exploit while Raging, I can roll a d4 in place of expending an Exploit Dice"])
         }
     }
 })
