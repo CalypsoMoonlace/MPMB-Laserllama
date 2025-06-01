@@ -607,7 +607,7 @@ AddSubClass("barbarian(laserllama)", "champion", {
                 // Exploit dice
                 limfeaname : "Exploit Dice",
                 usages : ['', 2, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6],
-                additional : ['', "d4", "d6", "d6", "d8", "d8", "d8", "d8", "d8", "d8", "d10", "d10", "d10", "d10", "d10", "d10", "d12", "d12", "d12", "d12"],
+                additional : ['', "d4", "d4 (d6 in rage)", "d4 (d6 in rage)", "d6 (d8 in rage)", "d6 (d8 in rage)", "d6 (d8 in rage)", "d6 (d8 in rage)", "d6 (d8 in rage)", "d6 (d8 in rage)", "d8 (d10 in rage)", "d8 (d10 in rage)", "d8 (d10 in rage)", "d8 (d10 in rage)", "d8 (d10 in rage)", "d8 (d10 in rage)", "d10 (d12 in rage)", "d10 (d12 in rage)", "d10 (d12 in rage)", "d10 (d12 in rage)"],
                 recovery : "short rest",
             };
 
