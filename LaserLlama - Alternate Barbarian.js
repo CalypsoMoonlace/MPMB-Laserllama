@@ -2803,21 +2803,24 @@ AddSubClass("barbarian(laserllama)", "titan", {
             name : "Fury of the Titans",
             source : [["GMB:LL", 0]],
             minlevel : 3,
-            description : desc([
-                "When I Rage, I gain the following benefits:",
-                "\u2022 If there is room, I can choose to grow by one size category. My physical size doubles in all dimensions, and my weight is multiplied by eight.",
-                "\u2022 My Strength-based weapon attacks deal bonus damage depending on my current size: Medium (1d4), Large(1d6), Huge (1d12), and Gargantuan (2d12).",
-                "\u2022 I can use hurl without expending an Exploit Die."
-            ])
-        },
-        "subclassfeature6" : {
-            name : "Titanic Vitality",
-            source : [["GMB:LL", 0]],
-            minlevel : 6,
             description : levels.map(function (n) {
+                if (n < 6) {
+                    return desc([
+                        "When I Rage, I gain the following benefits:",
+                        "\u2022 If there is room, I can choose to grow by one size category. My physical size doubles in all dimensions, and my weight is multiplied by eight.",
+                        "\u2022 My Strength-based weapon attacks deal bonus damage depending on my current size: Medium (1d4), Large(1d6), Huge (1d12), and Gargantuan (2d12).",
+                        "\u2022 I can use hurl without expending an Exploit Die."
+                    ])
+                }
 
-                return desc(["When I Rage, I gain " + n + " temporary HP"])
-            }),
+                return desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 If there is room, I can choose to grow by one size category. My physical size doubles in all dimensions, and my weight is multiplied by eight.",
+                    "\u2022 My Strength-based weapon attacks deal bonus damage depending on my current size: Medium (1d4), Large(1d6), Huge (1d12), and Gargantuan (2d12).",
+                    "\u2022 I can use hurl without expending an Exploit Die.",
+                    "\u2022 I gain " + n + " temporary HP"
+                ])
+            })
         },
         "subclassfeature10" : {
             name : "Awakened Bloodline",
