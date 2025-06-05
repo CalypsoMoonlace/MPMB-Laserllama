@@ -2741,6 +2741,198 @@ AddSubClass("barbarian(laserllama)", "reaver", {
     }
 })
 
+// Path of the Titan
+AddSubClass("barbarian(laserllama)", "titan", { 
+    regExpSearch : /titan/i,
+    subname : "Path of the Titan",
+    fullname : "Titan",
+    source : ["GMB:LL", 0],
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Titanic", ["feat of strength", "hurl","greater hurl", "shattering slam","destructive slam"]),
+        "subclassfeature3.1" : {
+            name : "Giant Bloodline",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                    'Choose the option that best fits the type of giant whose power resides in you using the "Choose Feature" button above',
+                    "This choice is permanent and can't be changed short of a wish spell or the magic of elder giants"
+                ]),
+            choices : ["Lesser Giant", "Hill Giant", "Stone Giant", "Frost Giant", "Fire Giant", "Cloud Giant", "Storm Giant"],
+            "lesser giant" : {
+                name : "Lesser Giant Bloodline",
+                description : desc(["The power of Lesser Giants reside in me, I gain resistance to Poison damage"]),
+                dmgres : ["Poison"],
+            },
+            "hill giant" : {
+                name : "Hill Giant Bloodline",
+                description : desc(["The power of Hill Giants reside in me, I gain resistance to Bludgeoning damage"]),
+                dmgres : ["Bludgeoning"],
+            },
+            "stone giant" : {
+                name : "Stone Giant Bloodline",
+                description : desc(["The power of Stone Giants reside in me, I gain resistance to Psychic damage"]),
+                dmgres : ["Psychic"],
+            },
+            "frost giant" : {
+                name : "Frost Giant Bloodline",
+                description : desc(["The power of Frost Giants reside in me, I gain resistance to Cold damage"]),
+                dmgres : ["Cold"],
+            },
+            "fire giant" : {
+                name : "Fire Giant Bloodline",
+                description : desc(["The power of Fire Giants reside in me, I gain resistance to Fire damage"]),
+                dmgres : ["Fire"],
+            },
+            "cloud giant" : {
+                name : "Cloud Giant Bloodline",
+                description : desc(["The power of Cloud Giants reside in me, I gain resistance to Thunder damage"]),
+                dmgres : ["Thunder"],
+            },
+            "storm giant" : {
+                name : "Storm Giant Bloodline",
+                description : desc(["The power of Storm Giants reside in me, I gain resistance to Lightning damage"]),
+                dmgres : ["Lightning"],
+            },
+            // Create the dependency for the level 10 feature
+            choiceDependencies : [{
+                feature : "subclassfeature10",
+                choiceAttribute : false
+            }]
+        },
+        "subclassfeature3.2" : {
+            name : "Fury of the Titans",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                "When I Rage, I gain the following benefits:",
+                "\u2022 If there is room, I can choose to grow by one size category. My physical size doubles in all dimensions, and my weight is multiplied by eight.",
+                "\u2022 My Strength-based weapon attacks deal bonus damage depending on my current size: Medium (1d4), Large(1d6), Huge (1d12), and Gargantuan (2d12).",
+                "\u2022 I can use hurl without expending an Exploit Die."
+            ])
+        },
+        "subclassfeature6" : {
+            name : "Titanic Vitality",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+
+                return desc(["When I Rage, I gain " + n + " temporary HP"])
+            }),
+        },
+        "subclassfeature10" : {
+            name : "Awakened Bloodline",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc(["I manifest more specific traits dependent upon my Giant Bloodline"]),
+            choices : ["Lesser Giant", "Hill Giant", "Stone Giant", "Frost Giant", "Fire Giant", "Cloud Giant", "Storm Giant"],
+            choicesNotInMenu : true,
+            "lesser giant" : {
+                name : "Awakened Lesser Giant Bloodline",
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "I can add 1d"+ExplDie+" to Strength (Intimidation) and Charisma (Intimidation) checks",
+                        "My strange knotted flesh grants me a +1 bonus to my Armor Class while Raging"
+                    ])
+                }),
+                extraAC : [{
+                    name : "Awakened Bloodline (in Rage)",
+                    mod : "1",
+                    text : "My strange knotted flesh grants me a +1 bonus to my Armor Class while Raging"
+                }]
+            },
+            "hill giant" : {
+                name : "Awakened Hill Giant Bloodline",
+                description : desc(["I have advantage on Constitution saving throws",
+                    "When I take damage while Raging, I can use a reaction to reduce the damage I take by my Con mod (min 1)"]),
+                action: [["reaction", " (when damaged in rage)"]],
+                savetxt : { 
+                    text : ["Adv. on Con saves"]
+                }
+            },
+            "stone giant" : {
+                name : "Awakened Stone Giant Bloodline",
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "I gain proficiency in Insight, and I can add 1d"+ExplDie+" to my Wisdom (Insight) checks", 
+                        "When forced to make a Wis save while Raging, I can add 1d" + ExplDie
+                    ])
+                }),
+                skills : ["Insight"],
+                savetxt : { 
+                    text : ["Add Expl Die to Wis saves in rage"]
+                },
+            },
+            "frost giant" : {
+                name : "Awakened Frost Giant Bloodline",
+                description : desc(["When using an Exploit that deals damage, I can cause it to deal cold damage", 
+                    "Each time I hit a target with an attack while Raging, its speed is reduced by 10 ft until the start of my next turn"]),
+            },
+            "fire giant" : {
+                name : "Awakened Fire Giant Bloodline",
+                description : levels.map(function (n) {
+                    var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                    return desc([
+                        "While wearing armor, I can use my Con mod, in place of Dex, to calculate my AC", // here we go again... this is impossible to add
+                        "When a creature hits me with a melee attack while Raging, I can use my reaction to deal 1d"+ExplDie+" fire damage to the attacker"
+                    ])
+                }),
+                action: [["reaction", "Awakened Bloodline (when hit in melee in rage)"]],
+                extraAC : [{
+                    name : "Awakened Fire Bloodline (light armor)",
+                    mod : "max(Con-Dex|0)",
+                    text : "I can use my Con to calculate my AC instead of Dex while wearing light armor",
+                    stopeval : function (v) { 
+                        return (!v.wearingArmor || v.mediumArmor || v.heavyArmor) // light armor only
+                    }
+                }/*, {
+                    name : "Awakened Fire Bloodline (medium armor)",
+                    mod : "min(max(Con-Dex|0)|2)",
+                    text : "I can use my Con to calculate my AC instead of Dex while wearing medium armor",
+                    stopeval : function (v) { 
+                        return !v.mediumArmor // medium armor only
+                    }
+                }*/] 
+                // NOTE: It is impossible to put a nested min/max expression (the sheet can't handle it)
+                // It is mathematically impossible to formulate this expression without it, so there's nothing I can do
+            },
+            "cloud giant" : {
+                name : "Awakened Cloud Giant Bloodline",
+                description : desc(["I gain resistance to falling damage, and while Raging, I can take the Dash or Disengage action as a bonus action"]),
+                action: [["bonus action", "Dash (in rage)"], ["bonus action", "Disengage (in rage)"]],
+                dmgres: ["Falling damage"]
+
+            },
+            "storm giant" : {
+                name : "Awakened Storm Giant Bloodline",
+                description : desc(["I gain a swim speed equal to my walk speed, and can breathe both air and water",
+                    "Also, while Raging, I can cause my thrown weapon attacks, both hurl and greater hurl to deal lightning damage in place of their normal damage"]),
+                speed : {
+                    swim : { spd : "walk", enc : 0 }
+                }
+            }
+        },
+        "subclassfeature14" : {
+            name : "Titanic Wrath",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc([
+                "When I take the Attack action while Raging, I can focus all my power into one strike",
+                "I make one attack for this action, even if I have a feature that lets me do more than one attack",
+                "On hit, it becomes a critical hit, regardless of my attack roll"
+            ]),
+            action : [["action", ""]],
+            usages : "Con mod per ",
+            usagescalc : "event.value = Math.max(1, What('Con Mod'));",
+            recovery : "long rest",
+        }
+    }
+});
+
 FeatsList["alternate savage attacker"] = {
     name : "Alternate Savage Attacker",
     source : [["GMB:LL", 0]],

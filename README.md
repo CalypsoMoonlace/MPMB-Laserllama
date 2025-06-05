@@ -21,7 +21,7 @@ Similarly, you can also create a spell sheet with *all* exploits if you want a s
 # Edge cases
 There are some content that is not possible to add through, or that I chose to add differently. Here is what I'd like to mention:
 - Alternate versions of spells are currently not included, but new spells are included
-- Pugilist's Iron physique feature on medium armor is not included (only light armor & unarmored) as the sheet can't handle the math required behind it
+- Pugilist's Iron physique feature on medium armor is not included (only light armor & unarmored) as the sheet can't handle the math required behind it. The same issue applies to Path of the Titan's Awakened Bloodline for Fire Giants.
 - Tinker knight's schematics do not go from the assumption the player will be the one to use the schematics so some calculations are not done automatically
 - Way of the Vigilante has an optional rule of replacing class features using Wisdom with Charisma, which would require to rewrite the whole class so it is currently not added
 - Path of the Mutant makes a distinction between known mutations and manifested mutations. This means the effects of some mutations won't be shown unless you select them for the level 6 feature.
