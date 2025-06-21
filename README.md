@@ -34,14 +34,16 @@ Below is the list of what I did so far, and what I have planned.
 - [ ] Magus
 - [ ] Psion
 - [ ] Warlord
+- [ ] Shaman
+- [ ] Vessel
 - [ ] And all other alternate classes
 - [ ] Alternate version of spells
 
 ### In Progress
-- [ ] Alternate Barbarian Expanded
 - [ ] Alternate Rogue
 
 ### Done ✓
+- [x] Alternate Barbarian Expanded
 - [x] Alternate Barbarian
 - [x] Alternate Monk Expanded
 - [x] Alternate Monk
