@@ -2758,6 +2758,26 @@ SpellsList["ego scourge"] = {
 	descriptionFull : "You strike at the mind of a creature you can see within range, attacking its very sense of self. The target must succeed on an Intelligence saving throw or suffer disadvantage on attack rolls and ability checks, and it cannot cast spells. At the end of each of its turns, the target can repeat the saving throw. On a successful save, this effect ends on the target."
 };
 
+
+// Shaman spells (note that I only added those required for the Warden, Barbarian subclass)
+SpellsList["chromatic blade"] = {
+	name : "Chromatic Blade",
+	classes : ["druid", "magus", "sorcerer", "wizard"],
+	source : ["GMB:LL", 0],
+	level : 2,
+	school : "Conj",
+	time : "1 bns",
+	range : "Self",
+	components : "V,S,M",
+    compMaterial: "a charred wooden hilt",
+	duration : "Conc, 10 min",
+	description : "Evoke an elemental blade that deals 2d6+1d6/2SL+spell modifier damage of my choice",
+	descriptionFull : "You evoke an elemental blade in a free hand, choosing one of the following damage types: acid, cold, fire, lightning, poison, or thunder. The elemental blade appears as if it were made of the chosen element, and lasts for the duration. If you let go of the blade, it disappears, but you can evoke the blade again as a bonus action without expending a spell slot.\n\tWhenever you would make a melee attack, you can make a melee spell attack with the elemental blade against a target within your reach. On hit, it takes elemental damage of the chosen type equal to 2d6 + your spellcasting modifier.\n\tWhile in your hand, the blade sheds bright light in a 10-foot radius and dim light an additional 10 feet beyond that."
+	+ AtHigherLevels + "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for every two slot levels above 2nd.",
+};
+
+
+
 // Fighting styles
 // NOTE: See the lack of "var" keyword, it is important as this variable has to be global to be used in other imports
 FightingStylesLL = {

@@ -424,6 +424,26 @@ ClassList["barbarian(laserllama)"] = {
     }
 }
 
+
+// Create warden spell list
+var WardenList = [
+    "control flames", "create bonfire", "druidcraft", "frostbite", "guidance", "gust", "magic stone", "mold earth", "primal savagery", "shape water", "shillelagh", "thorn whip", "thunderclap",
+    "absorb elements", "armor of agathys", "compelled duel", "cure wounds", "earth tremor", "ensnaring strike", "entangle", "fog cloud", "hellish rebuke", "inflict wounds", "searing smite", "thunderous smite", "thunderwave",
+    "dust devil", "earthbind", "chromatic blade", "gust of wind", "magic weapon", "shatter", "spike growth", "warding wind",
+    "elemental weapon", "plant growth", "sleet storm", "thunder step", "tidal wave", "wall of sand", "wall of water", "wind wall",
+    "control water", "elemental bane", "fire shield", "grasping vine", "guardian of nature", "ice storm", "staggering smite", "storm sphere"
+];
+
+for (var i = 0; i < WardenList.length; i++) {
+    try {
+        SpellsList[WardenList[i]].classes.push("warden");
+    } catch (error) {
+        throw new Error(WardenList[i]) 
+    }   
+}
+
+
+// Subclasses
 // Path of the Berserker
 AddSubClass("barbarian(laserllama)", "berserker", {
     regExpSearch : /berserker/i,
@@ -2935,6 +2955,105 @@ AddSubClass("barbarian(laserllama)", "titan", {
         }
     }
 });
+
+// Path of the Warden
+AddSubClass("barbarian(laserllama)", "warden", {
+    regExpSearch : /warden/i,
+    subname : "Path of the Warden",
+    fullname : "Warden",
+    source : [["GMB:LL", 0]],
+    abilitySave : 5,
+    spellcastingFactor : "warlock3",
+    spellcastingTable : [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 0
+        [0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 1
+        [0, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 2
+        [1, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 3
+        [2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 4
+        [2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 5
+        [2, 0, 0, 0, 0, 0, 0, 0, 0], //lvl 6
+        [0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 7
+        [0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 8
+        [0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl 9
+        [0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl10
+        [0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl11
+        [0, 2, 0, 0, 0, 0, 0, 0, 0], //lvl12
+        [0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl13
+        [0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl14
+        [0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl15
+        [0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl16
+        [0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl17
+        [0, 0, 2, 0, 0, 0, 0, 0, 0], //lvl18
+        [0, 0, 0, 2, 0, 0, 0, 0, 0], //lvl19
+        [0, 0, 0, 2, 0, 0, 0, 0, 0] //lvl20
+    ],
+    spellcastingList : {
+        spells : WardenList
+    },
+    spellcastingKnown : {
+        cantrips : [0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        spells : [0, 0, 2, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7]
+    },
+    features : {
+        "subclassfeature3" : {
+            name : "Spellcasting",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                "I can cast known Warden spells, using Wisdom as my spellcasting ability", 
+                "I can replace a spell I know with another I have spell slots for when I gain a level",
+                "I regain these spell slots on a short rest"
+            ]),
+            additional : ["", "", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 2 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 3 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 4 spells known", "1 cantrip \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 5 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 6 spells known", "2 cantrips \u0026 7 spells known", "2 cantrips \u0026 7 spells known", "2 cantrips \u0026 7 spells known", "2 cantrips \u0026 7 spells known"],
+        },
+        "subclassfeature3.1" : {
+            name : "Primal Rage",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : levels.map(function (n) {
+                if (n < 7) {
+                    return desc([
+                        "I can cast Warden spells while Raging, but I have disadvantage on any Con save to maintain concentration on my Warden spells while Raging",
+                        "Casting a Warden spell of 1st-level or higher allows my Rage to continue until the end of my next turn, even if I don't meet the other requirements to extend my Rage"
+                    ])
+                }
+
+                if (n < 14) {
+                    return desc([
+                        "I can cast Warden spells while Raging, but I have disadvantage on any Con save to maintain concentration on my Warden spells while Raging",
+                    ])
+                }
+
+                return desc([
+                    "I can cast Warden spells while Raging"
+                ])
+            })
+        },
+        "subclassfeature6" : {
+            name : "Guardian's Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : desc([
+                "When I use my action to cast a Warden spell, I can make a weapon attack as a bonus action",
+                "Also, I can use Reckless Attack when I cast a Warden spell that requires a spell attack roll"
+            ]),
+            action : ["bonus action", " (attack)"]
+        },
+        "subclassfeature10" : {
+            name : "Ward of the Ancients",
+            source : ["GMB:LL"],
+            minlevel : 10,
+            description : desc(["As a reaction when I take damage from a spell, I can expend a Primal Magic spell slot to grant myself resistance to all damage from the triggering spell"]),
+            action : ["reaction", ""]
+        },
+        "subclassfeature14" : {
+            name : "Improved Guardian's Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc(["When I take the Attack action while Raging, I can cast a Warden spell in place of one of my attacks"])
+        }
+    }
+})
 
 // Path of the Wyrmblood
 AddSubClass("barbarian(laserllama)", "wyrmblood", { 
