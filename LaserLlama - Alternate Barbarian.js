@@ -1759,7 +1759,7 @@ AddSubClass("barbarian(laserllama)", "inferno", {
             source : [["GMB:LL", 0]],
             minlevel : 3,
             description : desc("I learn Abyssal and when I use Commanding Presence, I can use a d6 instead of expending an Exploit Die"),
-            languageProfs : ["Draconic"],
+            languageProfs : ["Abyssal"],
             calcChanges : {
                 spellAdd : [
                     function (spellKey, spellObj, spName) {
@@ -2932,6 +2932,406 @@ AddSubClass("barbarian(laserllama)", "titan", {
             usages : "Con mod per ",
             usagescalc : "event.value = Math.max(1, What('Con Mod'));",
             recovery : "long rest",
+        }
+    }
+});
+
+// Path of the Wyrmblood
+AddSubClass("barbarian(laserllama)", "wyrmblood", { 
+    regExpSearch : /wyrmblood/i,
+    subname : "Path of the Wyrmblood",
+    fullname : "Wyrmblood",
+    source : ["GMB:LL", 0],
+    features : {
+        "subclassfeature3" : GetSubclassExploits("Wyrmblood", ["commanding presence", "ruthless strike","feral senses", "intimidating command","roar of triumph"]),
+        "subclassfeature3.1" : {
+            name : "Draconic Ancestry",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                'Choose the option that best fits the type of dragon whose power resides in you using the "Choose Feature" button above',
+                "I gain resistance to my Dragon's associated Element. I also learn Draconic."
+            ]),
+            languageProfs : ["Draconic"],
+            choices : ["Amethyst Dragon", "Black Dragon", "Blue Dragon", "Brass Dragon", "Bronze Dragon", "Copper Dragon", "Crystal Dragon", "Emerald Dragon",
+                "Gold Dragon", "Green Dragon", "Red Dragon", "Sapphire Dragon", "Silver Dragon", "Steel Dragon", "Topaz Dragon", "White Dragon"],
+            "amethyst dragon" : {
+                name : "Amethyst Draconic Ancestry",
+                description : desc([
+                    "The power of Amethyst dragons reside in me, which are affiliated with Force damage",
+                    "I gain resistance to Force damage and learn Draconic"
+                ]),
+                dmgres : ["Force"],
+                dependentChoices : "force"
+            },
+            "black dragon" : {
+                name : "Black Draconic Ancestry",
+                description : desc([
+                    "The power of Black dragons reside in me, which are affiliated with Acid damage",
+                    "I gain resistance to Acid damage and learn Draconic"
+                ]),
+                dmgres : ["Acid"],
+                dependentChoices : "acid"
+            },
+            "blue dragon" : {
+                name : "Blue Draconic Ancestry",
+                description : desc([
+                    "The power of Blue dragons reside in me, which are affiliated with Lightning damage",
+                    "I gain resistance to Lightning damage and learn Draconic"
+                ]),
+                dmgres : ["Lightning"],
+                dependentChoices : "lightning"
+            },
+            "brass dragon" : {
+                name : "Brass Draconic Ancestry",
+                description : desc([
+                    "The power of Brass dragons reside in me, which are affiliated with Fire damage",
+                    "I gain resistance to Fire damage and learn Draconic"
+                ]),
+                dmgres : ["Fire"],
+                dependentChoices : "fire"
+            },
+            "bronze dragon" : {
+                name : "Bronze Draconic Ancestry",
+                description : desc([
+                    "The power of Bronze dragons reside in me, which are affiliated with Lightning damage",
+                    "I gain resistance to Lightning damage and learn Draconic"
+                ]),
+                dmgres : ["Lightning"],
+                dependentChoices : "lightning"
+            },
+            "copper dragon" : {
+                name : "Copper Draconic Ancestry",
+                description : desc([
+                    "The power of Copper dragons reside in me, which are affiliated with Acid damage",
+                    "I gain resistance to Acid damage and learn Draconic"
+                ]),
+                dmgres : ["Acid"],
+                dependentChoices : "acid"
+            },
+            "crystal dragon" : {
+                name : "Crystal Draconic Ancestry",
+                description : desc([
+                    "The power of Crystal dragons reside in me, which are affiliated with Radiant damage",
+                    "I gain resistance to Radiant damage and learn Draconic"
+                ]),
+                dmgres : ["Radiant"],
+                dependentChoices : "radiant"
+            },
+            "emerald dragon" : {
+                name : "Emerald Draconic Ancestry",
+                description : desc([
+                    "The power of Emerald dragons reside in me, which are affiliated with Psychic damage",
+                    "I gain resistance to Psychic damage and learn Draconic"
+                ]),
+                dmgres : ["Psychic"],
+                dependentChoices : "psychic"
+            },
+            "gold dragon" : {
+                name : "Gold Draconic Ancestry",
+                description : desc([
+                    "The power of Gold dragons reside in me, which are affiliated with Fire damage",
+                    "I gain resistance to Fire damage and learn Draconic"
+                ]),
+                dmgres : ["Fire"],
+                dependentChoices : "fire"
+            },
+            "green dragon" : {
+                name : "Green Draconic Ancestry",
+                description : desc([
+                    "The power of Green dragons reside in me, which are affiliated with Poison damage",
+                    "I gain resistance to Poison damage and learn Draconic"
+                ]),
+                dmgres : ["Poison"],
+                dependentChoices : "poison"
+            },
+            "red dragon" : {
+                name : "Red Draconic Ancestry",
+                description : desc([
+                    "The power of Red dragons reside in me, which are affiliated with Fire damage",
+                    "I gain resistance to Fire damage and learn Draconic"
+                ]),
+                dmgres : ["Fire"],
+                dependentChoices : "fire"
+            },
+            "sapphire dragon" : {
+                name : "Sapphire Draconic Ancestry",
+                description : desc([
+                    "The power of Sapphire dragons reside in me, which are affiliated with Thunder damage",
+                    "I gain resistance to Thunder damage and learn Draconic"
+                ]),
+                dmgres : ["Thunder"],
+                dependentChoices : "thunder"
+            },
+            "silver dragon" : {
+                name : "Silver Draconic Ancestry",
+                description : desc([
+                    "The power of Silver dragons reside in me, which are affiliated with Cold damage",
+                    "I gain resistance to Cold damage and learn Draconic"
+                ]),
+                dmgres : ["Cold"],
+                dependentChoices : "cold"
+            },
+            "steel dragon" : {
+                name : "Steel Draconic Ancestry",
+                description : desc([
+                    "The power of Steel dragons reside in me, which are affiliated with Acid damage",
+                    "I gain resistance to Acid damage and learn Draconic"
+                ]),
+                dmgres : ["Acid"],
+                dependentChoices : "acid"
+            },
+            "topaz dragon" : {
+                name : "Topaz Draconic Ancestry",
+                description : desc([
+                    "The power of Topaz dragons reside in me, which are affiliated with Necrotic damage",
+                    "I gain resistance to Necrotic damage and learn Draconic"
+                ]),
+                dmgres : ["Necrotic"],
+                dependentChoices : "necrotic"
+            },
+            "white dragon" : {
+                name : "White Draconic Ancestry",
+                description : desc([
+                    "The power of White dragons reside in me, which are affiliated with Cold damage",
+                    "I gain resistance to Cold damage and learn Draconic"
+                ]),
+                dmgres : ["Cold"],
+                dependentChoices : "cold"
+            },
+
+            // Create the dependency for the other features
+            choiceDependencies : [{
+                feature : "subclassfeature3.2",
+                choiceAttribute : true
+            }, {
+                feature : "subclassfeature10",
+                choiceAttribute : true
+            }]
+        },
+        "subclassfeature3.2" : {
+            name : "Draconic Fury",
+            source : [["GMB:LL", 0]],
+            minlevel : 3,
+            description : desc([
+                "When I Rage, I gain the following benefits:",
+                "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                "\u2022 My Rage damage bonus and Savage Exploits deal my Element damage in place of their normal damage",
+                "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+            ]),
+            extraAC : [{
+                mod : 2,
+                magic : true,
+                text : "I gain a +2 bonus to AC while using Unarmored Defense",
+                stopeval : function (v) { return v.wearingArmor || v.theArmor.name == "Mage Armor"; }
+            }],
+
+            choices : ["fire", "cold", "poison", "acid", "thunder", "lightning", "radiant", "necrotic", "psychic", "force"],
+            choicesNotInMenu : true, // inherit attribute from subclassfeature3.1
+            "fire" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Fire damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "cold" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Cold damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "poison" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Poison damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "acid" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Acid damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "thunder" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Thunder damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "lightning" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Lightning damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "radiant" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Radiant damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "necrotic" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Necrotic damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "psychic" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Psychic damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+            "force" : {
+                name : "Draconic Fury",
+                description : desc([
+                    "When I Rage, I gain the following benefits:",
+                    "\u2022 Draconic scales give me a +2 bonus to my AC while using Unarmored Defense",
+                    "\u2022 My Rage damage bonus and Savage Exploits deal Force damage in place of their normal damage",
+                    "\u2022 Once per turn when I hit with a Strength-based weapon attack, I can roll two dice for my Rage damage bonus"
+                ]),
+            },
+        },
+        "subclassfeature6" : {
+            name : "Tyrannical Resilience",
+            source : [["GMB:LL", 0]],
+            minlevel : 6,
+            description : levels.map(function (n) {
+                var ExplDie = (n < 5 ? 4 : n < 11 ? 6 : n < 17 ? 8 : 10);
+
+                return desc(["While Raging, I can add 1d"+ExplDie+" to all Int, Wis, and Cha saves against magic"])
+            }),
+            savetxt : { 
+                text : ["Add Expl Die to Int/Wis/Cha vs. magic in rage"]
+            },
+            // In theory, I could merge this feature with the lvl 3 rage improvements, but it would mean that there is no text added to the saves field
+        },
+        "subclassfeature10" : {
+            name : "Breath of the Dragon",
+            source : [["GMB:LL", 0]],
+            minlevel : 10,
+            description : desc([
+                "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 damage of my Element damage type (half on save).",
+                "When I have no uses left, I can expend a use of Rage to use this feature again"
+            ]),
+            action : [["action", ""]],
+            usages : 1,
+            recovery : "short rest",
+            altResource : "Rage",
+
+            choices : ["fire", "cold", "poison", "acid", "thunder", "lightning", "radiant", "necrotic", "psychic", "force"],
+            choicesNotInMenu : true, // inherit attribute from subclassfeature3.1
+            "fire" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 fire damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ])
+            },
+            "cold" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 cold damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ])
+            },
+            "poison" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 poison damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ])
+            },
+            "acid" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 acid damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ]),
+            },
+            "thunder" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 thunder damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ]),
+            },
+            "lightning" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 lightning damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ]),
+            },
+            "radiant" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 radiant damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ]),
+            },
+            "necrotic" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 necrotic damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ]),
+            },
+            "psychic" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 psychic damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ]),
+            },
+            "force" : {
+                name : "Breath of the Dragon",
+                description : desc([
+                    "As an action, I can force creatures in an adjacent 30-foot cone to make a Dex save against my Exploit DC. On a fail, creatures take 8d6 force damage (half on save).",
+                    "When I have no uses left, I can expend a use of Rage to use this feature again"
+                ])
+            },
+        },
+        "subclassfeature14" : {
+            name : "Draconic Wings",
+            source : [["GMB:LL", 0]],
+            minlevel : 14,
+            description : desc([
+                "As a bonus action, I can manifest or dismiss a pair of draconic wings",
+                "These wings grant me a fly speed equal to my walk speed",
+                "Clothing that is not made to accommodate my wings is destroyed when I manifest them"
+            ]),
+            action : [["bonus action", " (manifest/dismiss)"]],
+            speed : {
+                fly : { spd : "walk", enc : 0 }
+            },
         }
     }
 });
