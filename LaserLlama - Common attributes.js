@@ -1857,7 +1857,7 @@ SpellsList["forgotten knowledge"] = {
 	// Regular spell attributes
 	name : "Forgotten Knowledge",
 	source : ["GMB:LL", 0],
-	classes : ["fighter(laserllama)"],
+	classes : ["rogue(laserllama)"],
 	level : 3,
 	school : "Skill",
 	time : "10 min",
