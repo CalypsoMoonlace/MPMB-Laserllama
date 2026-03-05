@@ -43,6 +43,7 @@ Below is the list of what I did so far, and what I have planned.
 - [ ] Alternate Rogue
 
 ### Done ✓
+- [x] Psion (credits to @poliglotta on Discord)
 - [x] Alternate Barbarian Expanded
 - [x] Alternate Barbarian
 - [x] Alternate Monk Expanded
